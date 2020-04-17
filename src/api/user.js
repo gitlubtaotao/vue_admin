@@ -23,3 +23,12 @@ export function logout(token) {
     params: { token }
   })
 }
+
+export function updateUser(token, data) {
+  return request({
+    url: '/user/update',
+    method: 'post',
+    params: { token },
+    data
+  })
+}

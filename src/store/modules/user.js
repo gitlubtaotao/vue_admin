@@ -1,12 +1,11 @@
-import { login, logout, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getInfo, login, logout, updateUser } from '@/api/user'
+import { getToken, removeToken, setToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
   return {
     token: getToken(),
-    name: '',
-    avatar: ''
+    userInfo: {}
   }
 }
 
@@ -25,8 +24,8 @@ const mutations = {
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
   },
-  SET_ROLES:(state,roles) =>{
-    state.roles = roles
+  SET_USER_INFO: (state, user) => {
+    state.userInfo = user
   }
 
 }
@@ -52,16 +51,14 @@ const actions = {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
         const { data } = response
-
         if (!data) {
           reject('Verification failed, please Login again.')
         }
-
-        const { name, avatar, roles } = data
-
-        commit('SET_NAME', name)
+        commit('SET_USER_INFO', data)
+        const { avatar } = data
+        // commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
-        commit('SET_ROLES',roles)
+
         resolve(data)
       }).catch(error => {
         reject(error)
@@ -77,6 +74,25 @@ const actions = {
         resetRouter()
         commit('RESET_STATE')
         resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+  updateUser({ commit, state }, userInfo) {
+    return new Promise((resolve, reject) => {
+      // eslint-disable-next-line no-undef
+      updateUser(state.token, userInfo).then(response => {
+        // eslint-disable-next-line no-unused-vars
+        console.log(response)
+        const { data } = response
+        if (!data) {
+          reject('Verification failed, please Login again.')
+        }
+        commit('SET_USER_INFO', data)
+        const { avatar } = data
+        commit('SET_AVATAR', avatar)
+        resolve(data)
       }).catch(error => {
         reject(error)
       })
