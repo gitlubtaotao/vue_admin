@@ -3,7 +3,7 @@
     <div v-if="user">
       <el-row :gutter="20">
         <el-col :span="6" :xs="24">
-          <user-card :user="user" :uploadUrl="uploadUrl" />
+          <user-card :user="user" :upload-url="uploadUrl" />
         </el-col>
 
         <el-col :span="18" :xs="24">

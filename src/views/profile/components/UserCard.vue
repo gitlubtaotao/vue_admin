@@ -19,8 +19,8 @@
         field="avatar"
         value="false"
         :url="uploadUrl"
-        :width="100"
-        :height="100"
+        :width="300"
+        :height="300"
         :no-rotate="false"
         @crop-success="cropSuccess"
         @crop-upload-success="cropUploadSuccess"
@@ -129,8 +129,8 @@ export default {
       this.imgDataUrl = imgDataUrl
     },
     cropUploadSuccess(jsonData, field) {
+      this.user.avatar = jsonData.data.url
       console.log('-------- upload success --------')
-      console.log(jsonData)
       console.log('field: ' + field)
     },
     cropUploadFail(status, field) {
