@@ -19,7 +19,7 @@
       <el-input v-model.trim="userInfo.address" type="textarea" />
     </el-form-item>
     <el-form-item>
-      <el-button :loading="loading" type="primary" @click="submit">Update</el-button>
+      <el-button :loading="loading" type="primary" @click="submit">保存</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -84,8 +84,8 @@ export default {
           this.loading = true
           this.$store.dispatch('user/updateUser', this.userInfo).then(() => {
             this.loading = false
-            if (this.userInfo.password !== ''){
-              this.$router.push({ path:  `/login?redirect=${this.$route.fullPath}` })
+            if (this.userInfo.password !== '') {
+              this.$router.push({ path: `/login?redirect=${this.$route.fullPath}` })
             }
             this.$message({
               message: '操作成功',

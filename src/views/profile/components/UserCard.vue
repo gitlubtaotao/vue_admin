@@ -10,13 +10,21 @@
         </pan-thumb>
       </div>
       <div class="box-center">
-        <el-button type="primary" icon="el-icon-upload" style="" @click="toggleShow" size="small">
+        <el-button type="primary" icon="el-icon-upload" style="" size="small" @click="toggleShow">
           设置头像
         </el-button>
       </div>
-      <my-upload field="avatar" value="false" v-model="show" @crop-success="cropSuccess"
-                 @crop-upload-success="cropUploadSuccess" @crop-upload-fail="cropUploadFail"
-                 url="/upload" :width="100" :height="100"
+      <my-upload
+        v-model="show"
+        field="avatar"
+        value="false"
+        :url="uploadUrl"
+        :width="100"
+        :height="100"
+        :no-rotate="false"
+        @crop-success="cropSuccess"
+        @crop-upload-success="cropUploadSuccess"
+        @crop-upload-fail="cropUploadFail"
       />
       <div class="box-center">
         <div class="user-name text-center">{{ user.userInfo.name }}</div>
@@ -27,53 +35,53 @@
     <div class="user-bio">
       <div class="user-education user-bio-section">
         <div class="user-bio-section-header">
-          <svg-icon icon-class="email"/>
+          <svg-icon icon-class="email" />
           <span>邮箱</span></div>
         <div class="user-bio-section-body">
           <div class="text-muted">
-            {{user.userInfo.email}}
+            {{ user.userInfo.email }}
           </div>
         </div>
       </div>
       <div class="user-education user-bio-section">
         <div class="user-bio-section-header">
-          <svg-icon icon-class="telephone"/>
+          <svg-icon icon-class="telephone" />
           <span>手机</span></div>
         <div class="user-bio-section-body">
           <div class="text-muted">
-            {{user.userInfo.phone}}
+            {{ user.userInfo.phone }}
           </div>
         </div>
       </div>
 
       <div class="user-skills user-bio-section">
         <div class="user-bio-section-header">
-          <svg-icon icon-class="list"/>
+          <svg-icon icon-class="list" />
           <span>其他</span></div>
         <div class="user-bio-section-body">
           <div class="progress-item">
             <div class="text-muted">
               <span>当前登录次数</span>
-              <span>{{user.userInfo.count}}</span>
+              <span>{{ user.userInfo.count }}</span>
             </div>
           </div>
           <div class="progress-item">
             <div class="text-muted">
               <span>当前登录时间</span>
-              <span>{{user.userInfo.current_sign_in_at}}</span>
+              <span>{{ user.userInfo.current_sign_in_at }}</span>
             </div>
           </div>
           <div class="progress-item">
             <span class="text-muted">上次登录时间</span>
-            <span>{{user.userInfo.last_sign_in_at}}</span>
+            <span>{{ user.userInfo.last_sign_in_at }}</span>
           </div>
           <div class="progress-item">
             <span class="text-muted">当前登录IP</span>
-            <span>{{user.userInfo.current_sign_in_ip}}</span>
+            <span>{{ user.userInfo.current_sign_in_ip }}</span>
           </div>
           <div class="progress-item">
             <span class="text-muted">上传登录IP</span>
-            <span>{{user.userInfo.last_sign_in_ip}}</span>
+            <span>{{ user.userInfo.last_sign_in_ip }}</span>
           </div>
         </div>
       </div>
@@ -82,52 +90,56 @@
 </template>
 
 <script>
-  import PanThumb from '@/components/PanThumb'
-  import myUpload from 'vue-image-crop-upload';
-  export default {
-    components: {
-      PanThumb,
-      'my-upload': myUpload
+import PanThumb from '@/components/PanThumb'
+import myUpload from 'vue-image-crop-upload'
+export default {
+  components: {
+    PanThumb,
+    'my-upload': myUpload
+  },
+  props: {
+    uploadUrl: {
+      type: String,
+      required: true
     },
-    data: function(){
-      return {
-        show: false,
-        imgDataUrl: '',
-      }
-    },
-    props: {
-      user: {
-        type: Object,
-        default: () => {
-          return {
-            name: '',
-            email: '',
-            avatar: '',
-            role: ''
-          }
+    user: {
+      type: Object,
+      default: () => {
+        return {
+          name: '',
+          email: '',
+          avatar: '',
+          role: ''
         }
       }
+    }
+  },
+  data: function() {
+    return {
+      show: false,
+      imgDataUrl: ''
+    }
+  },
+  methods: {
+    toggleShow() {
+      this.show = !this.show
     },
-    methods:{
-      toggleShow() {
-        this.show = !this.show
-      },
-      cropSuccess(imgDataUrl, field){
-        console.log('-------- crop success --------');
-        this.imgDataUrl = imgDataUrl
-      },
-      cropUploadSuccess(jsonData, field){
-        console.log('-------- upload success --------');
-        console.log(jsonData);
-        console.log('field: ' + field)
-      },
-      cropUploadFail(status, field){
-        console.log('-------- upload fail --------');
-        console.log(status);
-        console.log('field: ' + field)
-      }
+    cropSuccess(imgDataUrl, field) {
+      console.log('-------- crop success --------')
+      this.imgDataUrl = imgDataUrl
+    },
+    cropUploadSuccess(jsonData, field) {
+      console.log('-------- upload success --------')
+      console.log(jsonData)
+      console.log('field: ' + field)
+    },
+    cropUploadFail(status, field) {
+      console.log('-------- upload fail --------')
+      console.log(status)
+      console.log('field: ' + field)
     }
   }
+}
 </script>
 
 <style lang="scss" scoped>
