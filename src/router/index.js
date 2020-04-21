@@ -54,6 +54,40 @@ export const constantRoutes = [
     }]
   },
   {
+    path: '/oa',
+    component: Layout,
+    redirect: '/oa/company',
+    name: 'oa',
+    meta: {
+      title: '管理',
+      icon: 'nested',
+      roles: ['admin', 'editor']
+    },
+    children: [
+      {
+        path: 'company',
+        component: () => import('@/views/oa/company/index'),
+        meta: { title: '公司信息', icon: 'example' },
+        children: []
+      },
+      {
+        path: 'department',
+        component: () => import('@/views/oa/department/index'),
+        meta: { title: '部门信息', icon: 'example' }
+      },
+      {
+        path: 'employee',
+        component: () => import('@/views/oa/employee/index'),
+        meta: { title: '员工信息', icon: 'example' }
+      },
+      {
+        path: 'account',
+        component: () => import('@/views/oa/department/index'),
+        meta: { title: '公司银行账户', icon: 'example' }
+      }
+    ]
+  },
+  {
     path: '/profile',
     component: Layout,
     redirect: '/profile/index',
