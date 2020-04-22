@@ -13,7 +13,7 @@ body {
 }
 
 label {
-  font-weight: 700;
+  font-weight: 500;
 }
 
 html {
@@ -62,4 +62,7 @@ div:focus {
 // main-container global css
 .app-container {
   padding: 20px;
+}
+.el-button--mini, .el-button--mini.is-round {
+    padding: 7px 5px !important;
 }

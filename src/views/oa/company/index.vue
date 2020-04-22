@@ -51,27 +51,32 @@
         :key="tableKey"
         v-loading="listLoading"
         :data="list"
+        fit
+        max-height="1200"
         border
+        stripe
         highlight-current-row
         tooltip-effect="dark"
         style="width: 100%;"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="55" />
-        <el-table-column label="操作" width="150">
-          <template slot-scope="scope">
+        <el-table-column type="selection" width="55" fixed="left" />
+        <el-table-column label="操作" width="150" fixed="left">
+          <template slot-scope="{row,$index}">
             <el-button
               size="mini"
               type="primary"
-              @click=""
+              @click="handleUpdate(row)"
             >编辑</el-button>
-            <el-button
-              size="mini"
-              type="danger"
-              @click=""
-            >删除</el-button>
+            <el-dropdown size="mini" split-button type="primary">
+              更多
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click="">删除</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </template>
         </el-table-column>
+        <el-table-column type="index" />
         <el-table-column v-for="column in columnArray" v-if="showColumn(column)" :prop="column['data']" :label="column['title']" />
       </el-table>
       <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="filterTable" />
@@ -95,16 +100,16 @@
           <el-input v-model="temp.email" type="email" />
         </el-form-item>
         <el-form-item label="公司网站" prop="website">
-          <el-input v-model="temp.website" type="url"/>
+          <el-input v-model="temp.website" type="url" />
         </el-form-item>
         <el-form-item label="公司传真" prop="website">
-          <el-input v-model="temp.fax" type="text"/>
+          <el-input v-model="temp.fax" type="text" />
         </el-form-item>
         <el-form-item label="公司中文地址" prop="address">
-          <el-input v-model="temp.address" type="textarea" :rows="2" />
+          <el-input v-model="temp.zh_address" type="textarea" :rows="2" />
         </el-form-item>
         <el-form-item label="公司英文地址" prop="address2">
-          <el-input v-model="temp.address2" type="textarea" :rows="2" />
+          <el-input v-model="temp.en_address" type="textarea" :rows="2" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="temp.remark" type="textarea" :rows="2" />
@@ -125,7 +130,7 @@
 </template>
 <script>
 import { getColumn, localColumn } from '@/api/column'
-import { getData,createData } from '@/api/index_data'
+import { getData, createData, updateData,editData } from '@/api/index_data'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 export default {
@@ -148,13 +153,14 @@ export default {
       dialogFormVisible: false,
       dialogStatus: '',
       temp: {
+        id: null,
         name_nick: null,
         name_cn: null,
         name_en: null,
         telephone: null,
         email: null,
-        address: null,
-        address2: null,
+        zh_address: null,
+        en_address: null,
         remark: null,
         website: null,
         fax: null
@@ -204,7 +210,38 @@ export default {
         }
       })
     },
-    updateData(){},
+    handleUpdate(row) {
+      editData('/companies/' + row.id + '/edit',).then((response) => {
+        this.temp = response.data
+      })
+      this.dialogStatus = 'update'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    updateData() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          const tempData = Object.assign({}, this.temp)
+          tempData.updated_at = undefined
+          tempData.created_at = undefined
+          console.log('/companies/' + tempData.id + '/update')
+          updateData('/companies/' + tempData.id + '/update', tempData).then((response) => {
+            const index = this.list.findIndex(v => v.id === this.temp.id)
+
+            this.list.splice(index, 1, response.data)
+            this.dialogFormVisible = false
+            this.$notify({
+              title: 'Success',
+              message: 'Update Successfully',
+              type: 'success',
+              duration: 2000
+            })
+          })
+        }
+      })
+    },
     handleSelectionChange() {
     },
     fetchColumn() {
