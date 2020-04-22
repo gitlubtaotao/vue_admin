@@ -68,10 +68,12 @@
               type="primary"
               @click="handleUpdate(row)"
             >编辑</el-button>
-            <el-dropdown size="mini" split-button type="primary">
-              更多
+            <el-dropdown size="mini"  type="primary" @visible-change="handleClick(row,$index)" @command="handleCommand">
+              <el-button type="primary" size="mini">
+                更多<i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click="">删除</el-dropdown-item>
+                <el-dropdown-item command="delete">删除</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -130,7 +132,7 @@
 </template>
 <script>
 import { getColumn, localColumn } from '@/api/column'
-import { getData, createData, updateData,editData } from '@/api/index_data'
+import { getData, createData, updateData, editData, deleteData } from '@/api/index_data'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 export default {
@@ -165,6 +167,7 @@ export default {
         website: null,
         fax: null
       },
+      index: 0,
       rules: {
         name_nick: [{ required: true, message: '请输入公司简称', trigger: 'blur' }],
         name_cn: [{ required: true, message: '请输入公司中文名', trigger: 'blur' }],
@@ -234,12 +237,33 @@ export default {
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
-              message: 'Update Successfully',
+              message: '更新成功',
               type: 'success',
               duration: 2000
             })
           })
         }
+      })
+    },
+    handleClick(row,index) {
+      this.temp = row,
+      this.index = index
+    },
+    handleCommand(command){
+      if (command === 'delete') {
+        this.handleDelete()
+      }
+    },
+    handleDelete() {
+      const id = this.temp.id
+      deleteData('/companies/' + id + '/delete').then((response) => {
+        this.$notify({
+          title: 'Success',
+          message: '删除成功',
+          type: 'success',
+          duration: 2000
+        })
+        this.list.splice(this.index, 1)
       })
     },
     handleSelectionChange() {

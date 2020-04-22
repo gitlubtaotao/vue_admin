@@ -30,6 +30,12 @@ export function updateData(url, data, type = 'post') {
     data
   })
 }
+export function deleteData(url) {
+  return request({
+    url: url,
+    method: 'post'
+  })
+}
 
 
 
