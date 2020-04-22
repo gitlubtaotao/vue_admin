@@ -1,10 +1,17 @@
 import request from '@/utils/request'
-import { getToken } from '@/utils/auth' // get token from cookie
 export function getData(url,params, type = 'post') {
   return request({
-    url: url + '?token=' + getToken(),
+    url: url,
     method: type,
     params
+  })
+}
+
+export function createData(url, data, type = 'post') {
+  return request({
+    url: url,
+    method: type,
+    data
   })
 }
 
