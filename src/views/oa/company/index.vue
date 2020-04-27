@@ -17,7 +17,7 @@
       </div>
       <el-form ref="listQuery" :model="listQuery" label-width="100px">
         <el-row :gutter="12">
-          <el-col :xs="8" :sm="6" :md="6" :lg="6">
+          <el-col :xs="24" :sm="6" :md="6" :lg="6">
             <el-form-item label="公司名称" class="">
               <el-input
                 v-model="listQuery.name_nick"
@@ -28,7 +28,7 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :xs="8" :sm="6" :md="6" :lg="6">
+          <el-col :xs="24" :sm="12" :md="6" :lg="6">
             <el-form-item label="公司邮箱" class="">
               <el-input
                 v-model="listQuery.email"
@@ -39,7 +39,7 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :xs="12" :sm="8" :md="6" :lg="6">
+          <el-col :xs="24" :sm="12" :md="6" :lg="6" >
             <el-button v-waves type="primary" icon="el-icon-search" size="medium" @click="filterTable">搜索</el-button>
             <el-button type="danger" icon="el-icon-close" size="medium" @click="clearFilter">取消</el-button>
           </el-col>
@@ -70,7 +70,7 @@
             >编辑</el-button>
             <el-dropdown size="mini"  type="primary" @visible-change="handleClick(row,$index)" @command="handleCommand">
               <el-button type="primary" size="mini">
-                更多<i class="el-icon-arrow-down el-icon--right"></i>
+                更多 <i class="el-icon-arrow-down el-icon--right" />
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item command="delete">删除</el-dropdown-item>
@@ -193,6 +193,19 @@ export default {
     handleCreate() {
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
+      this.temp = {
+        id: null,
+        name_nick: null,
+        name_cn: null,
+        name_en: null,
+        telephone: null,
+        email: null,
+        zh_address: null,
+        en_address: null,
+        remark: null,
+        website: null,
+        fax: null
+      }
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
@@ -245,11 +258,11 @@ export default {
         }
       })
     },
-    handleClick(row,index) {
-      this.temp = row,
+    handleClick(row, index) {
+      this.temp = row
       this.index = index
     },
-    handleCommand(command){
+    handleCommand(command) {
       if (command === 'delete') {
         this.handleDelete()
       }

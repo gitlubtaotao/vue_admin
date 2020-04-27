@@ -19,6 +19,8 @@ export function localColumn(url) {
   }
 }
 
+
+
 function setRequest(url) {
   return request({
     url: url + '?token=' + getToken(),
