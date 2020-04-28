@@ -156,7 +156,7 @@ import { getData, createData, updateData, editData, deleteData } from '@/api/ind
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 export default {
-  name: 'CompanyTable',
+  name: 'Department',
   components: { Pagination },
   directives: { waves },
   data() {
@@ -206,6 +206,7 @@ export default {
       return column.title !== ''
     },
     handleCreate() {
+      this.getCompany()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.temp = {
@@ -228,16 +229,15 @@ export default {
               title: 'Success',
               message: '创建部门信息成功',
               type: 'success',
-              duration: 2000
+              duration: 5000
             })
           })
         }
       })
     },
     handleUpdate(row) {
-      editData('/departments/' + row.id + '/edit',).then((response) => {
-        this.temp = response.data
-      })
+      this.getCompany()
+      this.temp = row
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -258,7 +258,7 @@ export default {
               title: 'Success',
               message: '更新成功',
               type: 'success',
-              duration: 2000
+              duration: 5000
             })
           })
         }
@@ -304,14 +304,21 @@ export default {
     },
     handleDelete() {
       const id = this.temp.id
-      deleteData('/department/' + id + '/delete').then((response) => {
-        this.$notify({
-          title: 'Success',
-          message: '删除成功',
-          type: 'success',
-          duration: 2000
+      this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteData('/department/' + id + '/delete').then((response) => {
+          this.$notify({
+            title: 'Success',
+            message: '删除成功',
+            type: 'success',
+            duration: 5000
+          })
+          this.list.splice(this.index, 1)
         })
-        this.list.splice(this.index, 1)
+      }).catch(() => {
       })
     },
     handleSelectionChange() {
@@ -336,6 +343,7 @@ export default {
         if (!Array.isArray(data)) {
           data = []
         }
+        console.log(data)
         this.list = data
         setTimeout(() => {
           this.listLoading = false

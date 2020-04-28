@@ -1,12 +1,12 @@
 'use strict';
 const path = require('path');
-const defaultSettings = require('./src/settings.js');
+const defaultSettings = require('./src/settings.js')
 
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
-const name = defaultSettings.title || '货代操作系统'; // page title
+const name = defaultSettings.title || '货代操作系统' // page title
 
 // If your port is set to 80,
 // use administrator privileges to execute the command line.
@@ -32,6 +32,9 @@ module.exports = {
   devServer: {
     port: port,
     open: false,
+    allowedHosts: [
+      'localhost:8082'
+    ],
     overlay: {
       warnings: false,
       errors: true

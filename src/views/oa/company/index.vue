@@ -136,7 +136,7 @@ import { getData, createData, updateData, editData, deleteData } from '@/api/ind
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 export default {
-  name: 'CompanyTable',
+  name: 'Company',
   components: { Pagination },
   directives: { waves },
   data() {
@@ -220,7 +220,7 @@ export default {
               title: 'Success',
               message: '创建公司信息成功',
               type: 'success',
-              duration: 2000
+              duration: 5000
             })
           })
         }
@@ -252,7 +252,7 @@ export default {
               title: 'Success',
               message: '更新成功',
               type: 'success',
-              duration: 2000
+              duration: 5000
             })
           })
         }
@@ -269,14 +269,21 @@ export default {
     },
     handleDelete() {
       const id = this.temp.id
-      deleteData('/companies/' + id + '/delete').then((response) => {
-        this.$notify({
-          title: 'Success',
-          message: '删除成功',
-          type: 'success',
-          duration: 2000
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteData('/companies/' + id + '/delete').then((response) => {
+          this.$notify({
+            title: 'Success',
+            message: '删除成功',
+            type: 'success',
+            duration: 5000
+          })
+          this.list.splice(this.index, 1)
         })
-        this.list.splice(this.index, 1)
+      }).catch(() => {
       })
     },
     handleSelectionChange() {
