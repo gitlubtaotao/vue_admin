@@ -62,6 +62,7 @@
                 :remote-method="remoteMethod"
                 :loading="loading"
                 @focus="getCompany()"
+                @change="chooseDepartment"
               >
                 <el-option
                   v-for="item in user_company_options"
@@ -85,9 +86,9 @@
               >
                 <el-option
                   v-for="item in department_options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  :key="item.id"
+                  :label="item.name_cn"
+                  :value="item.id"
                 />
               </el-select>
             </el-form-item>
@@ -140,11 +141,14 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" :status-icon="true" label-position="left" label-width="100px" style="width: 500px; margin-left:50px;">
-        <el-form-item label="部门中文名" prop="name_cn">
-          <el-input v-model="temp.name_cn" />
+        <el-form-item label="姓名" prop="name">
+          <el-input v-model="temp.name" />
         </el-form-item>
-        <el-form-item label="部门英文名" prop="name_en">
-          <el-input v-model="temp.name_en" />
+        <el-form-item label="电话" prop="phone">
+          <el-input v-model="temp.phone" />
+        </el-form-item>
+        <el-form-item label="邮箱" prop="phone">
+          <el-input v-model="temp.email" type="email" />
         </el-form-item>
         <el-form-item label="所属公司" prop="user_company_id">
           <el-select
@@ -158,6 +162,7 @@
             :remote-method="remoteMethod"
             :loading="loading"
             @focus="getCompany()"
+            @change="chooseDepartment"
           >
             <el-option
               v-for="item in user_company_options"
@@ -166,6 +171,59 @@
               :value="item.value"
             />
           </el-select>
+        </el-form-item>
+        <el-form-item label="所在部门" prop="department_id">
+          <el-select
+            v-model="temp.department_id"
+            style="width:100%"
+            filterable
+            remote
+            placeholder="请选择"
+            size="medium"
+            clearable
+            :loading="loading"
+          >
+            <el-option
+              v-for="item in department_options"
+              :key="item.id"
+              :label="item.name_cn"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="temp.password" type="password" />
+        </el-form-item>
+        <el-form-item label="确认密码" prop="confirm_password">
+          <el-input v-model="temp.confirm_password" type="password" />
+        </el-form-item>
+        <el-form-item label="性别" prop="department_id">
+          <el-select
+            v-model="temp.sex"
+            style="width:100%"
+            filterable
+            remote
+            placeholder="请选择"
+            size="medium"
+            clearable
+            :loading="loading"
+          >
+            <el-option
+              v-for="item in sex_options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="工号" prop="user_no">
+          <el-input v-model="temp.user_no"/>
+        </el-form-item>
+        <el-form-item label="联系地址" prop="address">
+          <el-input v-model="temp.address" type="textarea"/>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="temp.remark" type="textarea"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -192,6 +250,20 @@ export default {
   components: { Pagination },
   directives: { waves },
   data() {
+    var validatePass2 = (rule, value, callback) => {
+      console.log(this.temp)
+      if (this.temp.password !== '') {
+        if (value === '') {
+          callback(new Error('请再次输入密码'))
+        } else if (value !== this.temp.password) {
+          callback(new Error('两次输入密码不一致!'))
+        } else {
+          callback()
+        }
+      } else {
+        callback()
+      }
+    }
     return {
       tableKey: 0,
       list: [],
@@ -230,17 +302,19 @@ export default {
         phone: [{ required: true, message: '请输入电话', trigger: 'blur' }],
         email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }],
         user_company_id: [{ required: true, message: '请选择所属公司', trigger: 'blur' }],
-        department_id: [{ required: true, message: '请选择所在部门', trigger: 'blur' }],
+        confirm_password: [{ validator: validatePass2, trigger: 'blur' }]
       },
       textMap: {
         update: '编辑员工信息',
-        create: '编辑员工信息'
+        create: '新增员工信息'
       },
       columnArray: [],
       user_companies: [],
       user_company_options: [],
       departments: [],
       department_options: [],
+      sex_options: [{ label: '男', value: 1 },
+        { label: '女', value: 2 }]
     }
   },
   created() {
@@ -318,6 +392,15 @@ export default {
         }
       })
     },
+    chooseDepartment(company_id) {
+      if (company_id !== ''){
+        this.department_options = this.departments.filter(item => {
+          return item.user_company_id === parseInt(company_id)
+        })
+      }else {
+        this.department_options = this.departments
+      }
+    },
     remoteMethod(query) {
       if (query !== '') {
         this.loading = true
@@ -394,11 +477,13 @@ export default {
       getData('/employees/data', this.listQuery).then(response => {
         this.total = response.data.total
         let data = response.data.data
+
         if (!Array.isArray(data)) {
           data = []
         }
-        console.log(data)
         this.list = data
+        this.departments = response.data.departments
+        this.department_options = this.departments
         setTimeout(() => {
           this.listLoading = false
         }, 500)
