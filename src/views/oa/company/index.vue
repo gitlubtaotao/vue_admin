@@ -74,12 +74,15 @@
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item command="delete">删除</el-dropdown-item>
+                <router-link :to="'/oa/company/show/'+row.id">
+                  <el-dropdown-item>详情</el-dropdown-item>
+                </router-link>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
         </el-table-column>
         <el-table-column type="index" />
-        <el-table-column v-for="column in columnArray" v-if="showColumn(column)" :prop="column['data']" :label="column['title']" />
+        <el-table-column v-for="column in columnArray" v-if="showColumn(column)" :prop="column['data']" :label="column['title']" width="180" />
       </el-table>
       <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="filterTable" />
     </el-card>

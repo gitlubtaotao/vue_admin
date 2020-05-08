@@ -68,7 +68,15 @@ export const constantRoutes = [
         path: 'company',
         component: () => import('@/views/oa/company/index'),
         meta: { title: '公司信息', icon: 'example' },
-        children: []
+        children: [
+        ]
+      },
+      {
+        path: 'company/show/:id(\\d+)',
+        component: () => import('@/views/oa/company/show'),
+        name: 'ShowCompany',
+        meta: { title: '公司信息详情', noCache: true, activeMenu: '/oa/company' },
+        hidden: true
       },
       {
         path: 'department',
@@ -82,7 +90,7 @@ export const constantRoutes = [
       },
       {
         path: 'account',
-        component: () => import('@/views/oa/department/index'),
+        component: () => import('@/views/oa/account/index'),
         meta: { title: '公司银行账户', icon: 'example' }
       }
     ]
@@ -135,7 +143,6 @@ export const constantRoutes = [
       }
     ]
   },
-
   {
     path: '/nested',
     component: Layout,
@@ -174,7 +181,8 @@ export const constantRoutes = [
                 path: 'menu1-2-2',
                 component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
                 name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
+                meta: { title: 'Menu1-2-2' },
+                hidden: true ,
               }
             ]
           },
