@@ -73,10 +73,10 @@
                 更多 <i class="el-icon-arrow-down el-icon--right" />
               </el-button>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="delete">删除</el-dropdown-item>
                 <router-link :to="'/oa/company/show/'+row.id">
                   <el-dropdown-item>详情</el-dropdown-item>
                 </router-link>
+                <el-dropdown-item command="delete">删除</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -182,7 +182,7 @@ export default {
         update: '编辑公司信息',
         create: '新增公司信息'
       },
-      columnArray: []
+      colmnArray: []
     }
   },
   created() {
