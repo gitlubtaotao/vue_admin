@@ -92,6 +92,11 @@ export const constantRoutes = [
         path: 'account',
         component: () => import('@/views/oa/account/index'),
         meta: { title: '公司银行账户', icon: 'example' }
+      },
+      {
+        path: 'system_setting',
+        component: () => import('@/views/oa/system_setting/index'),
+        meta: { title: '系统设置', icon: 'example' }
       }
     ]
   },
@@ -106,6 +111,12 @@ export const constantRoutes = [
         component: () => import('@/views/profile/index'),
         name: 'Profile',
         meta: { title: 'Profile', icon: 'user', noCache: true }
+      },
+      {
+        path: 'setting',
+        component: () => import('@/views/profile/setting'),
+        name: 'UserSetting',
+        meta: { title: '偏好设置', icon: 'user', noCache: true }
       }
     ]
   },
