@@ -97,6 +97,11 @@ export const constantRoutes = [
         path: 'system_setting',
         component: () => import('@/views/oa/system_setting/index'),
         meta: { title: '系统设置', icon: 'example' }
+      },
+      {
+        path: 'number_setting',
+        component: () => import('@/views/oa/number_setting/index'),
+        meta: { title: '流水号规则设置', icon: 'example' }
       }
     ]
   },
