@@ -120,10 +120,10 @@
           <el-input v-model="temp.prefix" size="medium" />
         </el-form-item>
         <el-form-item label="流水号长度" prop="length">
-          <el-input-number v-model="temp.length" size="medium" :min="1" :max="10"/>
+          <el-input-number v-model="temp.length" size="medium" :min="1" :max="10" />
         </el-form-item>
         <el-form-item label="年规则" prop="year_rule">
-          <el-radio v-model="temp.year_rule" label="1">4位年</el-radio>
+          <el-radio v-model="temp.year_rule" label="4">4位年</el-radio>
           <el-radio v-model="temp.year_rule" label="2">2位年</el-radio>
           <el-radio v-model="temp.year_rule" label="0">不用年</el-radio>
         </el-form-item>
@@ -131,10 +131,10 @@
           <el-input v-model="temp.special" size="medium" />
         </el-form-item>
         <el-form-item label="开始流水号" prop="default_number">
-          <el-input-number v-model="temp.default_number" size="medium" :min="1" :max="10"/>
+          <el-input-number v-model="temp.default_number" size="medium" :min="1" />
         </el-form-item>
         <el-form-item label="排序规则" prop="">
-          <el-checkbox-group v-model="ruleList">
+          <el-checkbox-group v-model="ruleList" @change="settingRule">
             <el-checkbox label="year">年</el-checkbox>
             <el-checkbox label="month">月</el-checkbox>
             <el-checkbox label="day">日</el-checkbox>
@@ -159,18 +159,18 @@
           </el-select>
         </el-form-item>
         <el-form-item label="生成的规则" prop="default_rule">
-          <el-input v-model="temp.default_rule" size="medium" disabled="disabled" />
+          <el-input v-model="showRule" size="medium" disabled="disabled" />
         </el-form-item>
       </el-form>
-      <el-divider />
-      <el-form :inline="true" :model="test" :status-icon="true" label-position="left" label-width="100px" style="width: 80%; margin-left:50px;">
-        <el-form-item label="模拟序号" prop="">
-          <el-input-number v-model="test.length" size="medium" :min="1" :max="10"/>
-        </el-form-item>
-        <el-form-item label="模拟效果" prop="">
-          <el-input v-model="test.result" size="medium" disabled="disabled" />
-        </el-form-item>
-      </el-form>
+<!--      <el-divider />-->
+<!--      <el-form :inline="true" :model="test" :status-icon="true" label-position="left" label-width="100px" style="width: 80%; margin-left:50px;">-->
+<!--        <el-form-item label="模拟序号" prop="">-->
+<!--          <el-input-number v-model="test.length" size="medium" :min="1" :max="10" @change="simulation" />-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="模拟效果" prop="">-->
+<!--          <el-input v-model="test.result" size="medium" disabled="disabled" />-->
+<!--        </el-form-item>-->
+<!--      </el-form>-->
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
           取消
@@ -190,6 +190,7 @@ import getSelectApi from '@/api/select'
 import { getData, createData, deleteData } from '@/api/index_data'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
+import { Message } from 'element-ui'
 export default {
   name: 'NumberSetting',
   components: { Pagination },
@@ -212,13 +213,13 @@ export default {
         user_company_id: null,
         prefix: '',
         length: 1,
-        year_rule: '',
+        year_rule: '2',
         special: '',
         default_number: 1,
         clear_rule: '',
         day_rule: '',
         month_rule: '',
-        default_rule: '',
+        default_rule: [],
         application_no: ''
       },
       test: {
@@ -226,6 +227,8 @@ export default {
         result: null
       },
       ruleList: [],
+      showRule: '',
+      defaultRule: [],
       index: 0,
       rules: {
         prefix: [{ required: true, message: '请输入前缀', trigger: 'blur' }],
@@ -237,7 +240,11 @@ export default {
       columnArray: [],
       user_companies: [],
       user_company_options: [],
-      clearRuleOptions: [],
+      clearRuleOptions: [{ label: '按年归零', value: 'year' },
+        { label: '按月归零', value: 'month' },
+        { label: '按日归零', value: 'day' },
+        { label: '不归零', value: 'non_zero' }
+      ],
       applicationNoOptions: [{ label: '订单号', value: 'order_serial_number' }]
     }
   },
@@ -246,20 +253,118 @@ export default {
     this.filterTable()
   },
   methods: {
+    settingRule() {
+      this.defaultRule = []
+      this.showRule = this.temp.prefix
+      const year_rule = this.temp.year_rule === '0' || typeof (this.temp.year_rule) === 'undefined'
+      const length = typeof (this.temp.length) === 'undefined'
+      if (length) {
+        Message({
+          message: '请先选择流水号长度' || 'Error',
+          type: 'error',
+          duration: 5 * 1000
+        })
+        this.ruleList = []
+        return
+      }
+      if (year_rule && this.ruleList.indexOf('year') > -1) {
+        Message({
+          message: '请先选择年规则' || 'Error',
+          type: 'error',
+          duration: 5 * 1000
+        })
+        this.ruleList = []
+        return
+      }
+      const special = typeof (this.temp.special) === 'undefined' && this.ruleList.indexOf('special') > -1
+      if (special) {
+        Message({
+          message: '请先输入特殊字符' || 'Error',
+          type: 'error',
+          duration: 5 * 1000
+        })
+        this.ruleList = []
+        return
+      }
+      for (let i = 0; i < this.ruleList.length; i++) {
+        switch (this.ruleList[i]) {
+          case 'year':
+            this.handleYear()
+            break
+          case 'month':
+            this.handleMonth()
+            break
+          case 'day':
+            this.handleDay()
+            break
+          case 'length':
+            this.handleLength()
+            break
+          default:
+            this.handleSpecial()
+        }
+      }
+    },
+    handleYear() {
+      if (this.temp.year_rule === '4') {
+        this.defaultRule.push('YYYY')
+        this.showRule += 'YYYY'
+      } else if (this.temp.year_rule === '2') {
+        this.defaultRule.push('YY')
+        this.showRule += 'YY'
+      }
+    },
+    handleMonth() {
+      this.temp.month_rule = 'MM'
+      this.defaultRule.push('MM')
+      this.showRule += 'MM'
+    },
+    handleDay() {
+      this.temp.day_rule = 'DD'
+      this.defaultRule.push('DD')
+      this.showRule += 'DD'
+    },
+    handleLength() {
+      let result = ''
+      for (let i = 0; i < this.temp.length; i++) {
+        result += '#'
+      }
+      this.defaultRule.push(result)
+      this.showRule += result
+    },
+    handleSpecial() {
+      this.defaultRule.push('special')
+      this.showRule += this.temp.special
+    },
     handleCreate() {
       this.getCompany()
       this.dialogFormVisible = true
-      this.temp = {
-        id: null,
-        name_cn: null,
-        name_en: null,
-        user_company_id: null
-      }
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
     },
+    simulation() {
+      this.test.result = this.temp.prefix
+      for (let i = 0; i < this.defaultRule.length; i++) {
+        switch (this.defaultRule[i]) {
+          case 'YY':
+            this.result
+            break
+          case 'YYYY':
+            break
+          case 'MM':
+            break
+          case 'DD':
+            break
+          case 'special':
+            break
+          default:
+        }
+      }
+    },
     createData() {
+      this.temp.default_rule = this.defaultRule.join(',')
+      console.log(this.temp)
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           createData('/number_settings/create', this.temp).then((response) => {
@@ -267,7 +372,7 @@ export default {
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
-              message: '创建部门信息成功',
+              message: '创建流水号规则成功',
               type: 'success',
               duration: 5000
             })
@@ -275,6 +380,7 @@ export default {
         }
       })
     },
+
     remoteMethod(query) {
       if (query !== '') {
         this.loading = true
@@ -304,17 +410,8 @@ export default {
         this.user_company_options = this.user_companies
       }
     },
-    handleClick(row, index) {
-      this.temp = row
-      this.index = index
-    },
-    handleCommand(command) {
-      if (command === 'delete') {
-        this.handleDelete()
-      }
-    },
-    handleDelete() {
-      const id = this.temp.id
+    handleDelete(row) {
+      const id = row.id
       this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -349,13 +446,12 @@ export default {
     filterTable() {
       this.listLoading = true
       getData('/number_settings/data', this.listQuery).then(response => {
-        // this.total = response.data.total
-        // let data = response.data.data
-        // if (!Array.isArray(data)) {
-        //   data = []
-        // }
-        // console.log(data)
-        // this.list = data
+        this.total = response.data.total
+        let data = response.data.data
+        if (!Array.isArray(data)) {
+          data = []
+        }
+        this.list = data
         setTimeout(() => {
           this.listLoading = false
         }, 500)
