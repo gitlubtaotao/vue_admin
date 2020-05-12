@@ -186,7 +186,7 @@
 </template>
 <script>
 import { getColumn, localColumn } from '@/api/column'
-import getSelectApi from '@/api/select'
+import { remoteCompany } from '@/api/select'
 import { getData, createData, deleteData } from '@/api/index_data'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
@@ -392,19 +392,18 @@ export default {
           this.loading = false
           this.user_company_options = result
         } else {
-          getSelectApi('/select/companies', { value: query }).then((response) => {
-            console.log(response.data)
-            this.loading = false
-            this.user_company_options = response.data
+          remoteCompany('').then((response) => {
+            this.user_company_options = response
+            this.loading =false
           })
         }
       }
     },
     getCompany() {
       if (this.user_companies.length === 0) {
-        getSelectApi('/select/companies', {}).then((response) => {
-          this.user_companies = response.data
-          this.user_company_options = response.data
+        remoteCompany('').then((response) => {
+          this.user_company_options = response
+          this.user_companies = response
         })
       } else {
         this.user_company_options = this.user_companies
@@ -446,12 +445,16 @@ export default {
     filterTable() {
       this.listLoading = true
       getData('/number_settings/data', this.listQuery).then(response => {
-        this.total = response.data.total
+        let total = response.data.total
+        if (typeof (total) === 'undefined'){
+          total = 0
+        }
         let data = response.data.data
         if (!Array.isArray(data)) {
           data = []
         }
         this.list = data
+        this.total = total
         setTimeout(() => {
           this.listLoading = false
         }, 500)

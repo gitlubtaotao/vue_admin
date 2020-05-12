@@ -253,7 +253,7 @@
 <script>
 import { getColumn, localColumn } from '@/api/column'
 import { createData, updateData, getData, deleteData } from '@/api/index_data'
-import getSelectApi from '@/api/select'
+import { remoteCompany } from '@/api/select'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 
@@ -382,19 +382,18 @@ export default {
           this.loading = false
           this.user_company_options = result
         } else {
-          getSelectApi('/select/companies', { value: query }).then((response) => {
-            console.log(response.data)
+          remoteCompany(query).then((response) => {
+            this.user_company_options = response
             this.loading = false
-            this.user_company_options = response.data
           })
         }
       }
     },
     getCompany() {
       if (this.user_companies.length === 0) {
-        getSelectApi('/select/companies', {}).then((response) => {
-          this.user_companies = response.data
-          this.user_company_options = response.data
+        remoteCompany('').then((response) => {
+          this.user_company_options = response
+          this.user_companies = response
         })
       } else {
         this.user_company_options = this.user_companies
