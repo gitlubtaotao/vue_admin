@@ -153,7 +153,7 @@
 <script>
 import { getColumn, localColumn } from '@/api/column'
 import { remoteCompany } from '@/api/select'
-import { getData, createData, updateData, editData, deleteData } from '@/api/index_data'
+import { getData, createData, updateData, deleteData } from '@/api/index_data'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 export default {

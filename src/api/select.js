@@ -12,7 +12,7 @@ export function remoteCompany(query = '', scope = { company_type: 4 }) {
   if (query !== '') {
     url += '?name=' + query
   }
-  return new Promise(function (resolve, reject) {
+  return new Promise(function(resolve, reject) {
     getSelectApi(url, {
       table_name: 'user_companies',
       scope: scope

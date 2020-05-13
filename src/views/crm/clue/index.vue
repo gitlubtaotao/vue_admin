@@ -135,7 +135,7 @@
                 更多 <i class="el-icon-arrow-down el-icon--right" />
               </el-button>
               <el-dropdown-menu slot="dropdown">
-                <router-link :to="'/oa/company/show/'+row.id">
+                <router-link :to="'/crm/clue/show/'+row.id">
                   <el-dropdown-item>详情</el-dropdown-item>
                 </router-link>
                 <el-dropdown-item command="delete">删除</el-dropdown-item>
@@ -199,6 +199,8 @@
                 size="medium"
                 style="width: 100%"
                 clearable
+                allow-create
+                multiple
               >
                 <el-option
                   v-for="item in sourceOptions"
@@ -295,7 +297,7 @@ import { getColumn, localColumn } from '@/api/column'
 import { getData, createData, updateData, editData, deleteData } from '@/api/index_data'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
-import getSelectApi from '@/api/select'
+import { getSelectApi } from '@/api/select'
 export default {
   name: 'Clue',
   components: { Pagination },
@@ -332,7 +334,7 @@ export default {
         name_cn: null,
         name_en: null,
         company_type: 1,
-        source: null,
+        source: [],
         tel: null,
         email: null,
         zh_address: null,
@@ -357,7 +359,7 @@ export default {
         update: '编辑线索信息',
         create: '新增线索信息'
       },
-      colmnArray: []
+      columnArray: []
     }
   },
   created() {
@@ -399,9 +401,6 @@ export default {
         this.users = response.data
       })
     },
-    showColumn(column) {
-      return column.title !== ''
-    },
     handleCreate() {
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
@@ -413,7 +412,11 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          createData('/crm/clues/create', this.temp).then((response) => {
+          let data = this.temp
+          if (data.source !== '' && typeof (data.source) !== 'undefined') {
+            data.source = data.source.join(',')
+          }
+          createData('/crm/clues/create', data).then((response) => {
             this.list.unshift(response.data)
             this.dialogFormVisible = false
             this.$notify({
@@ -428,7 +431,11 @@ export default {
     },
     handleUpdate(row) {
       editData('/crm/clues/' + row.id + '/edit',).then((response) => {
-        this.temp = response.data
+        const data = response.data
+        if (data.source !== '') {
+          data.source = data.source.split(',')
+        }
+        this.temp = data
       })
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
@@ -440,8 +447,9 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          tempData.updated_at = undefined
-          tempData.created_at = undefined
+          if (tempData.source !== '' && typeof (tempData.source) !== 'undefined') {
+            tempData.source = tempData.source.join(',')
+          }
           updateData('/crm/clues/' + tempData.id + '/update', tempData).then((response) => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, response.data)
@@ -509,7 +517,6 @@ export default {
         if (!Array.isArray(data)) {
           data = []
         }
-        console.log(response.data)
         this.list = data
         this.total = total
         setTimeout(() => {
