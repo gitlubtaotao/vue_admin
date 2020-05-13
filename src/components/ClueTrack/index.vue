@@ -66,7 +66,7 @@
       </el-row>
     </el-form>
     <el-divider />
-    <el-table v-if="clueTracks.length>0" :data="clueTracks" fit style="width: 100%">
+    <el-table v-if="Array.isArray(records) ? records.length>0 : false " :data="records" fit style="width: 100%">
       <el-table-column prop="description" label="跟进内容" width="280" />
       <el-table-column prop="created_at" label="跟进时间">
         <template slot-scope="scope">
@@ -109,6 +109,7 @@ export default {
   },
   data() {
     return {
+      records: [],
       temp: {
         of_way: null,
         source_id: this.sourceId,
@@ -129,6 +130,7 @@ export default {
     }
   },
   created() {
+    this.records = this.clueTracks
   },
   methods: {
     showDate(date) {
@@ -139,7 +141,10 @@ export default {
         if (valid) {
           const data = this.temp
           createData('/crm/tracks/create', data).then((response) => {
-            this.clueTracks.unshift(response.data)
+            if (!Array.isArray(this.records)) {
+              this.records = []
+            }
+            this.records.unshift(response.data)
             this.$notify({
               title: 'Success',
               message: '跟进记录创建成功',

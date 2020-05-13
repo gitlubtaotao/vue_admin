@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-card class="box-card">
       <div slot="header" class="clearfix">
-        <el-button type="primary" size="small">全部</el-button>
+        <el-button type="primary" size="medium">全部</el-button>
         <div style="float: right">
           <el-button
             class="filter-item"
@@ -59,6 +59,7 @@
         tooltip-effect="dark"
         style="width: 100%;"
         @selection-change="handleSelectionChange"
+        @row-dblclick="rowDblclick"
       >
         <el-table-column type="selection" width="55" fixed="left" />
         <el-table-column label="操作" width="150" fixed="left">
@@ -303,14 +304,21 @@ export default {
         this.columnArray = data
       }
     },
+    rowDblclick(row, column, event) {
+      this.$router.push('/oa/company/show/' + row.id)
+    },
     filterTable() {
       this.listLoading = true
       getData('/companies/data', this.listQuery).then(response => {
-        this.total = response.total
+        let total = response.total
         let data = response.data
         if (!Array.isArray(data)) {
           data = []
         }
+        if (typeof (total) === 'undefined') {
+          total = 0
+        }
+        this.total = total
         this.list = data
         setTimeout(() => {
           this.listLoading = false

@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-card class="box-card">
       <div slot="header" class="clearfix">
-        <el-button type="primary" size="small">全部</el-button>
+        <el-button type="primary" size="medium">全部</el-button>
         <div style="float: right">
           <el-button
             class="filter-item"

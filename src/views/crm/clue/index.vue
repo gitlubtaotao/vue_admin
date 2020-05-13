@@ -2,7 +2,11 @@
   <div class="app-container">
     <el-card class="box-card">
       <div slot="header" class="clearfix">
-        <el-button type="primary" size="small">全部</el-button>
+        <el-radio-group v-model="listQuery.status" @change="filterTable" size="medium" style="margin-left: 5px;">
+          <el-radio-button label="">全部</el-radio-button>
+          <el-radio-button label="0">未转化</el-radio-button>
+          <el-radio-button label="1">已转化</el-radio-button>
+        </el-radio-group>
         <div style="float: right">
           <el-button
             class="filter-item"
@@ -121,6 +125,7 @@
         tooltip-effect="dark"
         style="width: 100%;"
         @selection-change="handleSelectionChange"
+        @row-dblclick="rowDblclick"
       >
         <el-table-column type="selection" width="55" fixed="left" />
         <el-table-column label="操作" width="150" fixed="left">
@@ -138,7 +143,10 @@
                 <router-link :to="'/crm/clue/show/'+row.id">
                   <el-dropdown-item>详情</el-dropdown-item>
                 </router-link>
-                <el-dropdown-item command="delete">删除</el-dropdown-item>
+                <el-dropdown-item command="tracks">跟进记录</el-dropdown-item>
+                <el-dropdown-item command="transfer">转移</el-dropdown-item>
+                <el-dropdown-item command="transfer_crm">转化成合作单位</el-dropdown-item>
+                <el-dropdown-item command="delete" :divided="true">删除</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -148,7 +156,9 @@
       </el-table>
       <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="filterTable" />
     </el-card>
-
+    <el-dialog title="跟进记录" :visible.sync="dialogTracksVisible" width="50%">
+      <ClueTrack :source-id="parseInt(temp.id)" source-type="crm_clues" :clue-tracks="temp.crm_tracks"/>
+    </el-dialog>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="80%">
       <el-form ref="dataForm" :rules="rules" :model="temp" :status-icon="true" label-position="left" label-width="100px" style="width: 100%;padding: 0 20px;">
         <el-row :gutter="10">
@@ -298,9 +308,10 @@ import { getData, createData, updateData, editData, deleteData } from '@/api/ind
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import { getSelectApi } from '@/api/select'
+import ClueTrack from '@/components/ClueTrack'
 export default {
   name: 'Clue',
-  components: { Pagination },
+  components: {ClueTrack, Pagination },
   directives: { waves },
   data() {
     return {
@@ -324,9 +335,11 @@ export default {
         create_id: undefined,
         user_name: undefined,
         user_tel: undefined,
-        company_type: undefined
+        company_type: undefined,
+        status: ''
       },
       dialogFormVisible: false,
+      dialogTracksVisible: false,
       dialogStatus: '',
       temp: {
         id: null,
@@ -413,7 +426,8 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           let data = this.temp
-          if (data.source !== '' && typeof (data.source) !== 'undefined') {
+          console.log(data.source)
+          if (data.source !== '' && typeof (data.source) !== 'undefined' && Array.isArray(data.source)) {
             data.source = data.source.join(',')
           }
           createData('/crm/clues/create', data).then((response) => {
@@ -471,7 +485,12 @@ export default {
     handleCommand(command) {
       if (command === 'delete') {
         this.handleDelete()
+      }else if(command === 'tracks'){
+        this.handleTracks()
       }
+    },
+    handleTracks(){
+      this.dialogTracksVisible = true
     },
     handleDelete() {
       const id = this.temp.id
@@ -505,6 +524,9 @@ export default {
       } else {
         this.columnArray = data
       }
+    },
+    rowDblclick(row, column, event) {
+      this.$router.push('/crm/clue/show/' + row.id)
     },
     filterTable() {
       this.listLoading = true
