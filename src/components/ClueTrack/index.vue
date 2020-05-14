@@ -134,7 +134,7 @@ export default {
   },
   methods: {
     showDate(date) {
-      return parseTime(date,'{y}-{m}-{d}')
+      return parseTime(date, '{y}-{m}-{d}')
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {

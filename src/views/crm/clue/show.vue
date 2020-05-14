@@ -6,7 +6,6 @@
           <div slot="header" class="clearfix">
             <svg-icon icon-class="star" />
             <span>{{ company.name_nick || company.name_cn }}</span>
-<!--            <el-button style="float: right;" size="small" type="primary" icon="el-icon-edit">修改</el-button>-->
             <el-button v-if="company.status_value === 0" style="float: right; margin-right: 10px;" type="success" size="small">转化成合作单位</el-button>
             <el-button style="float: right;margin-right: 10px; " type="warning" size="small">转移</el-button>
           </div>

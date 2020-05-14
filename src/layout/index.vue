@@ -8,11 +8,15 @@
       </div>
       <app-main />
     </div>
+    <el-tooltip placement="top" content="tooltip">
+      <back-to-top :visibility-height="300" :back-position="50" transition-name="fade" />
+    </el-tooltip>
   </div>
 </template>
 
 <script>
-import { Navbar, Sidebar, AppMain } from './components'
+import { Navbar, Sidebar, AppMain} from './components'
+import BackToTop from '@/components/BackToTop'
 import ResizeMixin from './mixin/ResizeHandler'
 
 export default {
@@ -20,7 +24,8 @@ export default {
   components: {
     Navbar,
     Sidebar,
-    AppMain
+    AppMain,
+    BackToTop
   },
   mixins: [ResizeMixin],
   computed: {

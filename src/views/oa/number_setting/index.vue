@@ -73,7 +73,7 @@
           </template>
         </el-table-column>
         <el-table-column type="index" />
-        <el-table-column v-for="column in columnArray" :prop="column['data']" :label="column['title']" width="180" />
+        <el-table-column v-for="column in columnArray" :key="column['data']" :prop="column['data']" :label="column['title']" width="180" />
       </el-table>
       <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="filterTable" />
     </el-card>
@@ -162,15 +162,6 @@
           <el-input v-model="showRule" size="medium" disabled="disabled" />
         </el-form-item>
       </el-form>
-<!--      <el-divider />-->
-<!--      <el-form :inline="true" :model="test" :status-icon="true" label-position="left" label-width="100px" style="width: 80%; margin-left:50px;">-->
-<!--        <el-form-item label="模拟序号" prop="">-->
-<!--          <el-input-number v-model="test.length" size="medium" :min="1" :max="10" @change="simulation" />-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="模拟效果" prop="">-->
-<!--          <el-input v-model="test.result" size="medium" disabled="disabled" />-->
-<!--        </el-form-item>-->
-<!--      </el-form>-->
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
           取消
@@ -394,7 +385,7 @@ export default {
         } else {
           remoteCompany('').then((response) => {
             this.user_company_options = response
-            this.loading =false
+            this.loading = false
           })
         }
       }
@@ -446,7 +437,7 @@ export default {
       this.listLoading = true
       getData('/number_settings/data', this.listQuery).then(response => {
         let total = response.data.total
-        if (typeof (total) === 'undefined'){
+        if (typeof (total) === 'undefined') {
           total = 0
         }
         let data = response.data.data

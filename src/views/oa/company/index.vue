@@ -39,7 +39,7 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :xs="24" :sm="12" :md="6" :lg="6" >
+          <el-col :xs="24" :sm="12" :md="6" :lg="6">
             <el-button v-waves type="primary" icon="el-icon-search" size="medium" @click="filterTable">搜索</el-button>
             <el-button type="danger" icon="el-icon-close" size="medium" @click="clearFilter">取消</el-button>
           </el-col>
@@ -69,7 +69,7 @@
               type="primary"
               @click="handleUpdate(row)"
             >编辑</el-button>
-            <el-dropdown size="mini"  type="primary" @visible-change="handleClick(row,$index)" @command="handleCommand">
+            <el-dropdown size="mini" type="primary" @visible-change="handleClick(row,$index)" @command="handleCommand">
               <el-button type="primary" size="mini">
                 更多 <i class="el-icon-arrow-down el-icon--right" />
               </el-button>
@@ -83,7 +83,7 @@
           </template>
         </el-table-column>
         <el-table-column type="index" />
-        <el-table-column v-for="column in columnArray" v-if="showColumn(column)" :prop="column['data']" :label="column['title']" width="180" />
+        <el-table-column v-for="column in columnArray" :key="column['data']" :prop="column['data']" :label="column['title']" width="180" />
       </el-table>
       <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="filterTable" />
     </el-card>
@@ -183,7 +183,7 @@ export default {
         update: '编辑公司信息',
         create: '新增公司信息'
       },
-      colmnArray: []
+      columnArray: []
     }
   },
   created() {

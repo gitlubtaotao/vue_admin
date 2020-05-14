@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-card class="box-card">
       <div slot="header" class="clearfix">
-        <el-radio-group v-model="listQuery.status" @change="filterTable" size="medium" style="margin-left: 5px;">
+        <el-radio-group v-model="listQuery.status" size="medium" style="margin-left: 5px;" @change="filterTable">
           <el-radio-button label="">全部</el-radio-button>
           <el-radio-button label="0">未转化</el-radio-button>
           <el-radio-button label="1">已转化</el-radio-button>
@@ -152,12 +152,12 @@
           </template>
         </el-table-column>
         <el-table-column type="index" />
-        <el-table-column v-for="column in columnArray" :prop="column['data']" :label="column['title']" width="180" />
+        <el-table-column v-for="column in columnArray" :key="column['data']" :prop="column['data']" :label="column['title']" width="180" />
       </el-table>
       <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="filterTable" />
     </el-card>
     <el-dialog title="跟进记录" :visible.sync="dialogTracksVisible" width="50%">
-      <ClueTrack :source-id="parseInt(temp.id)" source-type="crm_clues" :clue-tracks="temp.crm_tracks"/>
+      <ClueTrack :source-id="parseInt(temp.id)" source-type="crm_clues" :clue-tracks="temp.crm_tracks" />
     </el-dialog>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="80%">
       <el-form ref="dataForm" :rules="rules" :model="temp" :status-icon="true" label-position="left" label-width="100px" style="width: 100%;padding: 0 20px;">
@@ -311,7 +311,7 @@ import { getSelectApi } from '@/api/select'
 import ClueTrack from '@/components/ClueTrack'
 export default {
   name: 'Clue',
-  components: {ClueTrack, Pagination },
+  components: { ClueTrack, Pagination },
   directives: { waves },
   data() {
     return {
@@ -425,8 +425,7 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          let data = this.temp
-          console.log(data.source)
+          const data = this.temp
           if (data.source !== '' && typeof (data.source) !== 'undefined' && Array.isArray(data.source)) {
             data.source = data.source.join(',')
           }
@@ -485,11 +484,11 @@ export default {
     handleCommand(command) {
       if (command === 'delete') {
         this.handleDelete()
-      }else if(command === 'tracks'){
+      } else if (command === 'tracks') {
         this.handleTracks()
       }
     },
-    handleTracks(){
+    handleTracks() {
       this.dialogTracksVisible = true
     },
     handleDelete() {
