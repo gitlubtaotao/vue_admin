@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { Navbar, Sidebar, AppMain} from './components'
+import { Navbar, Sidebar, AppMain } from './components'
 import BackToTop from '@/components/BackToTop'
 import ResizeMixin from './mixin/ResizeHandler'
 

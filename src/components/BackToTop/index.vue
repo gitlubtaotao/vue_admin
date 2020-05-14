@@ -105,7 +105,7 @@ export default {
 }
 
 .back-to-ceiling .Icon {
-  fill: #9aaabf;
+  fill: #ffffff;
   background: none;
 }
 </style>

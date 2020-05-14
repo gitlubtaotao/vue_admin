@@ -105,7 +105,9 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :xs="24" :sm="12" :md="6" :lg="6">
+        </el-row>
+        <el-row>
+          <el-col :xs="24" style="text-align: center;">
             <el-button v-waves type="primary" icon="el-icon-search" size="medium" @click="filterTable">搜索</el-button>
             <el-button type="danger" icon="el-icon-close" size="medium" @click="clearFilter">取消</el-button>
           </el-col>
@@ -307,7 +309,7 @@ import { getColumn, localColumn } from '@/api/column'
 import { getData, createData, updateData, editData, deleteData } from '@/api/index_data'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
-import { getSelectApi } from '@/api/select'
+import { remoteEmployee } from '@/api/select'
 import ClueTrack from '@/components/ClueTrack'
 export default {
   name: 'Clue',
@@ -393,25 +395,29 @@ export default {
       }
     },
     getUser() {
-      if (this.users.length > 0) {
-        this.usersOptions = this.users
+      if (this.users.length === 0) {
+        remoteEmployee('').then((response) => {
+          this.users = response
+          this.usersOptions = response
+        })
       } else {
-        this.remoteGetUser('')
+        this.usersOptions = this.users
       }
     },
     remoteGetUser(query) {
-      let url = '/select/base'
-      if (query !== '') {
-        url += '?name=' + query
-      }
-      getSelectApi(url, {
-        table_name: 'users',
-        select_keys: [],
-        scope: { company_type: 4 }
-      }).then((response) => {
+      this.loading = true
+      const result = this.users.filter(item => {
+        return item.label.toLowerCase()
+          .indexOf(query.toLowerCase()) > -1
+      })
+      if (result.length > 0) {
         this.loading = false
-        this.usersOptions = response.data
-        this.users = response.data
+        this.usersOptions = result
+        return
+      }
+      remoteEmployee(query).then((response) => {
+        this.usersOptions = response
+        this.loading = false
       })
     },
     handleCreate() {

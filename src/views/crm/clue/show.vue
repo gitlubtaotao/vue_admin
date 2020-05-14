@@ -42,7 +42,9 @@
         <el-card shadow="always">
           <el-tabs v-model="activeTab">
             <el-tab-pane label="跟进记录" name="track">
-              <ClueTrack :source-id="parseInt(id)" source-type="crm_clues" :clue-tracks="company.crm_tracks"/>
+              <keep-alive>
+                <ClueTrack :source-id="parseInt(id)" source-type="crm_clues" :clue-tracks="company.crm_tracks"/>
+              </keep-alive>
             </el-tab-pane>
             <el-tab-pane label="基本信息" name="base">
               <el-table :data="companyData" fit style="width: 100%">

@@ -39,7 +39,9 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :xs="24" :sm="12" :md="6" :lg="6">
+        </el-row>
+        <el-row>
+          <el-col :xs="24" style="text-align: center;">
             <el-button v-waves type="primary" icon="el-icon-search" size="medium" @click="filterTable">搜索</el-button>
             <el-button type="danger" icon="el-icon-close" size="medium" @click="clearFilter">取消</el-button>
           </el-col>

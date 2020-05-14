@@ -25,13 +25,13 @@ const crmRouter = {
       hidden: true
     },
     {
-      path: 'cooperator',
-      component: () => import('@/views/crm/cooperator/index'),
+      path: 'customer',
+      component: () => import('@/views/crm/customer/index'),
       meta: { title: '客户信息', icon: 'example' }
     },
     {
-      path: 'cooperator/show/:id(\\d+)',
-      component: () => import('@/views/crm/cooperator/show'),
+      path: 'customer/show/:id(\\d+)',
+      component: () => import('@/views/crm/customer/show'),
       name: 'ShowCooperator',
       meta: { title: '客户信息详情', noCache: true, activeMenu: '/crm/clue' },
       hidden: true
