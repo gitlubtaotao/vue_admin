@@ -101,7 +101,21 @@
             </el-dropdown>
           </template>
         </el-table-column>
+        <el-table-column type="expand">
+          <template slot-scope="{row}">
+            <el-table :data="row.roles" :fit="false" size="medium">
+              <el-table-column key="name" label="角色" prop="name" width="280" />
+              <el-table-column key="user_name" label="姓名" prop="user_name" width="280" />
+              <el-table-column width="180px" align="center" label="创建时间">
+                <template slot-scope="props">
+                  <span>{{ showDate(props.row.created_at )  }}</span>
+                </template>
+              </el-table-column>
+            </el-table>
+          </template>
+        </el-table-column>
         <el-table-column type="index" />
+
         <el-table-column v-for="column in columnArray" :key="column['data']" :prop="column['data']" :label="column['title']" width="180" />
       </el-table>
       <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="filterTable" />
@@ -242,6 +256,9 @@ import { getData, createData, updateData, editData, deleteData } from '@/api/ind
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import { remoteCompany, remoteEmployee } from '@/api/select'
+
+import { parseTime } from '@/utils';
+
 export default {
   name: 'Company',
   components: { Pagination },
@@ -326,22 +343,24 @@ export default {
     this.filterTable()
   },
   methods: {
+    showDate(date) {
+      return parseTime(date, '{y}-{m}-{d}')
+    },
     handleCreate() {
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
-      // this.temp = {
-      //   id: null,
-      //   name_nick: null,
-      //   name_cn: null,
-      //   name_en: null,
-      //   telephone: null,
-      //   email: null,
-      //   zh_address: null,
-      //   en_address: null,
-      //   remark: null,
-      //   website: null,
-      //   fax: null
-      // }
+      this.temp = {
+        id: null,
+        name_nick: null,
+        name_cn: null,
+        name_en: null,
+        telephone: null,
+        email: null,
+        zh_address: null,
+        en_address: null,
+        remark: null,
+        fax: null
+      }
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
@@ -466,9 +485,14 @@ export default {
       })
     },
     clearFilter() {
-      this.listLoading = true
-      this.listQuery.email = undefined
-      this.listQuery.name_nick = undefined
+      this.listQuery = {
+        name_nick: undefined,
+        email: undefined,
+        telephone: undefined,
+        user_salesman_id: undefined,
+        parent_id: undefined,
+        account_period: undefined
+      }
       this.filterTable()
     },
     remoteUsers(query) {
