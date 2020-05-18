@@ -414,6 +414,7 @@ export default {
     handleUpdate(row) {
       this.getCompany()
       this.temp = row
+      this.temp.user_company_id = row['user_company_id_value']
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {

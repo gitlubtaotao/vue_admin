@@ -65,7 +65,7 @@ const crmRouter = {
     {
       path: 'address',
       component: () => import('@/views/crm/address/index'),
-      meta: { title: '通讯地址', icon: 'example' }
+      meta: { title: '邮寄地址', icon: 'example' }
     }
   ]
 }
