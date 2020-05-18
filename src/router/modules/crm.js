@@ -46,6 +46,26 @@ const crmRouter = {
       component: () => import('@/views/crm/supplier/show'),
       meta: { title: '供应商信息详情', icon: 'example' },
       hidden: true
+    },
+    {
+      path: 'user',
+      component: () => import('@/views/crm/user/index'),
+      meta: { title: '联系人信息', icon: 'example' }
+    },
+    {
+      path: 'account',
+      component: () => import('@/views/crm/amount/index'),
+      meta: { title: '银行账户信息', icon: 'example' }
+    },
+    {
+      path: 'invoice',
+      component: () => import('@/views/crm/invoice/index'),
+      meta: { title: '发票信息', icon: 'example' }
+    },
+    {
+      path: 'address',
+      component: () => import('@/views/crm/address/index'),
+      meta: { title: '通讯地址', icon: 'example' }
     }
   ]
 }

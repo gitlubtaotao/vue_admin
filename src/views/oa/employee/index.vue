@@ -414,7 +414,7 @@ export default {
           this.loading = false
           this.user_company_options = result
         } else {
-          remoteCompany('').then((response) => {
+          remoteCompany(query).then((response) => {
             this.user_company_options = response
             this.loading = false
           })

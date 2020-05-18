@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app-container">
     <el-card class="box-card">
       <div slot="header" class="clearfix">
         <el-button type="primary" size="medium">全部</el-button>
@@ -18,10 +18,10 @@
       <el-form ref="listQuery" :model="listQuery" label-width="100px">
         <el-row :gutter="12">
           <el-col :xs="8" :sm="6" :md="6" :lg="6">
-            <el-form-item label="账户简称" class="">
+            <el-form-item label="姓名" class="">
               <el-input
                 v-model="listQuery.name"
-                placeholder="账户简称"
+                placeholder="姓名"
                 class="filter-item"
                 size="medium"
                 clearable
@@ -29,10 +29,10 @@
             </el-form-item>
           </el-col>
           <el-col :xs="8" :sm="6" :md="6" :lg="6">
-            <el-form-item label="开户人" class="">
+            <el-form-item label="电话" class="">
               <el-input
-                v-model="listQuery.user_name"
-                placeholder="开户人"
+                v-model="listQuery.phone"
+                placeholder="电话"
                 class="filter-item"
                 size="medium"
                 clearable
@@ -40,30 +40,10 @@
             </el-form-item>
           </el-col>
           <el-col :xs="8" :sm="6" :md="6" :lg="6">
-            <el-form-item label="开户行" prop="bank_name">
-              <el-select
-                v-model="listQuery.bank_name"
-                style="width:100%"
-                filterable
-                allow-create
-                placeholder="请选择"
-                size="medium"
-                clearable
-              >
-                <el-option
-                  v-for="item in bank_name_options"
-                  :key="item.label"
-                  :label="item.label"
-                  :value="item.label"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :xs="8" :sm="6" :md="6" :lg="6">
-            <el-form-item label="账号" class="">
+            <el-form-item label="邮箱" class="">
               <el-input
-                v-model="listQuery.bank_number"
-                placeholder="账号"
+                v-model="listQuery.email"
+                placeholder="邮箱"
                 class="filter-item"
                 size="medium"
                 clearable
@@ -71,26 +51,7 @@
             </el-form-item>
           </el-col>
           <el-col :xs="8" :sm="6" :md="6" :lg="6">
-            <el-form-item label="账户类型" prop="category">
-              <el-select
-                v-model="listQuery.category"
-                style="width:100%"
-                filterable
-                placeholder="请选择"
-                size="medium"
-                clearable
-              >
-                <el-option
-                  v-for="item in category_options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :xs="8" :sm="6" :md="6" :lg="6">
-            <el-form-item label="所属公司" class="">
+            <el-form-item label="合作单位" class="">
               <el-select
                 v-model="listQuery.user_company_id"
                 filterable
@@ -115,7 +76,7 @@
         <el-row>
           <el-col :xs="24" style="text-align: center;">
             <el-button v-waves type="primary" icon="el-icon-search" size="medium" @click="filterTable">搜索</el-button>
-            <el-button type="danger" icon="el-icon-close" size="medium">取消</el-button>
+            <el-button type="danger" icon="el-icon-close" size="medium" @click="clearFilter">取消</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -127,7 +88,6 @@
         :data="list"
         fit
         max-height="1200"
-        size="medium"
         border
         stripe
         highlight-current-row
@@ -158,9 +118,10 @@
       </el-table>
       <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="filterTable" />
     </el-card>
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="60%">
+
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" :status-icon="true" label-position="left" label-width="100px" style="width: 500px; margin-left:50px;">
-        <el-form-item label="所属公司" prop="user_company_id">
+        <el-form-item label="合作单位" prop="user_company_id">
           <el-select
             v-model="temp.user_company_id"
             style="width:100%"
@@ -181,94 +142,67 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="开户行" prop="bank_name">
-          <el-select
-            v-model="temp.bank_name"
-            style="width:100%"
-            filterable
-            allow-create
-            placeholder="请选择"
-            size="medium"
-            clearable
-          >
-            <el-option
-              v-for="item in bank_name_options"
-              :key="item.label"
-              :label="item.label"
-              :value="item.label"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="账户简称" prop="name">
+        <el-form-item label="姓名" prop="name">
           <el-input v-model="temp.name" />
         </el-form-item>
-        <el-form-item label="账户类型" prop="category">
+        <el-form-item label="电话" prop="phone">
+          <el-input v-model="temp.phone" />
+        </el-form-item>
+        <el-form-item label="邮箱" prop="phone">
+          <el-input v-model="temp.email" type="email" />
+        </el-form-item>
+        <el-form-item label="主要联系人" prop="is_key_contact">
+          <el-switch v-model="temp.is_key_contact" style="display: block" active-color="#13ce66" inactive-color="#ff4949" active-text="ON" inactive-text="OFF" />
+        </el-form-item>
+        <el-form-item label="性别" prop="department_id">
           <el-select
-            v-model="temp.category"
+            v-model="temp.sex"
             style="width:100%"
             filterable
+            remote
             placeholder="请选择"
             size="medium"
             clearable
+            :loading="loading"
           >
             <el-option
-              v-for="item in category_options"
+              v-for="item in sex_options"
               :key="item.value"
               :label="item.label"
               :value="item.value"
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="账号" prop="bank_number">
-          <el-input v-model="temp.bank_number" type="text" />
+        <el-form-item label="联系地址" prop="address">
+          <el-input v-model="temp.address" type="textarea" />
         </el-form-item>
-        <el-form-item label="税务登记号" prop="tax_register_number">
-          <el-input v-model="temp.tax_register_number" type="text" />
-        </el-form-item>
-        <el-form-item label="银行地址" prop="bank_address">
-          <el-input v-model="temp.bank_address" type="textarea" :rows="2" />
-        </el-form-item>
-        <el-form-item label="开户人" prop="user_name">
-          <el-input v-model="temp.user_name" type="text" />
-        </el-form-item>
-        <el-form-item label="开户人地址" prop="user_address">
-          <el-input v-model="temp.user_address" type="textarea" :rows="2" />
-        </el-form-item>
-        <el-form-item label="开户人位置" prop="location">
-          <el-input v-model="temp.location" type="textarea" :rows="2" />
-        </el-form-item>
-        <el-form-item label="Swift Code" prop="swift_code">
-          <el-input v-model="temp.swift_code" type="text" />
+        <el-form-item label="备注" prop="remarks">
+          <el-input v-model="temp.remarks" type="textarea" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
           取消
         </el-button>
-        <el-button type="primary" @click="dialogStatus==='create' ? createData() : updateData()">
+        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
           确定
         </el-button>
       </div>
     </el-dialog>
+
   </div>
+
 </template>
 <script>
 import { getColumn, localColumn } from '@/api/column'
-import { createData, updateData, getData, deleteData } from '@/api/index_data'
 import { remoteCompany } from '@/api/select'
+import { getData, createData, updateData, editData, deleteData } from '@/api/index_data'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
-
 export default {
-  name: 'Account',
+  name: 'CrmContact',
   components: { Pagination },
   directives: { waves },
-  props: {
-    type: {
-      required: true,
-      type: String
-    }
-  },
   data() {
     return {
       tableKey: 0,
@@ -276,52 +210,46 @@ export default {
       total: 1,
       listLoading: false,
       loading: false,
+      columnUrl: '/crm/users/column',
+      listQuery: {
+        page: 1,
+        limit: 20,
+        name: undefined,
+        phone: undefined,
+        email: undefined,
+        user_company_id: undefined
+      },
       dialogFormVisible: false,
       dialogStatus: '',
-      user_company_options: [],
-      user_companies: [],
-      bank_name_options: [],
-      category_options: [
-        { label: 'CNY', value: 1 },
-        { label: 'USD', value: 2 }],
-      listQuery: {
-        name: undefined,
-        user_name: undefined,
-        bank_name: undefined,
-        bank_number: undefined,
-        category: undefined,
-        user_company_id: undefined,
-        limit: 20,
-        page: 1
-      },
       temp: {
         id: null,
-        user_company_id: null,
-        bank_name: null,
         name: null,
-        category: null,
-        bank_number: null,
-        bank_address: null,
-        tax_register_number: null,
-        user_name: null,
-        user_address: null,
-        location: null,
-        swift_code: null
+        phone: null,
+        email: null,
+        user_company_id: null,
+        sex: null,
+        is_key_contact: false,
+        address: null,
+        remarks: null
       },
       index: 0,
-      columnArray: [],
-      textMap: {
-        update: '编辑银行账号信息',
-        create: '新增银行账号信息'
-      },
       rules: {
-        user_company_id: [{ required: true, message: '请选择所属公司', trigger: 'blur' }],
-        bank_name: [{ required: true, message: '请选择开户行', trigger: 'blur' }],
-        name: [{ required: true, message: '请输入账户简称', trigger: 'blur' }],
-        bank_number: [{ required: true, message: '请输入账号', trigger: 'blur' }],
-        user_name: [{ required: true, message: '请输入开户人', trigger: 'blur' }],
-        category: [{ required: true, message: '请选择账户类型', trigger: 'blur' }]
-      }
+        name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
+        phone: [{ required: true, message: '请输入电话', trigger: 'blur' }],
+        email: [
+          { required: true, message: '请输入邮箱', trigger: 'blur' },
+          { type: 'email', required: true, message: '请输入正确的邮箱', trigger: 'change' }],
+        user_company_id: [{ required: true, message: '请选择合作单位', trigger: 'blur' }]
+      },
+      textMap: {
+        update: '编辑联系人信息',
+        create: '新增联系人信息'
+      },
+      columnArray: [],
+      user_companies: [],
+      user_company_options: [],
+      sex_options: [{ label: '男', value: 1 },
+        { label: '女', value: 2 }]
     }
   },
   created() {
@@ -331,9 +259,18 @@ export default {
   methods: {
     handleCreate() {
       this.getCompany()
-      this.clearTemp()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
+      this.temp = {
+        id: null,
+        name: null,
+        phone: null,
+        email: null,
+        user_company_id: null,
+        user_no: null,
+        address: null,
+        remark: null
+      }
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
@@ -341,17 +278,29 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          createData('/accounts/create', this.temp).then((response) => {
+          createData('/crm/users/create', this.temp).then((response) => {
             this.list.unshift(response.data)
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
-              message: '创建银行账户成功',
+              message: '创建联系人信息成功',
               type: 'success',
               duration: 5000
             })
           })
         }
+      })
+    },
+    handleUpdate(row) {
+      this.getCompany()
+      this.temp = row
+      this.temp.user_company_id = row['user_company_id_value']
+      this.temp.is_key_contact = row['is_key_contact_value']
+      this.temp.sex = row['sex_value']
+      this.dialogStatus = 'update'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
       })
     },
     updateData() {
@@ -360,13 +309,13 @@ export default {
           const tempData = Object.assign({}, this.temp)
           tempData.updated_at = undefined
           tempData.created_at = undefined
-          updateData('/accounts/' + tempData.id + '/update', tempData).then((response) => {
+          updateData('/crm/users/' + tempData.id + '/update', tempData).then((response) => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, response.data)
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
-              message: '更新银行账户成功',
+              message: '更新联系人信息成功',
               type: 'success',
               duration: 5000
             })
@@ -385,40 +334,22 @@ export default {
           this.loading = false
           this.user_company_options = result
         } else {
-          remoteCompany(query,this.defaultScope()).then((response) => {
+          remoteCompany(query, { company_type: [1, 2, 3] }).then((response) => {
             this.user_company_options = response
             this.loading = false
           })
         }
       }
     },
-    defaultScope() {
-      if (this.type === 'oa') {
-        return { company_type: 4 }
-      } else {
-        return { company_type: [1, 2, 3] }
-      }
-    },
     getCompany() {
       if (this.user_companies.length === 0) {
-        remoteCompany('', this.defaultScope()).then((response) => {
+        remoteCompany('', { company_type: [1, 2, 3] }).then((response) => {
           this.user_company_options = response
           this.user_companies = response
         })
       } else {
         this.user_company_options = this.user_companies
       }
-    },
-    handleSelectionChange() {
-    },
-    handleUpdate(row) {
-      this.getCompany()
-      this.temp = row
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
     },
     handleClick(row, index) {
       this.temp = row
@@ -429,35 +360,6 @@ export default {
         this.handleDelete()
       }
     },
-    filterTable() {
-      this.listLoading = true
-      this.listQuery.type = this.type
-      getData('/accounts/data?type=' + this.type, this.listQuery).then(response => {
-        this.total = response.total
-        let data = response.data
-        if (!Array.isArray(data)) {
-          data = []
-        }
-        this.list = data
-        setTimeout(() => {
-          this.listLoading = false
-        }, 500)
-      }).catch(error => {
-        console.log(error)
-      })
-    },
-    fetchColumn() {
-      const data = localColumn('/accounts/column?type=' + this.type)
-      if (data.length === 0) {
-        getColumn('/accounts/column').then(response => {
-          this.columnArray = response
-        }).catch(error => {
-          this.$message({ showClose: true, message: error, type: 'error' })
-        })
-      } else {
-        this.columnArray = data
-      }
-    },
     handleDelete() {
       const id = this.temp.id
       this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
@@ -465,7 +367,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteData('/accounts/' + id + '/delete').then((response) => {
+        deleteData('crm/users/' + id + '/delete').then((response) => {
           this.$notify({
             title: 'Success',
             message: '删除成功',
@@ -477,22 +379,48 @@ export default {
       }).catch(() => {
       })
     },
-    clearTemp() {
-      this.temp = {
-        id: null,
-        user_company_id: null,
-        bank_name: null,
-        name: null,
-        category: null,
-        bank_number: null,
-        bank_address: null,
-        tax_register_number: null,
-        user_name: null,
-        user_address: null,
-        location: null,
-        swift_code: null
+    handleSelectionChange() {
+    },
+    fetchColumn() {
+      const data = localColumn(this.columnUrl)
+      if (data.length === 0) {
+        getColumn(this.columnUrl).then(response => {
+          this.columnArray = response
+        }).catch(error => {
+          this.$message({ showClose: true, message: error, type: 'error' })
+        })
+      } else {
+        this.columnArray = data
       }
+    },
+    filterTable() {
+      this.listLoading = true
+      getData('/crm/users/data', this.listQuery).then(response => {
+        let data = response.data
+        let total = response.total
+        if (!Array.isArray(data)) {
+          data = []
+        }
+        if (typeof (total) === 'undefined'){
+          total = 0
+        }
+        this.list = data
+        this.total = total
+        setTimeout(() => {
+          this.listLoading = false
+        }, 500)
+      }).catch(error => {
+        console.log(error)
+      })
+    },
+    clearFilter() {
+      this.listLoading = true
+      this.listQuery.email = undefined
+      this.listQuery.name_nick = undefined
+      this.filterTable()
     }
   }
 }
 </script>
+<style scoped="scss">
+</style>

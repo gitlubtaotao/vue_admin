@@ -9,7 +9,7 @@ export function getSelectApi(url, data) {
   })
 }
 
-export function remoteCompany(query = '', scope = {company_type: 4}) {
+export function remoteCompany(query = '', scope = { company_type: 4 }) {
   let url = '/select/companies'
   if (query !== '') {
     url += '?name=' + query
