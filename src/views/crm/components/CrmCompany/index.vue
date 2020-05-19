@@ -83,7 +83,7 @@
         <el-table-column type="selection" width="55" fixed="left" />
         <el-table-column label="操作" width="150" fixed="left">
           <template slot-scope="{row,$index}">
-            <router-link :to="'/oa/company/show/'+row.id">
+            <router-link :to="showUrl(row.id)">
               <el-button
                 size="mini"
                 type="primary"
@@ -157,10 +157,19 @@
           <el-col :span="12">
             <el-form-item label="业务类型" prop="business_type_name" style="">
               <el-select v-model="temp.business_type_name" filterable placeholder="请选择" size="medium" style="width: 100%" clearable allow-create multiple>
-                <el-option v-for="item in sourceOptions" :key="item.value" :label="item.label" :value="item.value" />
+                <el-option v-for="item in businessOptions" :key="item.label" :label="item.label" :value="item.label" />
               </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="12">
+            <el-form-item label="来源" prop="source" style="">
+              <el-select v-model="temp.source" filterable placeholder="请选择" size="medium" style="width: 100%" clearable allow-create multiple>
+                <el-option v-for="item in sourceOptions" :key="item.label" :label="item.label" :value="item.label" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="10">
           <el-col v-if="type ==='customer' " :span="12">
             <el-form-item label="业务员" class="" prop="user_salesman_id">
               <el-select v-model="temp.user_salesman_id" filterable remote placeholder="请选择" size="medium" clearable :remote-method="remoteUsers" :loading="loading" style="width: 100%;" @focus="getUser()">
@@ -168,8 +177,6 @@
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row :gutter="10">
           <el-col :span="12">
             <el-form-item label="审核员" class="" prop="user_audit_id">
               <el-select v-model="temp.user_audit_id" filterable remote placeholder="请选择" size="medium" clearable :remote-method="remoteUsers" :loading="loading" style="width: 100%;" @focus="getUser()">
@@ -418,7 +425,8 @@ export default {
         user_create_id: null,
         user_audit_id: null,
         roles: [],
-        code: null
+        code: null,
+        source: null
       },
       index: 0,
       rules: {
@@ -443,6 +451,7 @@ export default {
       userCompanies: [],
       userCompanyOptions: [],
       sourceOptions: [],
+      businessOptions: [],
       crmUserLists: [],
       crmUsers: {
         id: null,
@@ -462,6 +471,13 @@ export default {
     this.filterTable()
   },
   methods: {
+    showUrl(id) {
+      if (this.type === 'customer') {
+        return '/crm/customer/show/' + id.toString()
+      } else {
+        return '/crm/supply/show/' + id.toString()
+      }
+    },
     addCrmUser() {
       const j = { name: null, phone: null, email: null, sex: 1, is_key_contact: false, address: null, remarks: null, edit: true }
       this.crmUserLists.unshift(j)
@@ -508,7 +524,7 @@ export default {
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
-              message: '创建客户信息成功',
+              message: '创建合作单位信息成功',
               type: 'success',
               duration: 5000
             })
@@ -589,7 +605,6 @@ export default {
       this.index = index
     },
     handleCommand(command) {
-      console.log(command)
       if (command === 'edit') {
         this.handleUpdate(this.temp)
       } else if (command === 'changeCustomer') {
@@ -647,12 +662,11 @@ export default {
       }
     },
     rowDblclick(row, column, event) {
-      this.$router.push('/oa/company/show/' + row.id)
+      this.$router.push(this.showUrl(row.id))
     },
     async filterTable() {
       this.listLoading = true
       getData('/crm/companies/data?type=' + this.type, this.listQuery).then(response => {
-        console.log(response.data)
         let total = response.total
         let data = response.data
         if (!Array.isArray(data)) {

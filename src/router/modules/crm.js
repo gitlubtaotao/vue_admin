@@ -33,7 +33,7 @@ const crmRouter = {
       path: 'customer/show/:id(\\d+)',
       component: () => import('@/views/crm/customer/show'),
       name: 'ShowCooperator',
-      meta: { title: '客户信息详情', noCache: true, activeMenu: '/crm/clue' },
+      meta: { title: '客户信息详情', noCache: true, activeMenu: '/crm/customer' },
       hidden: true
     },
     {
@@ -44,7 +44,7 @@ const crmRouter = {
     {
       path: 'supply/show/:id(\\d+)',
       component: () => import('@/views/crm/supplier/show'),
-      meta: { title: '供应商信息详情', icon: 'example' },
+      meta: { title: '供应商信息详情', noCache: true, icon: 'example', activeMenu: '/crm/supply' },
       hidden: true
     },
     {

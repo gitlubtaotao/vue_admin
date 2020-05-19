@@ -1,6 +1,8 @@
 <template>
   <div class="app-container">
-    <crm-company type="supplier" :company-type-options="companyTypeOptions" :text-map="textMap" />
+    <keep-alive>
+      <crm-company type="supplier" :company-type-options="companyTypeOptions" :text-map="textMap" />
+    </keep-alive>
   </div>
 </template>
 <script>
