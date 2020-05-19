@@ -154,7 +154,7 @@
         <el-form-item label="主要联系人" prop="is_key_contact">
           <el-switch v-model="temp.is_key_contact" style="display: block" active-color="#13ce66" inactive-color="#ff4949" active-text="ON" inactive-text="OFF" />
         </el-form-item>
-        <el-form-item label="性别" prop="department_id">
+        <el-form-item label="性别" prop="sex">
           <el-select
             v-model="temp.sex"
             style="width:100%"
@@ -196,7 +196,7 @@
 <script>
 import { getColumn, localColumn } from '@/api/column'
 import { remoteCompany } from '@/api/select'
-import { getData, createData, updateData, editData, deleteData } from '@/api/index_data'
+import { getData, createData, updateData, deleteData } from '@/api/index_data'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 export default {
@@ -401,7 +401,7 @@ export default {
         if (!Array.isArray(data)) {
           data = []
         }
-        if (typeof (total) === 'undefined'){
+        if (typeof (total) === 'undefined') {
           total = 0
         }
         this.list = data

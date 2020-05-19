@@ -248,6 +248,77 @@
           </el-col>
         </el-row>
       </el-form>
+      <div v-if=" dialogStatus === 'create'">
+        <el-divider />
+        <el-row style="margin-bottom: 10px">
+          <el-button type="primary" size="small" @click="addCrmUser">新增联系人</el-button>
+        </el-row>
+        <el-table key="crm_users" :data="crmUserLists" fit max-height="1200" border style="width: 100%;">
+          <el-table-column min-width="100px" label="姓名">
+            <template slot-scope="{row}">
+              <template v-if="row.edit">
+                <el-input v-model="row.name" class="edit-input" size="small" />
+              </template>
+              <span v-else>{{ row.name }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column min-width="100px" label="邮箱">
+            <template slot-scope="{row}">
+              <template v-if="row.edit">
+                <el-input v-model="row.email" class="edit-input" size="small" />
+              </template>
+              <span v-else>{{ row.email }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column min-width="100px" label="电话">
+            <template slot-scope="{row}">
+              <template v-if="row.edit">
+                <el-input v-model="row.phone" class="edit-input" size="small" />
+              </template>
+              <span v-else>{{ row.phone }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column min-width="100px" label="性别">
+            <template slot-scope="{row}">
+              <template v-if="row.edit">
+                <el-select v-model="row.sex" style="width:100%" filterable placeholder="请选择" size="small" clearable>
+                  <el-option v-for="item in sexOptions" :key="item.value" :label="item.label" :value="item.value" />
+                </el-select>
+              </template>
+              <span v-else>{{ row.sex }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column min-width="100px" label="关键联系人">
+            <template slot-scope="{row}">
+              <template v-if="row.edit">
+                <el-switch v-model="row.is_key_contact" style="display: block;height:100%" active-color="#13ce66" inactive-color="#ff4949" />
+              </template>
+              <span v-else>{{ row.is_key_contact }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column min-width="200px" label="联系地址">
+            <template slot-scope="{row}">
+              <template v-if="row.edit">
+                <el-input v-model="row.address" type="textarea" />
+              </template>
+              <span v-else>{{ row.address }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column min-width="200px" label="备注">
+            <template slot-scope="{row}">
+              <template v-if="row.edit">
+                <el-input v-model="row.remarks" type="textarea" />
+              </template>
+              <span v-else>{{ row.remarks }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="100">
+            <template slot-scope="{row,$index}">
+              <el-button v-if="row.edit" type="danger" icon="el-icon-delete" size="small" @click="deleteCrmUser(row,$index)" />
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
           取消
@@ -281,6 +352,8 @@ import Pagination from '@/components/Pagination'
 import { remoteCompany, remoteEmployee } from '@/api/select'
 
 import { parseTime } from '@/utils'
+const sexOptions = [{ label: '男', value: 1 },
+  { label: '女', value: 2 }]
 
 export default {
   name: 'CrmCompany',
@@ -322,6 +395,7 @@ export default {
       dialogFormVisible: false,
       dialogChangeVisible: false,
       dialogStatus: '',
+      sexOptions,
       temp: {
         id: null,
         name_nick: null,
@@ -368,7 +442,19 @@ export default {
       usersOptions: [],
       userCompanies: [],
       userCompanyOptions: [],
-      sourceOptions: []
+      sourceOptions: [],
+      crmUserLists: [],
+      crmUsers: {
+        id: null,
+        name: null,
+        phone: null,
+        email: null,
+        user_company_id: null,
+        sex: null,
+        is_key_contact: false,
+        address: null,
+        remarks: null
+      }
     }
   },
   created() {
@@ -376,6 +462,13 @@ export default {
     this.filterTable()
   },
   methods: {
+    addCrmUser() {
+      const j = { name: null, phone: null, email: null, sex: 1, is_key_contact: false, address: null, remarks: null, edit: true }
+      this.crmUserLists.unshift(j)
+    },
+    deleteCrmUser(row, index) {
+      this.crmUserLists.splice(index, 1)
+    },
     showDate(date) {
       return parseTime(date, '{y}-{m}-{d}')
     },
@@ -407,6 +500,9 @@ export default {
           data.roles = this.handleRoles()
           data.age = parseInt(data.age)
           data.amount = parseInt(data.amount)
+          if (this.crmUserLists.length > 0) {
+            data.crm_users = this.crmUserLists
+          }
           createData('/crm/companies/create', data).then((response) => {
             this.list.unshift(response.data)
             this.dialogFormVisible = false
@@ -553,7 +649,7 @@ export default {
     rowDblclick(row, column, event) {
       this.$router.push('/oa/company/show/' + row.id)
     },
-    filterTable() {
+    async filterTable() {
       this.listLoading = true
       getData('/crm/companies/data?type=' + this.type, this.listQuery).then(response => {
         console.log(response.data)
