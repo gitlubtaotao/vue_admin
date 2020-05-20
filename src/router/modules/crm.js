@@ -2,7 +2,7 @@ import Layout from '@/layout'
 const crmRouter = {
   path: '/crm',
   component: Layout,
-  redirect: '/crm/cooperator',
+  redirect: '/crm/customer',
   name: 'crm',
   meta: {
     title: '合作',
