@@ -344,7 +344,7 @@ export default {
         this.list = data
         setTimeout(() => {
           this.listLoading = false
-        }, 100)
+        }, 200)
       }).catch(error => {
         console.log(error)
       })

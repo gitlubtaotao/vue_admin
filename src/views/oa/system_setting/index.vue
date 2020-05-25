@@ -79,9 +79,9 @@
                   >
                     <el-option
                       v-for="item in currencyOptions"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
+                      :key="item.name"
+                      :label="item.name"
+                      :value="item.name"
                     />
                   </el-select>
                 </el-form-item>
@@ -229,7 +229,7 @@ export default {
       ],
       conversionOptions: [{ label: '乘法', value: 'multiply' }, { label: '除法', value: 'division' }],
       rateOptions: [{ label: '按照当月汇率取值', value: 'month' }, { label: '按照实时汇率取值', value: 'now' }],
-      currencyOptions: [{ label: 'CNY', value: '1' }, { label: 'USD', value: '2' }]
+      currencyOptions: []
     }
   },
   created() {
@@ -240,6 +240,7 @@ export default {
       getData('/setting/data?key=system', {}).then(response => {
         const base = {}
         const finance = {}
+        this.currencyOptions = response.currencyOptions
         for (let i = 0; i < response.data.length; i++) {
           const result = response.data[i]
           if (result.key === 'base') {

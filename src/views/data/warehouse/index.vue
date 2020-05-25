@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-card class="box-card">
-      <div slot="header" class="clearfix">
+      <div slot="header">
         <el-button type="primary" size="medium">全部</el-button>
         <div style="float: right">
           <el-button
@@ -18,10 +18,10 @@
       <el-form ref="listQuery" :model="listQuery" label-width="100px">
         <el-row :gutter="12">
           <el-col :xs="8" :sm="6" :md="6" :lg="6">
-            <el-form-item label="代码值" class="">
+            <el-form-item label="仓库名称" class="">
               <el-input
                 v-model="listQuery.name"
-                placeholder="代码值"
+                placeholder="仓库名称"
                 class="filter-item"
                 size="medium"
                 clearable
@@ -29,22 +29,25 @@
             </el-form-item>
           </el-col>
           <el-col :xs="8" :sm="6" :md="6" :lg="6">
-            <el-form-item label="类型" class="">
-              <el-select
-                v-model="listQuery.code_name"
-                filterable
-                placeholder="请选择"
+            <el-form-item label="联系人" class="">
+              <el-input
+                v-model="listQuery.contact_name"
+                placeholder="联系人"
+                class="filter-item"
                 size="medium"
                 clearable
-                :loading="loading"
-              >
-                <el-option
-                  v-for="item in codeNamesOptions"
-                  :key="item.code"
-                  :label="item.name"
-                  :value="item.code"
-                />
-              </el-select>
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :xs="8" :sm="6" :md="6" :lg="6">
+            <el-form-item label="联系人电话" class="">
+              <el-input
+                v-model="listQuery.contact_tel"
+                placeholder="联系人电话"
+                class="filter-item"
+                size="medium"
+                clearable
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -96,29 +99,26 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" :status-icon="true" label-position="left" label-width="100px" style="width: 500px; margin-left:50px;">
-        <el-form-item label="类型" prop="code_name">
-          <el-select
-            v-model="temp.code_name"
-            style="width:100%"
-            filterable
-            placeholder="请选择"
-            size="medium"
-            clearable
-            :loading="loading"
-          >
-            <el-option
-              v-for="item in codeNamesOptions"
-              :key="item.code"
-              :label="item.name"
-              :value="item.code"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="代码值" prop="name">
+        <el-form-item label="仓库名称" prop="name">
           <el-input v-model="temp.name" />
         </el-form-item>
+        <el-form-item label="仓库地址" prop="detail">
+          <el-input v-model="temp.detail" />
+        </el-form-item>
+        <el-form-item label="联系人" prop="contact_name">
+          <el-input v-model="temp.contact_name" />
+        </el-form-item>
+        <el-form-item label="联系人电话" prop="contact_tel">
+          <el-input v-model="temp.contact_tel" />
+        </el-form-item>
+        <el-form-item label="联系人地址" prop="contact_address">
+          <el-input v-model="temp.contact_address" type="textarea" />
+        </el-form-item>
+        <el-form-item label="省、市、区" prop="region">
+          <el-cascader v-model="temp.region" size="medium" :options="regionOptions" placeholder="请选择" style="width: 100%" @filterable="true" />
+        </el-form-item>
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="temp.remarks" type="textarea" />
+          <el-input v-model="temp.remarks" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -137,8 +137,9 @@ import { getColumn, localColumn } from '@/api/column'
 import { getData, createData, updateData, deleteData } from '@/api/index_data'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
+import { regionData, CodeToText } from 'element-china-area-data'
 export default {
-  name: 'BaseCode',
+  name: 'BaseWarehouse',
   components: { Pagination },
   directives: { waves },
   data() {
@@ -148,33 +149,38 @@ export default {
       total: 1,
       listLoading: false,
       loading: false,
-      columnUrl: '/base/codes/column',
+      columnUrl: '/base/warehouses/column',
+      regionOptions: regionData,
       listQuery: {
         page: 1,
         limit: 20,
-        code_name: undefined,
-        name: undefined
+        name: undefined,
+        contact_name: undefined,
+        contact_tel: undefined,
+        type: 0
       },
       dialogFormVisible: false,
       dialogStatus: '',
       temp: {
         id: null,
         name: null,
-        code_name: null,
+        detail: null,
+        contact_name: null,
+        contact_tel: null,
+        contact_address: null,
+        region: [],
         remarks: null
       },
       index: 0,
       rules: {
-        name: [{ required: true, message: '代码值', trigger: 'blur' }],
-        code_name: [{ required: true, message: '请输入类型', trigger: 'blur' }]
+        name: [{ required: true, message: '仓库名称', trigger: 'blur' }]
       },
       textMap: {
-        update: '编辑基础代码信息',
-        create: '新增基础代码信息'
+        update: '编辑仓库地址信息',
+        create: '新增仓库地址信息'
       },
       columnArray: [],
-      codeNames: [],
-      codeNamesOptions: []
+      codeNames: []
     }
   },
   created() {
@@ -188,23 +194,27 @@ export default {
       this.temp = {
         id: null,
         name: null,
-        code_name: null,
         remarks: null
       }
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
     },
+    handleRegion() {
+      return this.temp.region.join(',')
+    },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         console.log(this.temp)
+        const data = this.temp
+        data.region = this.handleRegion()
         if (valid) {
-          createData('/base/codes/create', this.temp).then((response) => {
+          createData('/base/warehouses/create', data).then((response) => {
             this.list.unshift(response.data)
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
-              message: '创建基础代码成功',
+              message: '创建仓库地址信息成功',
               type: 'success',
               duration: 5000
             })
@@ -214,7 +224,8 @@ export default {
     },
     handleUpdate(row) {
       this.temp = row
-      this.temp.code_name = row['code_name_value']
+      this.temp.region = row['region_value'].split(',')
+      this.temp.type = row['type_value']
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -227,13 +238,14 @@ export default {
           const tempData = Object.assign({}, this.temp)
           tempData.updated_at = undefined
           tempData.created_at = undefined
-          updateData('/base/codes/' + tempData.id + '/update', tempData).then((response) => {
+          tempData.region = this.handleRegion()
+          updateData('/base/warehouses/' + tempData.id + '/update', tempData).then((response) => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, response.data)
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
-              message: '更新基础代码成功',
+              message: '更新仓库地址信息成功',
               type: 'success',
               duration: 5000
             })
@@ -257,10 +269,10 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteData('/base/codes/' + id + '/destroy').then((response) => {
+        deleteData('/base/warehouses/' + id + '/destroy').then((response) => {
           this.$notify({
             title: 'Success',
-            message: '删除基础代码信息成功',
+            message: '删除承运方信息成功',
             type: 'success',
             duration: 5000
           })
@@ -275,7 +287,6 @@ export default {
       const data = localColumn(this.columnUrl)
       if (data.length === 0) {
         getColumn(this.columnUrl).then(response => {
-          console.log(response)
           this.columnArray = response
         }).catch(error => {
           this.$message({ showClose: true, message: error, type: 'error' })
@@ -284,9 +295,15 @@ export default {
         this.columnArray = data
       }
     },
+    handlerRegionShow(temp) {
+      const region = temp.region.split(',')
+      temp['region_value'] = temp.region
+      temp['region'] = CodeToText[region[0]] + ',' + CodeToText[region[1]] + ',' + CodeToText[region[2]]
+      return temp
+    },
     filterTable() {
       this.listLoading = true
-      getData('/base/codes/data', this.listQuery).then(response => {
+      getData('/base/warehouses/data', this.listQuery).then(response => {
         let data = response.data
         let total = response.total
         if (!Array.isArray(data)) {
@@ -295,10 +312,11 @@ export default {
         if (typeof (total) === 'undefined') {
           total = 0
         }
+        for (let i = 0; i < data.length; i++) {
+          data[i] = this.handlerRegionShow(data[i])
+        }
         this.list = data
         this.total = total
-        console.log(response)
-        this.codeNamesOptions = response.code_level
         setTimeout(() => {
           this.listLoading = false
         }, 200)
@@ -309,7 +327,7 @@ export default {
     clearFilter() {
       this.listLoading = true
       this.listQuery.name = undefined
-      this.listQuery.code_name = undefined
+      this.listQuery.type = undefined
       this.filterTable()
     }
   }

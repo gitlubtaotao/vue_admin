@@ -548,7 +548,7 @@ export default {
         this.total = total
         setTimeout(() => {
           this.listLoading = false
-        }, 500)
+        }, 200)
       }).catch(error => {
         console.log(error)
       })

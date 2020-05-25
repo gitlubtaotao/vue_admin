@@ -16,6 +16,20 @@ const financeRouter = {
       meta: { title: '复核', icon: 'example' },
       children: [
       ]
+    },
+    {
+      path: 'rate',
+      component: () => import('@/views/finance/rate/index'),
+      meta: { title: '汇率设置', icon: 'example' },
+      children: [
+      ]
+    },
+    {
+      path: 'fee_type',
+      component: () => import('@/views/finance/fee_type/index'),
+      meta: { title: '费用项目', icon: 'example' },
+      children: [
+      ]
     }
   ]
 }

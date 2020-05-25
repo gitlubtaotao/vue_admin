@@ -1,8 +1,11 @@
 <template>
   <div class="app-container">
     <el-card class="box-card">
-      <div slot="header" class="clearfix">
-        <el-button type="primary" size="medium">全部</el-button>
+      <div slot="header">
+        <el-radio-group v-model="listQuery.type" size="medium" style="margin-left: 5px;" @change="filterTable">
+          <el-radio-button label="0" key="0">全部</el-radio-button>
+          <el-radio-button v-for="item in codeNamesOptions" :key="item.value" :label="item.value">{{ item.label }}</el-radio-button>
+        </el-radio-group>
         <div style="float: right">
           <el-button
             class="filter-item"
@@ -26,25 +29,6 @@
                 size="medium"
                 clearable
               />
-            </el-form-item>
-          </el-col>
-          <el-col :xs="8" :sm="6" :md="6" :lg="6">
-            <el-form-item label="类型" class="">
-              <el-select
-                v-model="listQuery.code_name"
-                filterable
-                placeholder="请选择"
-                size="medium"
-                clearable
-                :loading="loading"
-              >
-                <el-option
-                  v-for="item in codeNamesOptions"
-                  :key="item.code"
-                  :label="item.name"
-                  :value="item.code"
-                />
-              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -98,7 +82,7 @@
       <el-form ref="dataForm" :rules="rules" :model="temp" :status-icon="true" label-position="left" label-width="100px" style="width: 500px; margin-left:50px;">
         <el-form-item label="类型" prop="code_name">
           <el-select
-            v-model="temp.code_name"
+            v-model="temp.type"
             style="width:100%"
             filterable
             placeholder="请选择"
@@ -108,14 +92,23 @@
           >
             <el-option
               v-for="item in codeNamesOptions"
-              :key="item.code"
-              :label="item.name"
-              :value="item.code"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
             />
           </el-select>
         </el-form-item>
         <el-form-item label="代码值" prop="name">
           <el-input v-model="temp.name" />
+        </el-form-item>
+        <el-form-item label="中文名称" prop="name_cn">
+          <el-input v-model="temp.name_cn" />
+        </el-form-item>
+        <el-form-item label="英文名称" prop="name_en">
+          <el-input v-model="temp.name_en" />
+        </el-form-item>
+        <el-form-item label="官网" prop="url">
+          <el-input v-model="temp.url" type="url" />
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
           <el-input v-model="temp.remarks" type="textarea" />
@@ -138,7 +131,7 @@ import { getData, createData, updateData, deleteData } from '@/api/index_data'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 export default {
-  name: 'BaseCode',
+  name: 'BaseCarrier',
   components: { Pagination },
   directives: { waves },
   data() {
@@ -148,33 +141,40 @@ export default {
       total: 1,
       listLoading: false,
       loading: false,
-      columnUrl: '/base/codes/column',
+      columnUrl: '/base/carriers/column',
       listQuery: {
         page: 1,
         limit: 20,
-        code_name: undefined,
-        name: undefined
+        name: undefined,
+        type: 0
       },
       dialogFormVisible: false,
       dialogStatus: '',
       temp: {
         id: null,
         name: null,
-        code_name: null,
+        name_cn: null,
+        name_en: null,
+        url: null,
+        type: null,
         remarks: null
       },
       index: 0,
       rules: {
         name: [{ required: true, message: '代码值', trigger: 'blur' }],
-        code_name: [{ required: true, message: '请输入类型', trigger: 'blur' }]
+        type: [{ required: true, message: '请输入类型', trigger: 'blur' }]
       },
       textMap: {
-        update: '编辑基础代码信息',
-        create: '新增基础代码信息'
+        update: '编辑承运方信息',
+        create: '新增承运方信息'
       },
       columnArray: [],
       codeNames: [],
-      codeNamesOptions: []
+      codeNamesOptions: [
+        { value: 1, label: '船公司' },
+        { value: 2, label: '航空公司二字代码' },
+        { value: 3, label: '快递编码' }
+      ]
     }
   },
   created() {
@@ -199,12 +199,12 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         console.log(this.temp)
         if (valid) {
-          createData('/base/codes/create', this.temp).then((response) => {
+          createData('/base/carriers/create', this.temp).then((response) => {
             this.list.unshift(response.data)
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
-              message: '创建基础代码成功',
+              message: '创建承运方成功',
               type: 'success',
               duration: 5000
             })
@@ -227,13 +227,13 @@ export default {
           const tempData = Object.assign({}, this.temp)
           tempData.updated_at = undefined
           tempData.created_at = undefined
-          updateData('/base/codes/' + tempData.id + '/update', tempData).then((response) => {
+          updateData('/base/carriers/' + tempData.id + '/update', tempData).then((response) => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, response.data)
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
-              message: '更新基础代码成功',
+              message: '更新承运方信息成功',
               type: 'success',
               duration: 5000
             })
@@ -257,10 +257,10 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteData('/base/codes/' + id + '/destroy').then((response) => {
+        deleteData('/base/carriers/' + id + '/destroy').then((response) => {
           this.$notify({
             title: 'Success',
-            message: '删除基础代码信息成功',
+            message: '删除承运方信息成功',
             type: 'success',
             duration: 5000
           })
@@ -275,7 +275,6 @@ export default {
       const data = localColumn(this.columnUrl)
       if (data.length === 0) {
         getColumn(this.columnUrl).then(response => {
-          console.log(response)
           this.columnArray = response
         }).catch(error => {
           this.$message({ showClose: true, message: error, type: 'error' })
@@ -286,7 +285,7 @@ export default {
     },
     filterTable() {
       this.listLoading = true
-      getData('/base/codes/data', this.listQuery).then(response => {
+      getData('/base/carriers/data', this.listQuery).then(response => {
         let data = response.data
         let total = response.total
         if (!Array.isArray(data)) {
@@ -297,8 +296,6 @@ export default {
         }
         this.list = data
         this.total = total
-        console.log(response)
-        this.codeNamesOptions = response.code_level
         setTimeout(() => {
           this.listLoading = false
         }, 200)
@@ -309,7 +306,7 @@ export default {
     clearFilter() {
       this.listLoading = true
       this.listQuery.name = undefined
-      this.listQuery.code_name = undefined
+      this.listQuery.type = undefined
       this.filterTable()
     }
   }
