@@ -6,7 +6,7 @@ const oaRoute = {
   name: 'oa',
   meta: {
     title: '管理',
-    icon: 'nested',
+    icon: 'list',
     roles: ['admin', 'editor']
   },
   children: [

@@ -118,9 +118,10 @@
       <div slot="header" class="">
         <el-row :gutter="10">
           <keep-alive>
-            <el-col>
-              <unfixed-thead v-model="columnArray" :local-key="columnUrl" :columns="columnArray" />
-            </el-col>
+            <unfixed-thead v-model="columnArray" :local-key="columnUrl" :columns="columnArray" />
+          </keep-alive>
+          <keep-alive>
+            <export-excel :multiple-selection="multipleSelection" :local-key="columnUrl" />
           </keep-alive>
         </el-row>
       </div>
@@ -321,9 +322,10 @@ import Pagination from '@/components/Pagination'
 import { remoteEmployee } from '@/api/select'
 import ClueTrack from '@/components/ClueTrack'
 import UnfixedThead from '@/components/UnfixedThead'
+import ExportExcel from '@/components/ExportExcel'
 export default {
   name: 'Clue',
-  components: { ClueTrack, Pagination, UnfixedThead },
+  components: { ClueTrack, Pagination, UnfixedThead, ExportExcel },
   directives: { waves },
   data() {
     return {
@@ -384,7 +386,8 @@ export default {
         update: '编辑线索信息',
         create: '新增线索信息'
       },
-      columnArray: []
+      columnArray: [],
+      multipleSelection: []
     }
   },
   created() {
@@ -526,7 +529,8 @@ export default {
       }).catch(() => {
       })
     },
-    handleSelectionChange() {
+    handleSelectionChange(val) {
+      this.multipleSelection = val
     },
     fetchColumn() {
       const data = localColumn(this.columnUrl)

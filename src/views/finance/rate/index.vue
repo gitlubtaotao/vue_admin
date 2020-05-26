@@ -56,9 +56,10 @@
       <div slot="header" class="">
         <el-row :gutter="10">
           <keep-alive>
-            <el-col>
-              <unfixed-thead :local-key="columnUrl" :columns="columnArray" />
-            </el-col>
+            <unfixed-thead :local-key="columnUrl" :columns="columnArray" />
+          </keep-alive>
+          <keep-alive>
+            <export-excel :multiple-selection="multipleSelection" :local-key="columnUrl" />
           </keep-alive>
         </el-row>
       </div>
@@ -143,9 +144,10 @@ import Pagination from '@/components/Pagination'
 import { remoteCompany, remoteEmployee } from '@/api/select'
 import { parseTime, dateRangeArrayToStr } from '@/utils'
 import UnfixedThead from '@/components/UnfixedThead'
+import ExportExcel from '@/components/ExportExcel'
 export default {
   name: 'FinanceRate',
-  components: { Pagination, UnfixedThead },
+  components: { Pagination, UnfixedThead, ExportExcel },
   directives: { waves },
   data() {
     return {
@@ -193,7 +195,8 @@ export default {
       companyLoading: false,
       userLoading: false,
       systemRateSetting: 'month',
-      systemStandard: 'CNY'
+      systemStandard: 'CNY',
+      multipleSelection: []
     }
   },
   created() {
@@ -293,7 +296,8 @@ export default {
       }).catch(() => {
       })
     },
-    handleSelectionChange() {
+    handleSelectionChange(val) {
+      this.multipleSelection = val
     },
     remoteCompany(query) {
       this.companyLoading = true

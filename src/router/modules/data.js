@@ -6,7 +6,7 @@ const dataRouter = {
   name: 'data',
   meta: {
     title: '数据',
-    icon: 'nested',
+    icon: 'list',
     roles: ['admin', 'editor']
   },
   children: [

@@ -69,9 +69,10 @@
       <div slot="header" class="">
         <el-row :gutter="10">
           <keep-alive>
-            <el-col>
-              <unfixed-thead v-model="columnArray" :local-key="columnUrl+'?type='+type" :columns="columnArray" />
-            </el-col>
+            <unfixed-thead v-model="columnArray" :local-key="columnUrl+'?type='+type" :columns="columnArray" />
+          </keep-alive>
+          <keep-alive>
+            <export-excel :multiple-selection="multipleSelection" :local-key="columnUrl+'?type='+type" />
           </keep-alive>
         </el-row>
       </div>
@@ -368,12 +369,13 @@ import Pagination from '@/components/Pagination'
 import { remoteCompany, remoteEmployee } from '@/api/select'
 import UnfixedThead from '@/components/UnfixedThead'
 import { parseTime } from '@/utils'
+import ExportExcel from '@/components/ExportExcel'
 const sexOptions = [{ label: '男', value: 1 },
   { label: '女', value: 2 }]
 
 export default {
   name: 'CrmCompany',
-  components: { Pagination, UnfixedThead },
+  components: { Pagination, UnfixedThead, ExportExcel },
   directives: { waves },
   props: {
     type: {
@@ -472,7 +474,8 @@ export default {
         is_key_contact: false,
         address: null,
         remarks: null
-      }
+      },
+      multipleSelection: []
     }
   },
   created() {
@@ -654,7 +657,8 @@ export default {
       }).catch(() => {
       })
     },
-    handleSelectionChange() {
+    handleSelectionChange(val) {
+      this.multipleSelection = val
     },
     fetchColumn() {
       let url = this.columnUrl

@@ -6,7 +6,7 @@ const orderRouter = {
   name: 'order',
   meta: {
     title: '操作',
-    icon: 'nested',
+    icon: 'list',
     roles: ['admin', 'editor']
   },
   children: [

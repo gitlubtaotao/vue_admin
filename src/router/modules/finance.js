@@ -6,7 +6,7 @@ const financeRouter = {
   name: 'finance',
   meta: {
     title: '财务',
-    icon: 'nested',
+    icon: 'list',
     roles: ['admin', 'editor']
   },
   children: [

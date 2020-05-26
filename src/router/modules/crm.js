@@ -6,7 +6,7 @@ const crmRouter = {
   name: 'crm',
   meta: {
     title: '合作',
-    icon: 'nested',
+    icon: 'list',
     roles: ['admin', 'editor']
   },
   children: [

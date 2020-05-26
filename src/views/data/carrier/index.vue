@@ -44,9 +44,10 @@
       <div slot="header" class="">
         <el-row :gutter="10">
           <keep-alive>
-            <el-col>
-              <unfixed-thead v-model="columnArray" :local-key="columnUrl" :columns="columnArray" />
-            </el-col>
+            <unfixed-thead v-model="columnArray" :local-key="columnUrl" :columns="columnArray" />
+          </keep-alive>
+          <keep-alive>
+            <export-excel :multiple-selection="multipleSelection" :local-key="columnUrl" />
           </keep-alive>
         </el-row>
       </div>
@@ -140,9 +141,10 @@ import { getData, createData, updateData, deleteData } from '@/api/index_data'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import UnfixedThead from '@/components/UnfixedThead'
+import ExportExcel from '@/components/ExportExcel'
 export default {
   name: 'BaseCarrier',
-  components: { Pagination, UnfixedThead },
+  components: { Pagination, UnfixedThead, ExportExcel },
   directives: { waves },
   data() {
     return {
@@ -184,7 +186,8 @@ export default {
         { value: 1, label: '船公司' },
         { value: 2, label: '航空公司二字代码' },
         { value: 3, label: '快递编码' }
-      ]
+      ],
+      multipleSelection: []
     }
   },
   created() {
@@ -207,7 +210,6 @@ export default {
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
-        console.log(this.temp)
         if (valid) {
           createData('/base/carriers/create', this.temp).then((response) => {
             this.list.unshift(response.data)
@@ -279,7 +281,8 @@ export default {
       }).catch(() => {
       })
     },
-    handleSelectionChange() {
+    handleSelectionChange(val) {
+      this.multipleSelection = val
     },
     fetchColumn() {
       const data = localColumn(this.columnUrl)
