@@ -121,6 +121,15 @@
       </el-form>
     </el-card>
     <el-card class="box-card">
+      <div slot="header" class="">
+        <el-row :gutter="10">
+          <keep-alive>
+            <el-col>
+              <unfixed-thead v-model="columnArray" :local-key="columnUrl()" :columns="columnArray" />
+            </el-col>
+          </keep-alive>
+        </el-row>
+      </div>
       <el-table
         :key="tableKey"
         v-loading="listLoading"
@@ -258,10 +267,10 @@ import { createData, updateData, getData, deleteData } from '@/api/index_data'
 import { remoteCompany } from '@/api/select'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
-
+import UnfixedThead from '@/components/UnfixedThead'
 export default {
   name: 'Account',
-  components: { Pagination },
+  components: { Pagination, UnfixedThead },
   directives: { waves },
   props: {
     type: {
@@ -385,7 +394,7 @@ export default {
           this.loading = false
           this.user_company_options = result
         } else {
-          remoteCompany(query,this.defaultScope()).then((response) => {
+          remoteCompany(query, this.defaultScope()).then((response) => {
             this.user_company_options = response
             this.loading = false
           })
@@ -430,6 +439,9 @@ export default {
         this.handleDelete()
       }
     },
+    columnUrl() {
+      return '/accounts/column?type=' + this.type
+    },
     filterTable() {
       this.listLoading = true
       this.listQuery.type = this.type
@@ -448,7 +460,7 @@ export default {
       })
     },
     fetchColumn() {
-      const data = localColumn('/accounts/column?type=' + this.type)
+      const data = localColumn(this.columnUrl())
       if (data.length === 0) {
         getColumn('/accounts/column').then(response => {
           this.columnArray = response

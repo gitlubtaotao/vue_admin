@@ -66,6 +66,15 @@
       </el-form>
     </el-card>
     <el-card class="box-card">
+      <div slot="header" class="">
+        <el-row :gutter="10">
+          <keep-alive>
+            <el-col>
+              <unfixed-thead v-model="columnArray" :local-key="columnUrl+'?type='+type" :columns="columnArray" />
+            </el-col>
+          </keep-alive>
+        </el-row>
+      </div>
       <el-table
         :key="tableKey"
         v-loading="listLoading"
@@ -357,14 +366,14 @@ import { getData, createData, updateData, editData, deleteData } from '@/api/ind
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import { remoteCompany, remoteEmployee } from '@/api/select'
-
+import UnfixedThead from '@/components/UnfixedThead'
 import { parseTime } from '@/utils'
 const sexOptions = [{ label: '男', value: 1 },
   { label: '女', value: 2 }]
 
 export default {
   name: 'CrmCompany',
-  components: { Pagination },
+  components: { Pagination, UnfixedThead },
   directives: { waves },
   props: {
     type: {

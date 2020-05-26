@@ -53,7 +53,7 @@
         <el-row :gutter="10">
           <keep-alive>
             <el-col>
-              <unfixed-thead :local-key="columnUrl" :columns="columnArray" />
+              <unfixed-thead v-model="columnArray" :local-key="columnUrl" :columns="columnArray" />
             </el-col>
           </keep-alive>
         </el-row>

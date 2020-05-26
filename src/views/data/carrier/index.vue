@@ -3,7 +3,7 @@
     <el-card class="box-card">
       <div slot="header">
         <el-radio-group v-model="listQuery.type" size="medium" style="margin-left: 5px;" @change="filterTable">
-          <el-radio-button label="0" key="0">全部</el-radio-button>
+          <el-radio-button key="0" label="0">全部</el-radio-button>
           <el-radio-button v-for="item in codeNamesOptions" :key="item.value" :label="item.value">{{ item.label }}</el-radio-button>
         </el-radio-group>
         <div style="float: right">
@@ -41,6 +41,15 @@
       </el-form>
     </el-card>
     <el-card class="box-card">
+      <div slot="header" class="">
+        <el-row :gutter="10">
+          <keep-alive>
+            <el-col>
+              <unfixed-thead v-model="columnArray" :local-key="columnUrl" :columns="columnArray" />
+            </el-col>
+          </keep-alive>
+        </el-row>
+      </div>
       <el-table
         :key="tableKey"
         v-loading="listLoading"
@@ -130,9 +139,10 @@ import { getColumn, localColumn } from '@/api/column'
 import { getData, createData, updateData, deleteData } from '@/api/index_data'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
+import UnfixedThead from '@/components/UnfixedThead'
 export default {
   name: 'BaseCarrier',
-  components: { Pagination },
+  components: { Pagination, UnfixedThead },
   directives: { waves },
   data() {
     return {

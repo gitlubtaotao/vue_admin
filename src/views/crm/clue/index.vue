@@ -115,6 +115,15 @@
       </el-form>
     </el-card>
     <el-card class="box-card">
+      <div slot="header" class="">
+        <el-row :gutter="10">
+          <keep-alive>
+            <el-col>
+              <unfixed-thead v-model="columnArray" :local-key="columnUrl" :columns="columnArray" />
+            </el-col>
+          </keep-alive>
+        </el-row>
+      </div>
       <el-table
         :key="tableKey"
         v-loading="listLoading"
@@ -311,9 +320,10 @@ import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import { remoteEmployee } from '@/api/select'
 import ClueTrack from '@/components/ClueTrack'
+import UnfixedThead from '@/components/UnfixedThead'
 export default {
   name: 'Clue',
-  components: { ClueTrack, Pagination },
+  components: { ClueTrack, Pagination, UnfixedThead },
   directives: { waves },
   data() {
     return {

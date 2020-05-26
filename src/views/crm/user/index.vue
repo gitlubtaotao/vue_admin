@@ -82,6 +82,15 @@
       </el-form>
     </el-card>
     <el-card class="box-card">
+      <div slot="header" class="">
+        <el-row :gutter="10">
+          <keep-alive>
+            <el-col>
+              <unfixed-thead v-model="columnArray" :local-key="columnUrl" :columns="columnArray" />
+            </el-col>
+          </keep-alive>
+        </el-row>
+      </div>
       <el-table
         :key="tableKey"
         v-loading="listLoading"
@@ -199,9 +208,10 @@ import { remoteCompany } from '@/api/select'
 import { getData, createData, updateData, deleteData } from '@/api/index_data'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
+import UnfixedThead from '@/components/UnfixedThead'
 export default {
   name: 'CrmContact',
-  components: { Pagination },
+  components: { Pagination, UnfixedThead },
   directives: { waves },
   data() {
     return {

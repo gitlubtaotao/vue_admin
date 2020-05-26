@@ -53,6 +53,15 @@
       </el-form>
     </el-card>
     <el-card class="box-card">
+      <div slot="header" class="">
+        <el-row :gutter="10">
+          <keep-alive>
+            <el-col>
+              <unfixed-thead :local-key="columnUrl" :columns="columnArray" />
+            </el-col>
+          </keep-alive>
+        </el-row>
+      </div>
       <el-table
         :key="tableKey"
         v-loading="listLoading"
@@ -133,10 +142,10 @@ import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import { remoteCompany, remoteEmployee } from '@/api/select'
 import { parseTime, dateRangeArrayToStr } from '@/utils'
-
+import UnfixedThead from '@/components/UnfixedThead'
 export default {
   name: 'FinanceRate',
-  components: { Pagination },
+  components: { Pagination, UnfixedThead },
   directives: { waves },
   data() {
     return {

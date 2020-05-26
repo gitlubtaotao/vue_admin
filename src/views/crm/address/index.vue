@@ -60,6 +60,15 @@
       </el-form>
     </el-card>
     <el-card class="box-card">
+      <div slot="header" class="">
+        <el-row :gutter="10">
+          <keep-alive>
+            <el-col>
+              <unfixed-thead v-model="columnArray" :local-key="'/address/column?type=' + type" :columns="columnArray" />
+            </el-col>
+          </keep-alive>
+        </el-row>
+      </div>
       <el-table
         :key="tableKey"
         v-loading="listLoading"
@@ -154,9 +163,10 @@ import { remoteCompany } from '@/api/select'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import { regionData, CodeToText } from 'element-china-area-data'
+import UnfixedThead from '@/components/UnfixedThead'
 export default {
   name: 'Address',
-  components: { Pagination },
+  components: { Pagination, UnfixedThead },
   directives: { waves },
   data() {
     return {
@@ -282,7 +292,7 @@ export default {
     },
     handleRegion() {
       // eslint-disable-next-line no-undef
-      const selected = this.temp.selectedRegion;
+      const selected = this.temp.selectedRegion
       if (Array.isArray(selected) && selected.length > 1) {
         this.temp.province = selected[0]
         this.temp.city = selected[1]
