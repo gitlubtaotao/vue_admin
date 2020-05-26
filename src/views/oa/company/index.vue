@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-card class="box-card">
-      <div slot="header" class="clearfix">
+      <div slot="header" class="">
         <el-button type="primary" size="medium">全部</el-button>
         <div style="float: right">
           <el-button
@@ -49,6 +49,15 @@
       </el-form>
     </el-card>
     <el-card class="box-card">
+      <div slot="header" class="">
+        <el-row :gutter="10">
+          <keep-alive>
+            <el-col>
+              <unfixed-thead :local-key="columnUrl" :columns="columnArray" />
+            </el-col>
+          </keep-alive>
+        </el-row>
+      </div>
       <el-table
         :key="tableKey"
         v-loading="listLoading"
@@ -141,9 +150,10 @@ import { getColumn, localColumn } from '@/api/column'
 import { getData, createData, updateData, editData, deleteData } from '@/api/index_data'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
+import UnfixedThead from '@/components/UnfixedThead'
 export default {
   name: 'Company',
-  components: { Pagination },
+  components: { Pagination, UnfixedThead },
   directives: { waves },
   data() {
     return {

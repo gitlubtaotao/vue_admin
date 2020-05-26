@@ -272,10 +272,10 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteData('/base/ports/' + id + '/delete').then((response) => {
+        deleteData('/finance/rates/' + id + '/delete').then((response) => {
           this.$notify({
             title: 'Success',
-            message: '删除承运方信息成功',
+            message: '删除汇率信息成功',
             type: 'success',
             duration: 5000
           })
