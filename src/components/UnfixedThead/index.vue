@@ -1,7 +1,7 @@
 <template>
   <el-dropdown :hide-on-click="false" placement="bottom">
-    <el-button type="primary" size="medium">
-      列设置 <i class="el-icon-arrow-down el-icon--left" />
+    <el-button type="primary" size="medium" icon="el-icon-arrow-down">
+      列设置
     </el-button>
     <el-dropdown-menu slot="dropdown" style="width: 200px;margin-left: 30px;max-height:300px;overflow-y: auto;">
       <el-checkbox-group v-model="localColumns">

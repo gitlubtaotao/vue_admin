@@ -47,9 +47,10 @@
       <div slot="header" class="">
         <el-row :gutter="10">
           <keep-alive>
-            <el-col>
-              <unfixed-thead :local-key="columnUrl" :columns="columnArray" />
-            </el-col>
+            <unfixed-thead :local-key="columnUrl" :columns="columnArray" />
+          </keep-alive>
+          <keep-alive>
+            <export-excel :multiple-selection="multipleSelection" :local-key="columnUrl" />
           </keep-alive>
         </el-row>
       </div>
@@ -127,9 +128,10 @@ import { getData, createData, updateData, deleteData } from '@/api/index_data'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import UnfixedThead from '@/components/UnfixedThead'
+import ExportExcel from '@/components/ExportExcel'
 export default {
   name: 'FinanceFeeType',
-  components: { Pagination, UnfixedThead },
+  components: { Pagination, UnfixedThead, ExportExcel },
   directives: { waves },
   data() {
     return {
@@ -167,7 +169,8 @@ export default {
         create: '新增费用项目信息'
       },
       columnArray: [],
-      financeCurrencyOptions: []
+      financeCurrencyOptions: [],
+      multipleSelection: []
     }
   },
   created() {
@@ -264,7 +267,8 @@ export default {
       }).catch(() => {
       })
     },
-    handleSelectionChange() {
+    handleSelectionChange(val) {
+      this.multipleSelection = val
     },
     fetchColumn() {
       const data = localColumn(this.columnUrl)
@@ -292,7 +296,6 @@ export default {
         if (typeof (total) === 'undefined') {
           total = 0
         }
-        console.log(response)
         this.list = data
         this.total = total
         this.financeCurrencyOptions = response.currencyOptions
