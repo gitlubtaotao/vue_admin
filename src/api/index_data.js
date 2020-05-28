@@ -8,7 +8,7 @@ export function getData(url, params, type = 'post') {
   })
 }
 
-export function createData(url, data, type = 'patch') {
+export function createData(url, data, type = 'post') {
   return request({
     url: url,
     method: type,
@@ -19,7 +19,7 @@ export function createData(url, data, type = 'patch') {
 export function editData(url) {
   return request({
     url: url,
-    method: 'post',
+    method: 'post'
   })
 }
 
@@ -30,13 +30,10 @@ export function updateData(url, data, type = 'post') {
     data
   })
 }
-export function deleteData(url, type = 'post') {
+export function deleteData(url, type = 'delete') {
   return request({
     url: url,
     method: type
   })
 }
-
-
-
 

@@ -24,7 +24,7 @@
         </el-card>
       </el-col>
     </el-row>
-    <el-row :gutter="24" style="margin-top: 10px"/>
+    <el-row :gutter="24" style="margin-top: 10px" />
     <el-row :gutter="24">
       <el-col :span="24">
         <el-card shadow="always">
@@ -38,13 +38,13 @@
                 <el-table-column prop="en_address" label="英文地址" width="180" />
                 <el-table-column prop="email" label="邮箱" width="180" />
                 <el-table-column prop="phone" label="公司座机" width="180" />
-                <el-table-column prop="remark" label="备注"  />
+                <el-table-column prop="remark" label="备注" />
               </el-table>
             </el-tab-pane>
             <el-tab-pane label="部门信息" name="department">
               <el-table :data="company.departments" fit style="width: 100%">
                 <el-table-column prop="name_cn" label="部门中文名" width="280" />
-                <el-table-column prop="name_en" label="部门英文名"  />
+                <el-table-column prop="name_en" label="部门英文名" />
               </el-table>
             </el-tab-pane>
             <el-tab-pane label="员工信息" name="employee">
@@ -97,7 +97,7 @@ export default {
   methods: {
     fetchData() {
       const id = this.$route.params && this.$route.params.id
-      getData('/companies/' + id + '/show', {}, 'post').then(response => {
+      getData('/companies/' + id + '/show', {}, 'get').then(response => {
         this.company = response.data
         this.companyData.push(this.company)
         console.log(this.company)

@@ -255,7 +255,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteData('/finance/fee_types/' + id + '/destroy').then((response) => {
+        deleteData('/finance/fee_types/' + id + '/destroy', 'delete').then((response) => {
           this.$notify({
             title: 'Success',
             message: '删除费用项目成功',

@@ -517,7 +517,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteData('/crm/clues' + id + '/delete').then((response) => {
+        deleteData('/crm/clues' + id + '/delete', 'delete').then((response) => {
           this.$notify({
             title: 'Success',
             message: '删除成功',

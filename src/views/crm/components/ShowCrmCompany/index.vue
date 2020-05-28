@@ -189,7 +189,7 @@ export default {
     },
     fetchData() {
       const id = this.$route.params && this.$route.params.id
-      getData('/crm/companies/' + id + '/show', {}, 'post').then(response => {
+      getData('/crm/companies/' + id + '/show', {}, 'get').then(response => {
         this.company = response.data
         this.companyData.push(this.company)
         console.log(this.company)

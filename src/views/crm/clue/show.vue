@@ -43,7 +43,7 @@
           <el-tabs v-model="activeTab">
             <el-tab-pane label="跟进记录" name="track">
               <keep-alive>
-                <ClueTrack :source-id="parseInt(id)" source-type="crm_clues" :clue-tracks="company.crm_tracks"/>
+                <ClueTrack :source-id="parseInt(id)" source-type="crm_clues" :clue-tracks="company.crm_tracks" />
               </keep-alive>
             </el-tab-pane>
             <el-tab-pane label="基本信息" name="base">
@@ -98,7 +98,7 @@ export default {
   methods: {
     fetchData() {
       const id = this.$route.params && this.$route.params.id
-      getData('/crm/clues/' + id + '/show', {}, 'post').then(response => {
+      getData('/crm/clues/' + id + '/show', {}, 'get').then(response => {
         this.company = response.data
         this.companyData.push(this.company)
         console.log(this.company)

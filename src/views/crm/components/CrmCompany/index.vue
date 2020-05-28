@@ -665,7 +665,7 @@ export default {
       url += ('?type=' + this.type)
       const data = localColumn(url)
       if (data.length === 0) {
-        getColumn(this.columnUrl).then(response => {
+        getColumn(url).then(response => {
           this.columnArray = response
         }).catch(error => {
           this.$message({ showClose: true, message: error, type: 'error' })
