@@ -204,17 +204,34 @@
         </el-row>
       </el-form>
     </el-card>
+    <el-card class="box-card">
+      <div slot="header" class="">
+        <el-radio-group v-model="listQuery.status" size="small" style="margin-left: 5px;" @change="filterTable">
+          <el-radio-button label="">全部</el-radio-button>
+          <el-radio-button v-for="item in statusOptions" :key="item.value" :label="item.value">{{ item.label }}</el-radio-button>
+        </el-radio-group>
+      </div>
+      <keep-alive>
+        <master-index :lists="lists" :list-loading="listLoading" @listenToIndex="updateOrder" />
+      </keep-alive>
+      <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="filterTable" />
+    </el-card>
     <keep-alive>
-      <master-form :make-up-order="makeUpOrder" :dialog-form-visible="dialogFormVisible" :dialog-status="dialogStatus" @listenFormVisible="listenFormVisible" />
+      <master-form :make-up-order="makeUpOrder" :dialog-form-visible="dialogFormVisible" :dialog-status="dialogStatus" :record="record" @listenFormVisible="listenFormVisible" />
     </keep-alive>
   </div>
 </template>
 <script>
 import MasterForm from '../components/MasterForm'
+import MasterIndex from '../components/MasterIndex'
 import waves from '@/directive/waves' // waves directive
+import Pagination from '@/components/Pagination'
+import { getData } from '@/api/index_data'
+import { transportTypeOptions } from "@/api/order_master"
+import { dateRangeArrayToStr } from '@/utils'
 export default {
   name: 'OrderMaster',
-  components: { MasterForm },
+  components: { MasterIndex, MasterForm, Pagination },
   directives: { waves },
   data() {
     return {
@@ -222,7 +239,9 @@ export default {
       tmp_departure: '',
       tmp_arrival: '',
       tmp_cut_off_day: '',
+      total: 0,
       listQuery: {
+        status: '',
         transport_type: '',
         serial_number: undefined,
         instruction_id: undefined,
@@ -251,12 +270,12 @@ export default {
       dialogStatus: 'create',
       dialogFormVisible: false,
       loadingInstruction: false,
-      transportOptions: [
-        { label: '整箱', value: 1 },
-        { label: '拼箱', value: 4 },
-        { label: '空运', value: 2 },
-        { label: '快递', value: 5 },
-        { label: '其他', value: 3 }
+      transportOptions: transportTypeOptions(),
+      statusOptions: [
+        { label: '处理中', value: 'processing' },
+        { label: '已锁定', value: 'locked' },
+        { label: '已完成', value: 'finished' },
+        { label: '已作废', value: 'cancel' }
       ],
       mainTransportOptions: [
         { label: '整箱', value: 1 },
@@ -283,22 +302,72 @@ export default {
       ],
       edStatusOptions: [
         { value: 'unfinished', label: '未完成' },
-        { value: '', label: '部分完成' },
+        { value: 'part_finished', label: '部分完成' },
         { value: 'finished', label: '已完成' }
-      ]
+      ],
+      lists: [],
+      listLoading: false,
+      record: {
+        instruction_id: undefined,
+        contact_id: undefined,
+        salesman_id: undefined,
+        operation_id: this.$store.getters.userInfo.userInfo.id,
+        transport_type: undefined,
+        main_transport: undefined,
+        created_at: undefined,
+        remarks: undefined,
+        roles: []
+      }
     }
   },
+  created() {
+    this.filterTable()
+  },
   methods: {
-    filterTable() { console.log('333') },
+    filterTable() {
+      this.listLoading = true
+      this.listQuery.created_at = dateRangeArrayToStr(this.tmp_created_at)
+      this.listQuery.departure = dateRangeArrayToStr(this.tmp_departure)
+      this.listQuery.arrival = dateRangeArrayToStr(this.tmp_arrival)
+      this.listQuery.cut_off_day = dateRangeArrayToStr(this.tmp_cut_off_day)
+      getData('/order/masters/data', this.listQuery).then(response => {
+        let total = response.total
+        let data = response.data
+        if (!Array.isArray(data)) { data = [] }
+        if (typeof (total) === 'undefined') { total = 0 }
+        this.total = total
+        this.lists = data
+        setTimeout(() => {
+          this.listLoading = false
+        }, 200)
+      }).catch(error => {
+        console.log(error)
+      })
+    },
     handleCreate(createType) {
       this.makeUpOrder = createType === 'make_up'
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
+      this.record = {
+        instruction_id: undefined,
+        contact_id: undefined,
+        salesman_id: undefined,
+        operation_id: this.$store.getters.userInfo.userInfo.id,
+        transport_type: undefined,
+        main_transport: undefined,
+        remarks: undefined,
+        roles: []
+      }
     },
     getInstruction() { },
     remoteInstruction() { },
     listenFormVisible(val) {
       this.dialogFormVisible = val
+    },
+    updateOrder(val) {
+      this.record = val
+      this.dialogStatus = 'update'
+      this.listenFormVisible(true)
     }
   }
 }

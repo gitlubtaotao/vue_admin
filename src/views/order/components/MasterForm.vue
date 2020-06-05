@@ -25,12 +25,12 @@
       </el-form-item>
       <el-form-item label="业务员" prop="salesman_id">
         <el-select v-model="temp.salesman_id" filterable placeholder="请选择" size="medium" clearable style="width: 100%" @focus="getSalesman()">
-          <el-option v-for="item in salesmanOptions" :key="item.id" :label="item.name" :value="item.id" />
+          <el-option v-for="item in salesmanOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
         </el-select>
       </el-form-item>
       <el-form-item label="操作员" prop="operation_id">
         <el-select v-model="temp.operation_id" filterable remote placeholder="请选择" size="medium" clearable style="width: 100%" @focus="getOperation()">
-          <el-option v-for="item in operationOptions" :key="item.id" :label="item.name" :value="item.id" />
+          <el-option v-for="item in operationOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
         </el-select>
       </el-form-item>
       <el-form-item label="运输类型" prop="transport_type">
@@ -50,39 +50,41 @@
         <el-input v-model="temp.remarks" type="textarea" />
       </el-form-item>
     </el-form>
-    <div v-if=" dialogStatus === 'create'">
-      <el-divider />
-      <el-row style="margin-bottom: 10px">
-        <el-button type="primary" size="small" @click="addEmployee">新增角色</el-button>
-      </el-row>
-      <el-table key="crm_users" :data="roleArray" fit max-height="500" border style="width: 100%;">
-        <el-table-column min-width="100px" label="角色">
-          <template slot-scope="{row}">
-            <template v-if="row.edit">
-              <el-select v-model="row.name" filterable placeholder="请选择" size="medium" clearable style="width: 100%">
-                <el-option v-for="item in roleOptions" :key="item.value" :label="item.label" :value="item.value" />
-              </el-select>
-            </template>
-            <span v-else>{{ row.name }}</span>
+
+    <el-divider />
+    <el-row style="margin-bottom: 10px">
+      <el-button type="primary" size="small" @click="addEmployee">新增角色</el-button>
+    </el-row>
+    <el-table key="crm_users" :data="roleArray" fit max-height="500" border style="width: 100%;">
+      <el-table-column min-width="100px" label="角色">
+        <template slot-scope="scope">
+          <template v-if="scope.row.edit">
+            <el-select v-model="scope.row.name" filterable placeholder="请选择" size="medium" clearable style="width: 100%">
+              <el-option v-for="item in roleOptions" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
           </template>
-        </el-table-column>
-        <el-table-column min-width="100px" label="员工">
-          <template slot-scope="{row}">
-            <template v-if="row.edit">
-              <el-select v-model="row.user_id" filterable placeholder="请选择" size="medium" clearable style="width: 100%" @focus="getOperation()">
-                <el-option v-for="item in operationOptions" :key="item.id" :label="item.name" :value="item.id" />
-              </el-select>
-            </template>
-            <span v-else>{{ row.user_name }}</span>
+          <span v-else>{{ showName(scope.row.name) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="100px" label="员工">
+        <template slot-scope="scope">
+          <template v-if="scope.row.edit">
+            <el-select v-model="scope.row.user_id" filterable placeholder="请选择" size="medium" clearable style="width: 100%" @focus="getOperation()" @change="changeUser($event,scope.$index)">
+              <el-option v-for="item in operationOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+            </el-select>
           </template>
-        </el-table-column>
-        <el-table-column label="操作" width="100">
-          <template slot-scope="{row,$index}">
-            <el-button v-if="row.edit" type="danger" icon="el-icon-delete" size="small" @click="deleteEmployee(row,$index)" />
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
+          <span v-else>{{ scope.row.user_name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="100">
+        <template slot-scope="scope">
+          <el-button v-if="!scope.row.edit" type="primary" icon="el-icon-edit" size="mini" @click="editEmployee(scope.$index, scope.row,true)" />
+          <el-button v-else type="success" icon="el-icon-check" size="mini" @click="saveEmployee(scope.$index,scope.row)" />
+          <el-button v-if="scope.row.edit" type="danger" icon="el-icon-close" size="mini" @click="editEmployee(scope.$index,scope.row,false)" />
+          <el-button v-if="!scope.row.edit" type="danger" icon="el-icon-delete" size="mini" @click="deleteEmployee(scope.row,scope.$index)" />
+        </template>
+      </el-table-column>
+    </el-table>
     <div slot="footer" class="dialog-footer">
       <el-button @click="localFormVisible = false">
         取消
@@ -95,7 +97,7 @@
 </template>
 <script>
 import { remoteCompany, remoteContact, getSelectApi } from '@/api/select'
-import { createData } from '@/api/index_data'
+import { createData, updateData } from '@/api/index_data'
 
 export default {
   name: 'MasterForm',
@@ -120,6 +122,7 @@ export default {
       }
     }
   },
+
   data() {
     return {
       temp: {
@@ -129,7 +132,6 @@ export default {
         operation_id: this.$store.getters.userInfo.userInfo.id.toString(),
         transport_type: undefined,
         main_transport: undefined,
-        created_at: undefined,
         remarks: undefined,
         roles: []
       },
@@ -192,9 +194,18 @@ export default {
     makeUpOrder: {
       immediate: true,
       handler(val) { }
+    },
+    record: {
+      immediate: true,
+      handler(row) {
+        this.temp = row
+        this.roleArray = row.roles
+        console.log(this.roleArray)
+      }
     }
   },
   created() {
+    this.getInstruction()
     this.getSalesman()
     this.getOperation()
   },
@@ -203,7 +214,6 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           createData('/order/masters/create', this.handlerTemp()).then((response) => {
-            console.log(response)
             this.localFormVisible = false
             this.closeDialog()
             this.$notify({
@@ -216,7 +226,22 @@ export default {
         }
       })
     },
-    updateData() { },
+    updateData() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          updateData('/order/masters/' + this.temp.id + '/update', this.handlerTemp(), 'patch').then((response) => {
+            this.localFormVisible = false
+            this.closeDialog()
+            this.$notify({
+              title: 'Success',
+              message: '更新订单信息成功',
+              type: 'success',
+              duration: 5000
+            })
+          })
+        }
+      })
+    },
     remoteInstruction(query) {
       if (query === '') {
         return
@@ -285,7 +310,7 @@ export default {
       }
     },
     defaultScope() {
-      return { company_type: [1, 2] }
+      return { company_type: [1, 3] }
     },
     instructionChange() {
       this.temp.contact_id = undefined
@@ -301,18 +326,47 @@ export default {
       if (data.operation_id !== undefined && data.operation_id !== '') {
         data.operation_id = parseInt(data.operation_id)
       }
-      data.roles = this.roleArray
-      for (let i = 0; i < data.roles.length; i++) {
-        data.roles[i].user_id = parseInt(data.roles[i].user_id)
-      }
+      data.roles = this.roleArray.filter((item) => {
+        return !item['edit']
+      })
       return data
     },
     addEmployee() {
       const j = { name: null, user_id: null, edit: true }
       this.roleArray.unshift(j)
     },
+    editEmployee($index, row, status) {
+      this.$set(this.roleArray[$index], 'edit', status)
+      if (!status) {
+        if (row['id'] === '' || typeof (row['id']) === 'undefined') {
+          this.roleArray.splice($index, 1)
+        }
+      }
+    },
+    saveEmployee($index, row) {
+      if (row.name !== null && row.user_id !== null) {
+        this.$set(this.roleArray[$index], 'edit', false)
+      } else {
+        this.$message.error('角色和员工不能为空')
+      }
+    },
     deleteEmployee(row, index) {
       this.roleArray.splice(index, 1)
+    },
+    changeUser(val, $index) {
+      const obj = this.operationOptions.find((item) => {
+        return parseInt(item.id) === val
+      })
+      this.$set(this.roleArray[$index], 'user_name', obj.name)
+      console.log(this.roleArray)
+    },
+    showName(val) {
+      const obj = this.roleOptions.find((item) => {
+        return item.value === val
+      })
+      console.log(obj)
+      return obj.label
+      // return obj.label
     }
   }
 }

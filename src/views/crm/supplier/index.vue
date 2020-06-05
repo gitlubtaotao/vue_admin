@@ -9,7 +9,7 @@
 import CrmCompany from '../components/CrmCompany'
 
 export default {
-  name: 'CrmCustomer',
+  name: 'CrmSupply',
   components: { CrmCompany },
   data() {
     return {

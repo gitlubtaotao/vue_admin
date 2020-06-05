@@ -151,7 +151,7 @@ import { regionData, CodeToText } from 'element-china-area-data'
 import UnfixedThead from '@/components/UnfixedThead'
 import ExportExcel from '@/components/ExportExcel'
 export default {
-  name: 'BaseWarehouse',
+  name: 'DataWarehouse',
   components: { Pagination, UnfixedThead, ExportExcel },
   directives: { waves },
   data() {

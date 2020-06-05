@@ -21,6 +21,7 @@ const financeRouter = {
       path: 'rate',
       component: () => import('@/views/finance/rate/index'),
       meta: { title: '汇率设置', icon: 'example' },
+      name: 'FinanceRate',
       children: [
       ]
     },
@@ -28,6 +29,7 @@ const financeRouter = {
       path: 'fee_type',
       component: () => import('@/views/finance/fee_type/index'),
       meta: { title: '费用项目', icon: 'example' },
+      name: 'FinanceFeeType',
       children: [
       ]
     }

@@ -165,7 +165,7 @@ import Pagination from '@/components/Pagination'
 import { regionData, CodeToText } from 'element-china-area-data'
 import UnfixedThead from '@/components/UnfixedThead'
 export default {
-  name: 'Address',
+  name: 'CrmAddress',
   components: { Pagination, UnfixedThead },
   directives: { waves },
   data() {

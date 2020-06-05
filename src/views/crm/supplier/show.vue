@@ -8,7 +8,7 @@
 <script>
 import ShowCrmCompany from '../components/ShowCrmCompany'
 export default {
-  name: 'ShowCrmSupply',
+  name: 'CrmShowSupply',
   components: { ShowCrmCompany }
 }
 </script>

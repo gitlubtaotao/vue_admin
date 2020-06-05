@@ -16,10 +16,10 @@ export function createData(url, data, type = 'post') {
   })
 }
 
-export function editData(url) {
+export function editData(url, type = 'post') {
   return request({
     url: url,
-    method: 'post'
+    method: type
   })
 }
 

@@ -324,7 +324,7 @@ import ClueTrack from '@/components/ClueTrack'
 import UnfixedThead from '@/components/UnfixedThead'
 import ExportExcel from '@/components/ExportExcel'
 export default {
-  name: 'Clue',
+  name: 'CrmClue',
   components: { ClueTrack, Pagination, UnfixedThead, ExportExcel },
   directives: { waves },
   data() {

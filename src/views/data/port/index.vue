@@ -149,7 +149,7 @@ import Pagination from '@/components/Pagination'
 import UnfixedThead from '@/components/UnfixedThead'
 import ExportExcel from '@/components/ExportExcel'
 export default {
-  name: 'BaseCarrier',
+  name: 'DataPort',
   components: { Pagination, UnfixedThead, ExportExcel },
   directives: { waves },
   data() {

@@ -152,7 +152,7 @@ import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import UnfixedThead from '@/components/UnfixedThead'
 export default {
-  name: 'Company',
+  name: 'OaCompany',
   components: { Pagination, UnfixedThead },
   directives: { waves },
   data() {

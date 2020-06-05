@@ -14,6 +14,7 @@ const dataRouter = {
       path: 'code',
       component: () => import('@/views/data/code/index'),
       meta: { title: '基础代码', icon: 'example' },
+      name: 'DataCode',
       children: [
       ]
     },
@@ -21,6 +22,7 @@ const dataRouter = {
       path: 'port',
       component: () => import('@/views/data/port/index'),
       meta: { title: '港口信息', icon: 'example' },
+      name: 'DataPort',
       children: [
       ]
     },
@@ -28,6 +30,7 @@ const dataRouter = {
       path: 'carrier',
       component: () => import('@/views/data/carrier/index'),
       meta: { title: '承运方', icon: 'example' },
+      name: 'DataCarrier',
       children: [
       ]
     },
@@ -35,6 +38,7 @@ const dataRouter = {
       path: 'warehouse',
       component: () => import('@/views/data/warehouse/index'),
       meta: { title: '仓库信息', icon: 'example' },
+      name: 'DataWarehouse',
       children: [
       ]
     }

@@ -28,7 +28,8 @@ export default {
           height: '40px',
           'border-radius': '4px',
           'line-height': '45px',
-          background: '#1989fa'
+          background: '#1989fa',
+          'z-index': '100'
         }
       }
     },

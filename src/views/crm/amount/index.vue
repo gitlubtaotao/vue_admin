@@ -6,7 +6,7 @@
 <script>
 import Account from '@/components/Account'
 export default {
-  name: 'OAAccount',
+  name: 'CrmAccount',
   components: { Account }
 }
 </script>

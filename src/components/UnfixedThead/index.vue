@@ -64,7 +64,6 @@ export default {
     getTableColumns() {
       if (this.tableColumns.length === 0) {
         getTableColumn(this.localKey).then(response => {
-          console.log(response)
           this.tableColumns = response
         }).catch(error => {
           this.$message({ showClose: true, message: error, type: 'error' })

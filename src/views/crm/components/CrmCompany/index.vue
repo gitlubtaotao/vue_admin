@@ -44,15 +44,15 @@
           </el-col>
           <el-col :xs="24" :sm="12" :md="6" :lg="6">
             <el-form-item label="业务员" class="">
-              <el-select v-model="listQuery.user_salesman_id" filterable remote placeholder="请选择" size="medium" clearable :remote-method="remoteUsers" :loading="loading" @focus="getUser()">
-                <el-option v-for="item in usersOptions" :key="item.value" :label="item.label" :value="item.value" />
+              <el-select v-model="listQuery.user_salesman_id" filterable placeholder="请选择" size="medium" clearable :loading="loading" @focus="getUser()">
+                <el-option v-for="item in usersOptions" :key="item.id" :label="item.name" :value="parseInt(item.id)" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="6" :lg="6">
             <el-form-item label="所属公司" class="">
-              <el-select v-model="listQuery.parent_id" filterable remote placeholder="请选择" size="medium" clearable :remote-method="remoteCompanies" :loading="loading" @focus="getCompany()">
-                <el-option v-for="item in userCompanyOptions" :key="item.value" :label="item.label" :value="item.value" />
+              <el-select v-model="listQuery.parent_id" filterable placeholder="请选择" size="medium" clearable :loading="loading" @focus="getCompany()">
+                <el-option v-for="item in userCompanyOptions" :key="parseInt(item.id)" :label="item.name_nick" :value="parseInt(item.id)" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -182,22 +182,22 @@
         <el-row :gutter="10">
           <el-col v-if="type ==='customer' " :span="12">
             <el-form-item label="业务员" class="" prop="user_salesman_id">
-              <el-select v-model="temp.user_salesman_id" filterable remote placeholder="请选择" size="medium" clearable :remote-method="remoteUsers" :loading="loading" style="width: 100%;" @focus="getUser()">
-                <el-option v-for="item in usersOptions" :key="item.value" :label="item.label" :value="item.value" />
+              <el-select v-model="temp.user_salesman_id" filterable placeholder="请选择" size="medium" clearable :loading="loading" style="width: 100%;" @focus="getUser()">
+                <el-option v-for="item in usersOptions" :key="item.id" :label="item.name" :value="parseInt(item.id)" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="审核员" class="" prop="user_audit_id">
-              <el-select v-model="temp.user_audit_id" filterable remote placeholder="请选择" size="medium" clearable :remote-method="remoteUsers" :loading="loading" style="width: 100%;" @focus="getUser()">
-                <el-option v-for="item in usersOptions" :key="item.value" :label="item.label" :value="item.value" />
+              <el-select v-model="temp.user_audit_id" filterable placeholder="请选择" size="medium" clearable :loading="loading" style="width: 100%;" @focus="getUser()">
+                <el-option v-for="item in usersOptions" :key="item.id" :label="item.name" :value="parseInt(item.id)" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col v-if="dialogStatus === 'update' " :span="12">
             <el-form-item label="创建者" class="" prop="user_create_id">
-              <el-select v-model="temp.user_create_id" filterable remote placeholder="请选择" size="medium" clearable :remote-method="remoteUsers" :loading="loading" style="width: 100%;" @focus="getUser()">
-                <el-option v-for="item in usersOptions" :key="item.value" :label="item.label" :value="item.value" />
+              <el-select v-model="temp.user_create_id" filterable placeholder="请选择" size="medium" clearable :loading="loading" style="width: 100%;" @focus="getUser()">
+                <el-option v-for="item in usersOptions" :key="item.id" :label="item.name" :value="parseInt(item.id)" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -348,8 +348,8 @@
     <el-dialog title="转化成客户&供应商" :visible.sync="dialogChangeVisible" width="30%">
       <el-form ref="dataForm" :rules="rules" :model="temp" :status-icon="true" label-position="left" label-width="100px" style="width: 100%;padding: 0 20px;">
         <el-form-item label="业务员" class="" prop="user_salesman_id">
-          <el-select v-model="temp.user_salesman_id" filterable remote placeholder="请选择" size="medium" clearable :remote-method="remoteUsers" :loading="loading" style="width: 100%;" @focus="getUser()">
-            <el-option v-for="item in usersOptions" :key="item.value" :label="item.label" :value="item.value" />
+          <el-select v-model="temp.user_salesman_id" filterable placeholder="请选择" size="medium" clearable :loading="loading" style="width: 100%;" @focus="getUser()">
+            <el-option v-for="item in usersOptions" :key="item.id" :label="item.name" :value="parseInt(item.id)" />
           </el-select>
         </el-form-item>
       </el-form>
@@ -366,7 +366,7 @@ import { getColumn, localColumn } from '@/api/column'
 import { getData, createData, updateData, editData, deleteData } from '@/api/index_data'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
-import { remoteCompany, remoteEmployee } from '@/api/select'
+import { getSelectApi } from '@/api/select'
 import UnfixedThead from '@/components/UnfixedThead'
 import { parseTime } from '@/utils'
 import ExportExcel from '@/components/ExportExcel'
@@ -546,7 +546,7 @@ export default {
     },
     handleUpdate(row) {
       this.getUser()
-      editData('/crm/companies/' + row.id + '/edit',).then((response) => {
+      editData('/crm/companies/' + row.id + '/edit', 'get').then((response) => {
         this.temp = response.data
         this.temp.user_salesman_id = searchRole(this.temp, 'salesman')
         this.temp.user_audit_id = searchRole(this.temp, 'audit')
@@ -579,7 +579,7 @@ export default {
           tempData.amount = parseInt(tempData.amount)
           tempData.created_at = undefined
           tempData.updated_at = undefined
-          updateData('/crm/companies/' + tempData.id + '/update', tempData).then((response) => {
+          updateData('/crm/companies/' + tempData.id + '/update', tempData, 'patch').then((response) => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, response.data)
             this.dialogFormVisible = false
@@ -708,56 +708,18 @@ export default {
       }
       this.filterTable()
     },
-    remoteUsers(query) {
-      this.loading = true
-      const result = this.users.filter(item => {
-        return item.label.toLowerCase()
-          .indexOf(query.toLowerCase()) > -1
-      })
-      if (result.length > 0) {
-        this.loading = false
-        this.usersOptions = result
-        return
-      }
-      remoteEmployee(query).then((response) => {
-        this.usersOptions = response
-        this.loading = false
-      })
-    },
     getUser() {
-      if (this.users.length === 0) {
-        remoteEmployee('').then((response) => {
-          this.users = response
-          this.usersOptions = response
-        })
-      } else {
-        this.usersOptions = this.users
-      }
-    },
-    remoteCompanies(query) {
-      this.loading = true
-      const result = this.userCompanies.filter(item => {
-        return item.label.toLowerCase()
-          .indexOf(query.toLowerCase()) > -1
-      })
-      if (result.length > 0) {
-        this.loading = false
-        this.userCompanyOptions = result
-      } else {
-        remoteCompany(query).then((response) => {
-          this.userCompanyOptions = response
-          this.loading = false
+      if (this.usersOptions.length === 0) {
+        getSelectApi('/select/employee', {}, 'get').then((response) => {
+          this.usersOptions = response.data
         })
       }
     },
     getCompany() {
-      if (this.userCompanies.length === 0) {
-        remoteCompany('').then((response) => {
-          this.userCompanyOptions = response
-          this.userCompanies = response
+      if (this.userCompanyOptions.length === 0) {
+        getSelectApi('/select/owner_company', {}, 'get').then((response) => {
+          this.userCompanyOptions = response.data
         })
-      } else {
-        this.userCompanyOptions = this.userCompanies
       }
     },
     handleBusiness() {

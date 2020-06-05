@@ -41,9 +41,7 @@ export default {
       handler(val) {}
     }
   },
-  created() {
-    console.log(this.localKey, this.multipleSelection)
-  },
+  created() { },
   methods: {
     handleDownload() {
       if (!this.notRecord()) {

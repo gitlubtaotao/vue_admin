@@ -78,7 +78,7 @@
 import { getData } from '@/api/index_data'
 import ClueTrack from '@/components/ClueTrack'
 export default {
-  name: 'ShowCompany',
+  name: 'CrmShowClue',
   components: { ClueTrack },
   data() {
     return {

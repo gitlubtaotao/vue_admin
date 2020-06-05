@@ -211,7 +211,7 @@ import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import UnfixedThead from '@/components/UnfixedThead'
 export default {
-  name: 'Invoice',
+  name: 'CrmInvoice',
   components: { Pagination, UnfixedThead },
   directives: { waves },
   data() {
