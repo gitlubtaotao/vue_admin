@@ -114,9 +114,15 @@ export default {
       type: Object
     }
   },
-  created() {
-    console.log(this.orderMaster)
-  }
+  watch: {
+    orderMaster: {
+      immediate: true, // 这句重要
+      handler(val) {
+        this.orderMaster = val
+      }
+    }
+  },
+  created() { }
 }
 </script>
 

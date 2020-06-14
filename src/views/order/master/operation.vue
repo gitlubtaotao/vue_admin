@@ -52,6 +52,7 @@ export default {
         status: '',
         create_at: '',
         order_extend_info: {
+          order_master_id: undefined,
           pol_id: undefined,
           carrier_id: undefined,
           number: undefined,

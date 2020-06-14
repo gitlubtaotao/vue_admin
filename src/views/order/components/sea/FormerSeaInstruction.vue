@@ -118,7 +118,7 @@
         <el-divider />
         <div class="box-center-3">
           <div class="cap-list">
-            <el-form-item v-for="(cap_list, index) in former_sea_instruction.sea_cap_lists" :key="index" :label="'柜型/柜量'" size="mini">
+            <el-form-item v-for="(cap_list, index) in sea_cap_lists" :key="index" :label="'柜型/柜量'" size="mini">
               <el-select v-model="cap_list.cap_type" filterable placeholder="请选择" size="mini" clearable>
                 <el-option v-for="item in portOptions" :key="parseInt(item.name)" :label="item.name" :value="parseInt(item.name)" />
               </el-select>
@@ -209,6 +209,7 @@
   </el-form>
 </template>
 <script>
+import { getData } from '@/api/index_data'
 export default {
   name: 'FormerSeaInstruction',
   props: {
@@ -259,9 +260,9 @@ export default {
         shipment_item_id: undefined,
         contract_no: undefined,
         invoice_no: undefined,
-        remarks: undefined,
-        sea_cap_lists: [{ number: 1, cap_type: undefined }]
+        remarks: undefined
       },
+      sea_cap_lists: [{ number: 1, cap_type: undefined }],
       changePayOptions: [],
       userOptions: [],
       cooperatorOptions: [],
@@ -279,17 +280,42 @@ export default {
       CapTypeOptions: []
     }
   },
+  watch: {
+    orderExtendInfo: {
+      immediate: true, // 这句重要
+      handler(val) {
+        this.orderExtendInfo = val
+        this.tmp_extend_info = val
+      }
+    }
+  },
   created() {
     this.tmp_extend_info = this.orderExtendInfo
+    this.initData()
   },
   methods: {
     remoteCooperator() { },
-    getCooperator() {},
+    getCooperator() {
+      if (this.cooperator.length > 0) {
+        this.cooperatorOptions = this.cooperator
+      }
+    },
     removeCapList(index) {
-      this.former_sea_instruction.sea_cap_lists.splice(index, 1)
+      this.sea_cap_lists.splice(index, 1)
     },
     addCapList() {
-      this.former_sea_instruction.sea_cap_lists.push({ number: 1, cap_type: undefined })
+      this.sea_cap_lists.push({ number: 1, cap_type: undefined })
+    },
+    initData() {
+      getData('/order/masters/' + this.$route.params.id + '/getFormerData', { formerType: 'former_sea_instruction' }, 'get').then(response => {
+        console.log(response)
+        const selectOptions = response.selectOptions
+        this.cooperator = selectOptions.crmOptions
+        this.cooperatorOptions = selectOptions.crmOptions
+        this.former_sea_instruction = response.formerData
+      }).catch(error => {
+        console.log(error)
+      })
     }
   }
 }
