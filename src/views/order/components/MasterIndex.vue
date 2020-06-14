@@ -28,7 +28,7 @@
         <el-table-column type="selection" width="55" fixed="left" />
         <el-table-column label="操作" width="150" fixed="left">
           <template slot-scope="{row,$index}">
-            <router-link :to="'/order/master/operation/'+row.id">
+            <router-link :to="'/order/master/operation/'+row.id + '?transport_type=' + row['transport_type_value']">
               <el-button size="mini" type="primary" @click="rowDblclick(row)">操作</el-button>
             </router-link>
             <el-dropdown size="mini" type="primary" @visible-change="handleClick(row,$index)" @command="handleCommand">
