@@ -28,7 +28,6 @@ export default {
     saveDataToService() {
       this.saveLoading = true
       this.saveData()
-      console.log('22')
       setTimeout(() => {
         this.saveLoading = false
       }, 300)

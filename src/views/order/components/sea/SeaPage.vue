@@ -460,6 +460,15 @@ export default {
       activeName: 'former_sea_instruction'
     }
   },
+  watch: {
+    former_sea_instruction: {
+      handler(newValue, oldValue) {
+        console.log(newValue, oldValue)
+      },
+      immediate: true,
+      deep: true
+    }
+  },
   created() {
     this.initData()
   },
@@ -471,6 +480,10 @@ export default {
       return parseTime(time, '{y}-{m}-{d}')
     },
     getCompanyDetail(val, field) {
+      if (val === '' || val === null || typeof (val) === 'undefined') {
+        this.former_sea_instruction[field] = ''
+        return
+      }
       getData('/crm/companies/' + val + '/operationInfo', { }, 'get').then(response => {
         this.former_sea_instruction[field] = response.data
       }).catch(error => {
@@ -536,7 +549,7 @@ export default {
     saveData() {
       let data = {}
       if (this.activeName === 'former_sea_instruction') {
-        data = { former_sea_instruction: this.former_sea_instruction, order_master: this.order_master }
+        data = { former_sea_instruction: this.former_sea_instruction, order_extend_info: this.order_master.order_extend_info }
       }
       console.log(data)
       createData('/order/masters/' + this.$route.params.id + '/UpdateFormerData?former_type=' + this.activeName, data).then((response) => {
