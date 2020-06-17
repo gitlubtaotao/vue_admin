@@ -271,9 +271,9 @@
                   <div class="cap-list">
                     <el-form-item v-for="(cap_list, index) in former_sea_instruction.sea_cap_lists" :key="index" :label="'柜型/柜量'" size="mini">
                       <el-select v-model="cap_list.cap_type" filterable placeholder="请选择" size="mini" clearable>
-                        <el-option v-for="item in CapTypeOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.name)" />
+                        <el-option v-for="item in CapTypeOptions" :key="item.name" :label="item.name" :value="item.name" />
                       </el-select>
-                      <el-input v-model="cap_list.number" type="number" class="cap-list-number" />
+                      <el-input-number v-model="cap_list.number" :min="1" class="cap-list-number" size="mini" />
                       <el-button type="danger" size="mini" icon="el-icon-delete" @click.prevent="removeCapList(index)" />
                     </el-form-item>
                   </div>
@@ -292,7 +292,7 @@
                   </el-form-item>
                   <div class="pack-number-content">
                     <el-form-item label="数量" size="small">
-                      <el-input v-model="former_sea_instruction.number" style="width: 100%" type="number" />
+                      <el-input-number v-model="former_sea_instruction.number" :min="1" style="width: 100%" />
                     </el-form-item>
                     <el-form-item label="包装类型" size="small">
                       <el-select v-model="former_sea_instruction.package_type_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
@@ -457,16 +457,17 @@ export default {
       tradeTermsOptions: [],
       transshipmentTypeOptions: [],
       CapTypeOptions: [],
-      activeName: 'former_sea_instruction'
+      activeName: 'former_sea_instruction',
+      isDataChange: 0
     }
   },
   watch: {
     former_sea_instruction: {
-      handler(newValue, oldValue) {
-        console.log(newValue, oldValue)
+      handler(newName, oldName) {
+        this.isDataChange++
       },
-      immediate: true,
-      deep: true
+      deep: true,
+      immediate: false
     }
   },
   created() {
@@ -509,7 +510,9 @@ export default {
         this.tradeTermsOptions = selectOptions['TradeTerms']
         this.shipmentItemOptions = selectOptions['ShippingTerms']
         this.former_sea_instruction = response['formerData']
-        this.former_sea_instruction.sea_cap_lists = [{ number: 1, cap_type: undefined }]
+        if (this.former_sea_instruction.sea_cap_lists === null) {
+          this.former_sea_instruction.sea_cap_lists = [{ number: 1, cap_type: undefined, order_master_id: parseInt(this.$route.params.id) }]
+        }
         this.order_master = response['order']
         this.$emit('orderInfo', this.order_master)
       }).catch(error => {
@@ -517,7 +520,7 @@ export default {
       })
     },
     addCapList() {
-      this.former_sea_instruction.sea_cap_lists.push({ number: 1, cap_type: undefined })
+      this.former_sea_instruction.sea_cap_lists.push({ number: 1, cap_type: undefined, order_master_id: parseInt(this.$route.params.id) })
     },
     removeCapList(index) {
       this.former_sea_instruction.sea_cap_lists.splice(index, 1)
@@ -548,6 +551,14 @@ export default {
     },
     saveData() {
       let data = {}
+      if (this.isDataChange <= 1) {
+        this.$notify.error({
+          title: '错误',
+          message: '当前数据未发生改变,不允许进行保存',
+          duration: 5000
+        })
+        return
+      }
       if (this.activeName === 'former_sea_instruction') {
         data = { former_sea_instruction: this.former_sea_instruction, order_extend_info: this.order_master.order_extend_info }
       }
@@ -559,6 +570,7 @@ export default {
           type: 'success',
           duration: 5000
         })
+        this.isDataChange = 1
       }).catch(reason => {
         console.log(reason)
       })
@@ -570,11 +582,12 @@ export default {
 <style lang="scss">
   .cap-list{
     .el-form-item{
+      width: 30% !important;
       .el-select{
-        width: 40%;
+        width: 33%;
       }
       .cap-list-number{
-        width: 30%;
+        width: 40%;
       }
       .el-button{
         display: inline-block;

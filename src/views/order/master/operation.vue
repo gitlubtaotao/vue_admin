@@ -123,6 +123,7 @@ export default {
       margin-right: 0 !important;
       width: 24.5%;
     }
+
   }
   .form-content-box-right{
     .el-form-item {
