@@ -70,6 +70,7 @@ export default {
     former_sea_so_no: {
       handler(newName, oldName) {
         this.isDataChange++
+        this.$emit('childByValue', newName)
       },
       deep: true,
       immediate: false
@@ -79,6 +80,12 @@ export default {
         this.isDataChange++
       },
       deep: true,
+      immediate: false
+    },
+    isDataChange: {
+      handler(newValue, oldValue) {
+        this.$emit('childByDataChange', newValue)
+      },
       immediate: false
     }
   },

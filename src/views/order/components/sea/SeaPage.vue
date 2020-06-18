@@ -24,7 +24,7 @@
                   <el-input :value="showDate(order_master.order_extend_info.cut_off_day)" disabled />
                 </el-form-item>
                 <el-form-item label="截放行条时间" size="small">
-                  <el-input :value="order_master.order_extend_info.carrier_name" disabled />
+                  <el-input :value="showDate(former_sea_so_no.voucher_cut_off)" disabled />
                 </el-form-item>
                 <el-form-item label="起运港." size="small">
                   <el-input :value="showPort(order_master.order_extend_info.pol_id)" disabled />
@@ -39,10 +39,10 @@
                   <el-input :value="order_master.order_extend_info.voyage" disabled />
                 </el-form-item>
                 <el-form-item label="VGM截止时间" size="small">
-                  <el-input :value="order_master.order_extend_info.carrier_name" placeholder="HBL NO." disabled />
+                  <el-input :value="showDate(former_sea_so_no.vgm_submission_deadline)" disabled />
                 </el-form-item>
-                <el-form-item label="SO NO." size="small">
-                  <el-input :value="order_master.order_extend_info.mbl_so" placeholder="MBL NO." disabled />
+                <el-form-item label="So No." size="small">
+                  <el-input :value="former_sea_so_no.so_no" placeholder="" disabled />
                 </el-form-item>
                 <el-form-item label="货量" size="small">
                   <el-input :value="order_master.order_extend_info.number" placeholder="" disabled />
@@ -54,7 +54,7 @@
                   <el-input :value="showDate(order_master.order_extend_info.arrival)" disabled />
                 </el-form-item>
                 <el-form-item label="截补料时间" size="small">
-                  <el-input :value="order_master.order_extend_info.carrier_name" placeholder="HBL NO." disabled />
+                  <el-input :value="showDate(former_sea_so_no.si_cut_off)" disabled />
                 </el-form-item>
               </el-col>
               <el-col :span="4" class="middle-content">
@@ -625,7 +625,7 @@
         </el-tab-pane>
         <el-tab-pane label="SO NO." name="former_sea_so_no" :lazy="true">
           <keep-alive>
-            <former-so-no :get-former-data-url="getFormerDataUrl" />
+            <former-so-no :get-former-data-url="getFormerDataUrl" @childByValue="formerSoNoValue" @childByDataChange="childByDataChange"/>
           </keep-alive>
         </el-tab-pane>
         <el-tab-pane label="综合服务" name="service">定时任务补偿</el-tab-pane>
@@ -645,6 +645,12 @@ export default {
   components: { ButtonList, FormerButton, FormerSoNo },
   data() {
     return {
+      former_sea_so_no: {
+        voucher_cut_off: undefined,
+        vgm_submission_deadline: undefined,
+        si_cut_off: undefined,
+        so_no: undefined
+      },
       order_master: {
         order_extend_info: {
           id: undefined,
@@ -877,6 +883,12 @@ export default {
         }
         this.loadingCooperator = false
       })
+    },
+    formerSoNoValue(val) {
+      this.former_sea_so_no = val
+    },
+    childByDataChange(val) {
+      this.isDataChange = val
     },
     remoteCooperator(query) {
       if (query !== '') {
