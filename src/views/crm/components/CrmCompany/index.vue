@@ -644,7 +644,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        updateData(url).then((response) => {
+        updateData(url, {}, 'patch').then((response) => {
           this.$notify({
             title: 'Success',
             message: '操作成功',

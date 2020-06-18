@@ -4,16 +4,13 @@
       <el-button type="success" size="mini" icon="el-icon-check" :loading="saveLoading" @click="saveDataToService">保存</el-button>
     </el-row>
     <el-divider />
+
   </div>
 </template>
 <script>
 export default {
   name: 'FormerButton',
   props: {
-    orderMaster: {
-      required: true,
-      type: Object
-    },
     saveData: {
       type: Function,
       default: null

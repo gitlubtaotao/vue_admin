@@ -582,9 +582,20 @@
               </el-col>
               <el-col :span="4" class="form-content-box-right" style="padding-left: 5px;padding-right: 5px; ">
                 <el-tag type="primary">订舱信息</el-tag>
-                <el-form-item label="订舱代理" size="small">
-                  <el-select v-model="former_sea_book.supply_agent_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                    <el-option v-for="item in miscBillOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                <el-form-item label="订舱代理" prop="supply_agent_id" size="small">
+                  <el-select
+                    v-model="former_sea_book.supply_agent_id"
+                    filterable
+                    remote
+                    placeholder="请选择"
+                    size="small"
+                    clearable
+                    :remote-method="remoteSupply"
+                    :loading="loadingCooperator"
+                    style="width: 100%"
+                    @focus="getSupply"
+                  >
+                    <el-option v-for="item in supplyOptions" :key="item.value" :label="item.label" :value="item.value" />
                   </el-select>
                 </el-form-item>
                 <el-form-item label="出单方式" size="small">
@@ -612,7 +623,11 @@
             </el-row>
           </el-form>
         </el-tab-pane>
-        <el-tab-pane label="SO NO." name="former_sea_so_no">角色管理</el-tab-pane>
+        <el-tab-pane label="SO NO." name="former_sea_so_no" :lazy="true">
+          <keep-alive>
+            <former-so-no :get-former-data-url="getFormerDataUrl" />
+          </keep-alive>
+        </el-tab-pane>
         <el-tab-pane label="综合服务" name="service">定时任务补偿</el-tab-pane>
       </el-tabs>
     </el-col>
@@ -623,9 +638,11 @@ import { parseTime } from '@/utils'
 import { getData, createData } from '@/api/index_data'
 import ButtonList from '../ButtonList'
 import FormerButton from './FormerButton'
+import FormerSoNo from './FormerSoNo'
+import { remoteCompany } from '@/api/select'
 export default {
   name: 'SeaPage',
-  components: { ButtonList, FormerButton },
+  components: { ButtonList, FormerButton, FormerSoNo },
   data() {
     return {
       order_master: {
@@ -750,6 +767,8 @@ export default {
       tradeTermsOptions: [],
       transshipmentTypeOptions: [],
       CapTypeOptions: [],
+      supplies: [],
+      supplyOptions: [],
       activeName: 'former_sea_instruction',
       isDataChange: 0,
       isLoadingBookingData: false,
@@ -831,7 +850,52 @@ export default {
         this.cooperatorOptions = this.cooperator
       }
     },
-    remoteCooperator() { },
+    getSupply() {
+      if (this.supplies.length > 0) {
+        this.supplyOptions = this.supplies
+        return
+      }
+      this.remoteSupply('')
+    },
+    remoteSupply(query) {
+      if (query !== '') {
+        this.loadingCooperator = true
+        const result = this.supplies.filter(item => {
+          return item.label.toLowerCase()
+            .indexOf(query.toLowerCase()) > -1
+        })
+        if (result.length > 0) {
+          this.loadingCooperator = false
+          this.supplyOptions = result
+          return
+        }
+      }
+      remoteCompany(query, { company_type: [2, 3] }).then((response) => {
+        this.supplyOptions = response
+        if (query === '' || query === null) {
+          this.supplies = response
+        }
+        this.loadingCooperator = false
+      })
+    },
+    remoteCooperator(query) {
+      if (query !== '') {
+        this.loadingCooperator = true
+        const result = this.cooperator.filter(item => {
+          return item.label.toLowerCase()
+            .indexOf(query.toLowerCase()) > -1
+        })
+        if (result.length > 0) {
+          this.loadingCooperator = false
+          this.cooperatorOptions = result
+        } else {
+          remoteCompany(query, { company_type: [1, 3] }).then((response) => {
+            this.cooperatorOptions = response
+            this.loadingCooperator = false
+          })
+        }
+      }
+    },
     showPackType() {
       const val = this.order_master.order_extend_info.package_type_id
       if (val === '' || val === undefined || typeof (val) === 'undefined') {
@@ -863,6 +927,7 @@ export default {
     changeNabType(tab, event) {
       if (this.activeName === 'former_sea_book') {
         this.initBookingData()
+        this.getSupply()
       }
     },
     initBookingData() {
