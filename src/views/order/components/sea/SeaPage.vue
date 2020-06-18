@@ -59,19 +59,19 @@
               </el-col>
               <el-col :span="4" class="middle-content">
                 <el-form-item label="包装数量" size="small">
-                  <el-input v-model="order_master.order_extend_info.number" placeholder="包装数量" disabled />
+                  <el-input :value="order_master.order_extend_info.number" placeholder="包装数量" disabled />
                 </el-form-item>
                 <el-form-item label="包装类型" size="small">
-                  <el-input v-model="order_master.order_extend_info.carrier_name" placeholder="HBL NO." disabled />
+                  <el-input :value="showPackType()" placeholder="包装类型" disabled />
                 </el-form-item>
                 <el-form-item label="毛重(KGS)" size="small">
-                  <el-input v-model="order_master.order_extend_info.gross_weight" placeholder="HBL NO." disabled />
+                  <el-input :value="order_master.order_extend_info.gross_weight" placeholder="毛重" disabled />
                 </el-form-item>
                 <el-form-item label="体积(CBM)" size="small">
-                  <el-input v-model="order_master.order_extend_info.volume" placeholder="HBL NO." disabled />
+                  <el-input :value="order_master.order_extend_info.volume" placeholder="体积(CBM)" disabled />
                 </el-form-item>
                 <el-form-item label="订单备注" size="small" class="order-master-remark">
-                  <el-input v-model="order_master.remarks" placeholder="HBL NO." disabled />
+                  <el-input :value="order_master.remarks" placeholder="HBL NO." disabled />
                 </el-form-item>
               </el-col>
               <el-col :span="6" class="right-content">
@@ -558,18 +558,18 @@
                   </el-form-item>
                   <div class="pack-number-content">
                     <el-form-item label="数量" size="small">
-                      <el-input-number v-model="former_sea_book.number" :min="1" style="width: 100%" />
+                      <el-input-number v-model="former_sea_book.number" :min="1" style="width: 100%" @change="syncExtendInfo($event,'number')" />
                     </el-form-item>
                     <el-form-item label="包装类型" size="small">
-                      <el-select v-model="former_sea_book.package_type_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
+                      <el-select v-model="former_sea_book.package_type_id" filterable placeholder="请选择" size="small" clearable style="width: 100%" @change="syncExtendInfo($event,'package_type_id')">
                         <el-option v-for="item in packageTypeOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
                       </el-select>
                     </el-form-item>
                     <el-form-item label="毛重(KGS)" size="small">
-                      <el-input v-model="former_sea_book.gross_weight" style="width: 100%" type="number" />
+                      <el-input v-model="former_sea_book.gross_weight" style="width: 100%" type="number" @change="syncExtendInfo($event,'gross_weight')" />
                     </el-form-item>
                     <el-form-item label="体积(CBM)" size="small">
-                      <el-input v-model="former_sea_book.volume" style="width: 100%" type="number" />
+                      <el-input v-model="former_sea_book.volume" style="width: 100%" type="number" @change="syncExtendInfo($event,'volume')" />
                     </el-form-item>
                   </div>
                   <el-form-item label="收货地" size="small">
@@ -832,6 +832,16 @@ export default {
       }
     },
     remoteCooperator() { },
+    showPackType() {
+      const val = this.order_master.order_extend_info.package_type_id
+      if (val === '' || val === undefined || typeof (val) === 'undefined') {
+        return ''
+      }
+      const value = this.packageTypeOptions.filter(item => item.id === val.toString())
+      if (value.length > 0) {
+        return value[0].name
+      }
+    },
     showCarrier(val) {
       if (val === '' || val === undefined || typeof (val) === 'undefined') {
         return ''
@@ -873,7 +883,7 @@ export default {
     dataIsSave(activeName, oldActiveName) {
       if (this.isDataChange > 1) {
         this.$notify.warning({
-          title: '错误',
+          title: '警告',
           message: '当前数据发生改变,没有进行保存',
           duration: 5000
         })
@@ -895,7 +905,7 @@ export default {
       if (this.activeName === 'former_sea_instruction') {
         data = { former_sea_instruction: this.former_sea_instruction, order_extend_info: this.order_master.order_extend_info }
       } else if (this.activeName === 'former_sea_book') {
-        data = { former_sea_book: this.former_sea_instruction, order_extend_info: this.order_master.order_extend_info }
+        data = { former_sea_book: this.former_sea_book, order_extend_info: this.order_master.order_extend_info }
       }
       console.log(data)
       createData('/order/masters/' + this.$route.params.id + '/UpdateFormerData?former_type=' + this.activeName, data).then((response) => {
