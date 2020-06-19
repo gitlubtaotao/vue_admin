@@ -18,7 +18,7 @@
                   <el-input :value="order_master.order_extend_info.hbl_so" disabled />
                 </el-form-item>
                 <el-form-item label="船公司." size="small">
-                  <el-input :value="showCarrier(order_master.order_extend_info.carrier_id)" disabled />
+                  <el-input :value="showCarrier" disabled />
                 </el-form-item>
                 <el-form-item label="截关/截港日期" size="small">
                   <el-input :value="showDate(order_master.order_extend_info.cut_off_day)" disabled />
@@ -27,10 +27,10 @@
                   <el-input :value="showDate(former_sea_so_no.voucher_cut_off)" disabled />
                 </el-form-item>
                 <el-form-item label="起运港." size="small">
-                  <el-input :value="showPort(order_master.order_extend_info.pol_id)" disabled />
+                  <el-input :value="showPol" disabled />
                 </el-form-item>
                 <el-form-item label="目的港" size="small">
-                  <el-input :value="showPort(order_master.order_extend_info.pod_id)" disabled />
+                  <el-input :value="showPod" disabled />
                 </el-form-item>
                 <el-form-item label="船名" size="small">
                   <el-input :value="order_master.order_extend_info.vessel" disabled />
@@ -358,6 +358,9 @@
               </el-col>
             </el-row>
           </el-form>
+          <keep-alive>
+            <sea-cargo-list :source-id="former_sea_instruction.id" :cargo-info="former_sea_instruction.sea_cargo_infos" source-type="former_sea_instructions" :package-type-options="packageTypeOptions" :cap-type-options="CapTypeOptions" />
+          </keep-alive>
         </el-tab-pane>
         <el-tab-pane label="订舱单(MBL)" name="former_sea_book" :lazy="true">
           <keep-alive>
@@ -622,10 +625,13 @@
               </el-col>
             </el-row>
           </el-form>
+          <keep-alive>
+            <sea-cargo-list :source-id="parseInt($route.params.id)" source-type="order_masters" :cargo-info="former_sea_instruction.sea_cargo_infos" :package-type-options="packageTypeOptions" :cap-type-options="CapTypeOptions" />
+          </keep-alive>
         </el-tab-pane>
         <el-tab-pane label="SO NO." name="former_sea_so_no" :lazy="true">
           <keep-alive>
-            <former-so-no :get-former-data-url="getFormerDataUrl" @childByValue="formerSoNoValue" @childByDataChange="childByDataChange"/>
+            <former-so-no :get-former-data-url="getFormerDataUrl" @childByValue="formerSoNoValue" @childByDataChange="childByDataChange" />
           </keep-alive>
         </el-tab-pane>
         <el-tab-pane label="综合服务" name="service">定时任务补偿</el-tab-pane>
@@ -639,10 +645,11 @@ import { getData, createData } from '@/api/index_data'
 import ButtonList from '../ButtonList'
 import FormerButton from './FormerButton'
 import FormerSoNo from './FormerSoNo'
+import SeaCargoList from './SeaCargoList'
 import { remoteCompany } from '@/api/select'
 export default {
   name: 'SeaPage',
-  components: { ButtonList, FormerButton, FormerSoNo },
+  components: { ButtonList, FormerButton, FormerSoNo, SeaCargoList },
   data() {
     return {
       former_sea_so_no: {
@@ -675,7 +682,7 @@ export default {
         }
       },
       former_sea_instruction: {
-        id: undefined,
+        id: 0,
         instruction_id: undefined,
         shipper_id: undefined,
         shipper_content: undefined,
@@ -715,7 +722,8 @@ export default {
         contract_no: undefined,
         invoice_no: undefined,
         remarks: undefined,
-        sea_cap_lists: [{ number: 1, cap_type: undefined }]
+        sea_cap_lists: [{ number: 1, cap_type: undefined }],
+        sea_cargo_infos: []
       },
       former_sea_book: {
         id: undefined,
@@ -779,6 +787,44 @@ export default {
       isDataChange: 0,
       isLoadingBookingData: false,
       getFormerDataUrl: '/order/masters/' + this.$route.params.id
+    }
+  },
+  computed: {
+    showCarrier: function() {
+      const val = this.order_master.order_extend_info.carrier_id
+      if (val === '' || val === undefined || typeof (val) === 'undefined') {
+        return ''
+      }
+      const value = this.carrierOptions.filter(item => item.id === val.toString())
+      if (value.length > 0) {
+        return value[0].name
+      } else {
+        return ''
+      }
+    },
+    showPol: function() {
+      const val = this.order_master.order_extend_info.pol_id
+      if (val === '' || val === undefined || typeof (val) === 'undefined') {
+        return ''
+      }
+      const value = this.portOptions.filter(item => item.id === val.toString())
+      if (value.length > 0) {
+        return value[0].name
+      } else {
+        return ''
+      }
+    },
+    showPod: function() {
+      const val = this.order_master.order_extend_info.pod_id
+      if (val === '' || val === undefined || typeof (val) === 'undefined') {
+        return ''
+      }
+      const value = this.portOptions.filter(item => item.id === val.toString())
+      if (value.length > 0) {
+        return value[0].name
+      } else {
+        return ''
+      }
     }
   },
   watch: {
@@ -914,24 +960,6 @@ export default {
         return ''
       }
       const value = this.packageTypeOptions.filter(item => item.id === val.toString())
-      if (value.length > 0) {
-        return value[0].name
-      }
-    },
-    showCarrier(val) {
-      if (val === '' || val === undefined || typeof (val) === 'undefined') {
-        return ''
-      }
-      const value = this.carrierOptions.filter(item => item.id === val.toString())
-      if (value.length > 0) {
-        return value[0].name
-      }
-    },
-    showPort(val) {
-      if (val === '' || val === undefined || typeof (val) === 'undefined') {
-        return ''
-      }
-      const value = this.portOptions.filter(item => item.id === val.toString())
       if (value.length > 0) {
         return value[0].name
       }
