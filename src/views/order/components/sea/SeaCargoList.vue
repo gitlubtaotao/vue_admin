@@ -134,9 +134,9 @@
     </el-table>
     <el-row style="margin-top: 10px">
       <el-button size="mini" type="primary" icon="el-icon-plus" @click="addCargoInfo">新增</el-button>
-      <el-button size="mini" type="success" icon="el-icon-check" :loading="updateLoading" @click="saveCargoInfo">保存</el-button>
+      <el-button size="mini" type="success" icon="el-icon-check" :loading="updateLoading" @click="saveCargoInfo()">保存</el-button>
       <el-button size="mini" type="danger" icon="el-icon-delete" :loading="deleteLoading" @click="deleteCargoInfo('','')">删除</el-button>
-      <el-button size="mini" type="info" icon="el-icon-copy-document">复制</el-button>
+      <el-button size="mini" type="info" icon="el-icon-copy-document" @click="copyData">复制</el-button>
     </el-row>
   </div>
 </template>
@@ -263,7 +263,6 @@ export default {
       }).then(() => {
         this.deleteLoading = true
         const ids = rows.map(item => item.id)
-        console.log(ids)
         createData('/order/masters/DeleteCargoInfo?former_type=sea_cargo_info', { ids: ids }, 'post').then((response) => {
           this.$notify({
             title: 'Success',
@@ -272,7 +271,7 @@ export default {
             duration: 5000
           })
           rows.forEach((a) => {
-            this.sea_cargo_array.splice(this.sea_cargo_array.indexOf(a),1)
+            this.sea_cargo_array.splice(this.sea_cargo_array.indexOf(a), 1)
           })
           this.deleteLoading = false
         }).catch(reason => {
@@ -292,25 +291,29 @@ export default {
         this.$set(this.sea_cargo_array[$index], 'edit', status)
       }
     },
-    saveCargoInfo() {
-      if (this.multipleSelection.length <= 0) {
+    saveCargoInfo(data) {
+      if (data === undefined) {
+        data = this.multipleSelection
+      }
+      console.log(data)
+      if (data.length <= 0) {
         this.$message.warning('未选择记录,不允许保存')
         return
       }
-      for (let i = 0; i < this.multipleSelection.length; i++) {
-        const cap_type = this.sea_cargo_array[i].cap_type
+      for (let i = 0; i < data.length; i++) {
+        const cap_type = data[i].cap_type
         if (cap_type === '' || typeof (cap_type) === 'undefined') {
           this.$message.warning('柜型不能为空')
           return
         }
-        const so_no = this.sea_cargo_array[i].so_no
+        const so_no = data[i].so_no
         if (so_no === '' || typeof (so_no) === 'undefined') {
           this.$message.warning('SO No.不能为空')
           return
         }
       }
       this.updateLoading = true
-      createData('/order/masters/' + this.$route.params.id + '/UpdateCargoInfo?former_type=' + 'sea_cargo_info', { sea_cargo_info: this.multipleSelection }).then((response) => {
+      createData('/order/masters/' + this.$route.params.id + '/UpdateCargoInfo?former_type=' + 'sea_cargo_info', { sea_cargo_info: data }).then((response) => {
         this.$notify({
           title: 'Success',
           message: '保存数据成功',
@@ -328,9 +331,25 @@ export default {
         return el.id !== 0
       })
       this.sea_cargo_array = result.concat(data)
+      console.log(this.sea_cargo_array)
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
+    },
+    copyData() {
+      if (this.multipleSelection.length <= 0) {
+        this.$message.warning('没有选择记录')
+        return false
+      }
+      const data = this.multipleSelection
+      data.forEach((a) => {
+        if (a.id === 0) {
+          this.$message.warning('请先进行数据保存')
+          return false
+        }
+        a.id = 0
+      })
+      this.saveCargoInfo(data)
     },
     getSoNoOptions() {
       if (this.SoNoOptions.length > 0) {

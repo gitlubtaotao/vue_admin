@@ -626,7 +626,7 @@
             </el-row>
           </el-form>
           <keep-alive>
-            <sea-cargo-list :source-id="parseInt($route.params.id)" source-type="order_masters" :cargo-info="former_sea_instruction.sea_cargo_infos" :package-type-options="packageTypeOptions" :cap-type-options="CapTypeOptions" />
+            <sea-cargo-list :source-id="former_sea_book.id" source-type="former_sea_books" :cargo-info="former_sea_book.sea_cargo_infos" :package-type-options="packageTypeOptions" :cap-type-options="CapTypeOptions" />
           </keep-alive>
         </el-tab-pane>
         <el-tab-pane label="SO NO." name="former_sea_so_no" :lazy="true">
@@ -726,7 +726,7 @@ export default {
         sea_cargo_infos: []
       },
       former_sea_book: {
-        id: undefined,
+        id: 0,
         instruction_id: undefined,
         shipper_id: undefined,
         shipper_content: undefined,
@@ -764,7 +764,8 @@ export default {
         shipment_item_id: undefined,
         charge_description: undefined,
         remarks: undefined,
-        sea_cap_lists: [{ number: 1, cap_type: undefined }]
+        sea_cap_lists: [{ number: 1, cap_type: undefined }],
+        sea_cargo_infos: []
       },
       changePayOptions: [],
       userOptions: [],
@@ -986,14 +987,6 @@ export default {
       this.order_master.order_extend_info[field] = val
     },
     dataIsSave(activeName, oldActiveName) {
-      if (this.isDataChange > 1) {
-        this.$notify.warning({
-          title: '警告',
-          message: '当前数据发生改变,没有进行保存',
-          duration: 5000
-        })
-        return false
-      }
       this.isDataChange = 0
       return true
     },
