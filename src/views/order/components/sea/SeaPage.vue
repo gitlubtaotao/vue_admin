@@ -119,11 +119,21 @@
                     @change="getCompanyDetail($event,'shipper_content')"
                     @focus="getCooperator"
                   >
-                    <el-option v-for="item in cooperatorOptions" :key="item.value" :label="item.label" :value="item.value" />
+                    <el-option
+                      v-for="item in cooperatorOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
                   </el-select>
                 </el-form-item>
                 <el-form-item label="发货人详情" size="small">
-                  <el-input v-model="former_sea_instruction.shipper_content" type="textarea" :rows="6" style="width: 100%" />
+                  <el-input
+                    v-model="former_sea_instruction.shipper_content"
+                    type="textarea"
+                    :rows="6"
+                    style="width: 100%"
+                  />
                 </el-form-item>
                 <el-form-item label="收货人" prop="consignee_id" size="small">
                   <el-select
@@ -139,11 +149,21 @@
                     @change="getCompanyDetail($event,'consignee_content')"
                     @focus="getCooperator"
                   >
-                    <el-option v-for="item in cooperatorOptions" :key="item.value" :label="item.label" :value="item.value" />
+                    <el-option
+                      v-for="item in cooperatorOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
                   </el-select>
                 </el-form-item>
                 <el-form-item label="收货人详情" size="small">
-                  <el-input v-model="former_sea_instruction.consignee_content" type="textarea" :rows="6" style="width: 100%" />
+                  <el-input
+                    v-model="former_sea_instruction.consignee_content"
+                    type="textarea"
+                    :rows="6"
+                    style="width: 100%"
+                  />
                 </el-form-item>
                 <el-form-item label="通知人" prop="notify_party_id" size="small">
                   <el-select
@@ -159,11 +179,21 @@
                     @change="getCompanyDetail($event,'notify_party_content')"
                     @focus="getCooperator"
                   >
-                    <el-option v-for="item in cooperatorOptions" :key="item.value" :label="item.label" :value="item.value" />
+                    <el-option
+                      v-for="item in cooperatorOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
                   </el-select>
                 </el-form-item>
                 <el-form-item label="通知人详情" size="small">
-                  <el-input v-model="former_sea_instruction.notify_party_content" type="textarea" :rows="6" style="width: 100%" />
+                  <el-input
+                    v-model="former_sea_instruction.notify_party_content"
+                    type="textarea"
+                    :rows="6"
+                    style="width: 100%"
+                  />
                 </el-form-item>
                 <el-form-item label="目的港代理" prop="pod_agent_id" size="small">
                   <el-select
@@ -179,44 +209,98 @@
                     @change="getCompanyDetail($event,'pod_agent_content')"
                     @focus="getCooperator"
                   >
-                    <el-option v-for="item in cooperatorOptions" :key="item.value" :label="item.label" :value="item.value" />
+                    <el-option
+                      v-for="item in cooperatorOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
                   </el-select>
                 </el-form-item>
                 <el-form-item label="目的港代理详情" size="small">
-                  <el-input v-model="former_sea_instruction.pod_agent_content" type="textarea" :rows="6" style="width: 100%" />
+                  <el-input
+                    v-model="former_sea_instruction.pod_agent_content"
+                    type="textarea"
+                    :rows="6"
+                    style="width: 100%"
+                  />
                 </el-form-item>
               </el-col>
               <el-col :span="16" class="form-content-box-center" style="padding-left: 5px;padding-right: 5px; ">
                 <div class="box-center-1">
                   <el-form-item label="HBL NO." size="small">
-                    <el-input v-model="former_sea_instruction.hbl_no" style="width: 100%" @change="syncExtendInfo($event,'hbl_so')" />
+                    <el-input
+                      v-model="former_sea_instruction.hbl_no"
+                      style="width: 100%"
+                      @change="syncExtendInfo($event,'hbl_so')"
+                    />
                   </el-form-item>
                   <el-form-item label="HBL释放时间" size="small">
                     <el-date-picker v-model="former_sea_instruction.hbl_no_date" type="date" placeholder="选择日期" />
                   </el-form-item>
                   <el-form-item label="运费支付方式" size="small">
-                    <el-select v-model="former_sea_instruction.ocean_change_pay_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                      <el-option v-for="item in changePayOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                    <el-select
+                      v-model="former_sea_instruction.ocean_change_pay_id"
+                      filterable
+                      placeholder="请选择"
+                      size="small"
+                      clearable
+                      style="width: 100%"
+                    >
+                      <el-option
+                        v-for="item in changePayOptions"
+                        :key="parseInt(item.id)"
+                        :label="item.name"
+                        :value="parseInt(item.id)"
+                      />
                     </el-select>
                   </el-form-item>
                   <el-form-item label="其他运费支付方式" size="small">
-                    <el-select v-model="former_sea_instruction.other_change_pay_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                      <el-option v-for="item in changePayOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                    <el-select
+                      v-model="former_sea_instruction.other_change_pay_id"
+                      filterable
+                      placeholder="请选择"
+                      size="small"
+                      clearable
+                      style="width: 100%"
+                    >
+                      <el-option
+                        v-for="item in changePayOptions"
+                        :key="parseInt(item.id)"
+                        :label="item.name"
+                        :value="parseInt(item.id)"
+                      />
                     </el-select>
                   </el-form-item>
                   <el-form-item label="校对日期" size="small">
                     <el-date-picker v-model="former_sea_instruction.verify_date" type="date" placeholder="选择日期" />
                   </el-form-item>
                   <el-form-item label="校对人" size="small">
-                    <el-select v-model="former_sea_instruction.user_verify_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                      <el-option v-for="item in userOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                    <el-select
+                      v-model="former_sea_instruction.user_verify_id"
+                      filterable
+                      placeholder="请选择"
+                      size="small"
+                      clearable
+                      style="width: 100%"
+                    >
+                      <el-option
+                        v-for="item in userOptions"
+                        :key="parseInt(item.id)"
+                        :label="item.name"
+                        :value="parseInt(item.id)"
+                      />
                     </el-select>
                   </el-form-item>
                   <el-form-item label="电放单号" size="small">
                     <el-input v-model="former_sea_instruction.tlx_no" style="width: 100%" />
                   </el-form-item>
                   <el-form-item label="收货人提货时间" size="small">
-                    <el-date-picker v-model="former_sea_instruction.cargo_received_date" type="date" placeholder="选择日期" />
+                    <el-date-picker
+                      v-model="former_sea_instruction.cargo_received_date"
+                      type="date"
+                      placeholder="选择日期"
+                    />
                   </el-form-item>
                   <el-form-item label="签单地点" size="small">
                     <el-input v-model="former_sea_instruction.place_of_issue" style="width: 100%" />
@@ -228,8 +312,20 @@
                 <el-divider />
                 <div class="box-center-2">
                   <el-form-item label="船公司" size="small">
-                    <el-select v-model="order_master.order_extend_info.carrier_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                      <el-option v-for="item in carrierOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                    <el-select
+                      v-model="order_master.order_extend_info.carrier_id"
+                      filterable
+                      placeholder="请选择"
+                      size="small"
+                      clearable
+                      style="width: 100%"
+                    >
+                      <el-option
+                        v-for="item in carrierOptions"
+                        :key="parseInt(item.id)"
+                        :label="item.name"
+                        :value="parseInt(item.id)"
+                      />
                     </el-select>
                   </el-form-item>
                   <el-form-item label="船名" size="small">
@@ -239,64 +335,147 @@
                     <el-input v-model="order_master.order_extend_info.voyage" style="width: 100%" />
                   </el-form-item>
                   <el-form-item label="装船日期" size="small">
-                    <el-date-picker v-model="former_sea_instruction.shaping_on_board_date" type="date" placeholder="选择日期" />
+                    <el-date-picker
+                      v-model="former_sea_instruction.shaping_on_board_date"
+                      type="date"
+                      placeholder="选择日期"
+                    />
                   </el-form-item>
                   <el-form-item label="离港日期" size="small">
-                    <el-date-picker v-model="order_master.order_extend_info.departure" type="date" placeholder="选择日期" :value="22" />
+                    <el-date-picker
+                      v-model="order_master.order_extend_info.departure"
+                      type="date"
+                      placeholder="选择日期"
+                      :value="22"
+                    />
                   </el-form-item>
                   <el-form-item label="到港日期" size="small">
                     <el-date-picker v-model="order_master.order_extend_info.arrival" type="date" placeholder="选择日期" />
                   </el-form-item>
                   <el-form-item label="截关/截港日期" size="small">
-                    <el-date-picker v-model="order_master.order_extend_info.cut_off_day" type="date" placeholder="选择日期" />
+                    <el-date-picker
+                      v-model="order_master.order_extend_info.cut_off_day"
+                      type="date"
+                      placeholder="选择日期"
+                    />
                   </el-form-item>
                   <el-form-item label="起运港" size="small">
-                    <el-select v-model="order_master.order_extend_info.pol_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                      <el-option v-for="item in portOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                    <el-select
+                      v-model="order_master.order_extend_info.pol_id"
+                      filterable
+                      placeholder="请选择"
+                      size="small"
+                      clearable
+                      style="width: 100%"
+                    >
+                      <el-option
+                        v-for="item in portOptions"
+                        :key="parseInt(item.id)"
+                        :label="item.name"
+                        :value="parseInt(item.id)"
+                      />
                     </el-select>
                   </el-form-item>
                   <el-form-item label="中转港" size="small">
-                    <el-select v-model="order_master.order_extend_info.pot_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                      <el-option v-for="item in portOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                    <el-select
+                      v-model="order_master.order_extend_info.pot_id"
+                      filterable
+                      placeholder="请选择"
+                      size="small"
+                      clearable
+                      style="width: 100%"
+                    >
+                      <el-option
+                        v-for="item in portOptions"
+                        :key="parseInt(item.id)"
+                        :label="item.name"
+                        :value="parseInt(item.id)"
+                      />
                     </el-select>
                   </el-form-item>
                   <el-form-item label="目的港" size="small">
-                    <el-select v-model="order_master.order_extend_info.pod_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                      <el-option v-for="item in portOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                    <el-select
+                      v-model="order_master.order_extend_info.pod_id"
+                      filterable
+                      placeholder="请选择"
+                      size="small"
+                      clearable
+                      style="width: 100%"
+                    >
+                      <el-option
+                        v-for="item in portOptions"
+                        :key="parseInt(item.id)"
+                        :label="item.name"
+                        :value="parseInt(item.id)"
+                      />
                     </el-select>
                   </el-form-item>
                 </div>
                 <el-divider />
                 <div class="box-center-3">
-                  <div class="cap-list">
-                    <el-form-item v-for="(cap_list, index) in former_sea_instruction.sea_cap_lists" :key="index" :label="'柜型/柜量'" size="mini">
+                  <div v-if="showTransport === 1" class="cap-list">
+                    <el-form-item
+                      v-for="(cap_list, index) in former_sea_instruction.sea_cap_lists"
+                      :key="index"
+                      :label="'柜型/柜量'"
+                      size="mini"
+                    >
                       <el-select v-model="cap_list.cap_type" filterable placeholder="请选择" size="mini" clearable>
-                        <el-option v-for="item in CapTypeOptions" :key="item.name" :label="item.name" :value="item.name" />
+                        <el-option
+                          v-for="item in CapTypeOptions"
+                          :key="item.name"
+                          :label="item.name"
+                          :value="item.name"
+                        />
                       </el-select>
                       <el-input-number v-model="cap_list.number" :min="1" class="cap-list-number" size="mini" />
                       <el-button type="danger" size="mini" icon="el-icon-delete" @click.prevent="removeCapList(index)" />
                     </el-form-item>
                   </div>
-                  <div><el-button type="primary" size="mini" @click.prevent="addCapList">新增</el-button></div>
+                  <div v-if="showTransport === 1">
+                    <el-button type="primary" size="mini" @click.prevent="addCapList">新增</el-button>
+                  </div>
                   <el-form-item label="唛头" size="small">
                     <el-input v-model="former_sea_instruction.marks" type="textarea" :rows="8" style="width: 100%" />
                   </el-form-item>
                   <el-form-item label="货物描述" size="small">
-                    <el-input v-model="former_sea_instruction.description_of_good" type="textarea" :rows="8" style="width: 100%" />
+                    <el-input
+                      v-model="former_sea_instruction.description_of_good"
+                      type="textarea"
+                      :rows="8"
+                      style="width: 100%"
+                    />
                   </el-form-item>
                   <el-form-item label="尺寸" size="small">
                     <el-input v-model="former_sea_instruction.size" type="textarea" :rows="8" style="width: 100%" />
                   </el-form-item>
                   <el-form-item label="HBL 备注" size="small">
-                    <el-input v-model="former_sea_instruction.hbl_remarks" type="textarea" :rows="8" style="width: 100%" />
+                    <el-input
+                      v-model="former_sea_instruction.hbl_remarks"
+                      type="textarea"
+                      :rows="8"
+                      style="width: 100%"
+                    />
                   </el-form-item>
                   <div class="pack-number-content">
                     <el-form-item label="数量" size="small">
                       <el-input-number v-model="former_sea_instruction.number" :min="1" style="width: 100%" />
                     </el-form-item>
                     <el-form-item label="包装类型" size="small">
-                      <el-select v-model="former_sea_instruction.package_type_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                        <el-option v-for="item in packageTypeOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                      <el-select
+                        v-model="former_sea_instruction.package_type_id"
+                        filterable
+                        placeholder="请选择"
+                        size="small"
+                        clearable
+                        style="width: 100%"
+                      >
+                        <el-option
+                          v-for="item in packageTypeOptions"
+                          :key="parseInt(item.id)"
+                          :label="item.name"
+                          :value="parseInt(item.id)"
+                        />
                       </el-select>
                     </el-form-item>
                     <el-form-item label="毛重(KGS)" size="small">
@@ -307,43 +486,125 @@
                     </el-form-item>
                   </div>
                   <el-form-item label="收货地" size="small">
-                    <el-input v-model="former_sea_instruction.place_of_delivery" type="textarea" :rows="8" style="width: 100%" />
+                    <el-input
+                      v-model="former_sea_instruction.place_of_delivery"
+                      type="textarea"
+                      :rows="8"
+                      style="width: 100%"
+                    />
                   </el-form-item>
                   <el-form-item label="接货地" size="small">
-                    <el-input v-model="former_sea_instruction.place_of_receipt" type="textarea" :rows="8" style="width: 100%" />
+                    <el-input
+                      v-model="former_sea_instruction.place_of_receipt"
+                      type="textarea"
+                      :rows="8"
+                      style="width: 100%"
+                    />
                   </el-form-item>
                 </div>
               </el-col>
               <el-col :span="4" class="form-content-box-right" style="padding-left: 5px;padding-right: 5px; ">
                 <el-tag type="primary">委托信息</el-tag>
                 <el-form-item label="委托类型" size="small">
-                  <el-select v-model="former_sea_instruction.instruction_type_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                    <el-option v-for="item in instructionTypeOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                  <el-select
+                    v-model="former_sea_instruction.instruction_type_id"
+                    filterable
+                    placeholder="请选择"
+                    size="small"
+                    clearable
+                    style="width: 100%"
+                  >
+                    <el-option
+                      v-for="item in instructionTypeOptions"
+                      :key="parseInt(item.id)"
+                      :label="item.name"
+                      :value="parseInt(item.id)"
+                    />
                   </el-select>
                 </el-form-item>
                 <el-form-item label="报关方式" size="small">
-                  <el-select v-model="former_sea_instruction.ways_of_declaration_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                    <el-option v-for="item in waysOfDeclarationOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                  <el-select
+                    v-model="former_sea_instruction.ways_of_declaration_id"
+                    filterable
+                    placeholder="请选择"
+                    size="small"
+                    clearable
+                    style="width: 100%"
+                  >
+                    <el-option
+                      v-for="item in waysOfDeclarationOptions"
+                      :key="parseInt(item.id)"
+                      :label="item.name"
+                      :value="parseInt(item.id)"
+                    />
                   </el-select>
                 </el-form-item>
                 <el-form-item label="出单方式" size="small">
-                  <el-select v-model="former_sea_instruction.misc_bill_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                    <el-option v-for="item in miscBillOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                  <el-select
+                    v-model="former_sea_instruction.misc_bill_id"
+                    filterable
+                    placeholder="请选择"
+                    size="small"
+                    clearable
+                    style="width: 100%"
+                  >
+                    <el-option
+                      v-for="item in miscBillOptions"
+                      :key="parseInt(item.id)"
+                      :label="item.name"
+                      :value="parseInt(item.id)"
+                    />
                   </el-select>
                 </el-form-item>
                 <el-form-item label="转运类型" size="small">
-                  <el-select v-model="former_sea_instruction.transshipment_type_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                    <el-option v-for="item in transshipmentTypeOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                  <el-select
+                    v-model="former_sea_instruction.transshipment_type_id"
+                    filterable
+                    placeholder="请选择"
+                    size="small"
+                    clearable
+                    style="width: 100%"
+                  >
+                    <el-option
+                      v-for="item in transshipmentTypeOptions"
+                      :key="parseInt(item.id)"
+                      :label="item.name"
+                      :value="parseInt(item.id)"
+                    />
                   </el-select>
                 </el-form-item>
                 <el-form-item label="贸易条款" size="small">
-                  <el-select v-model="former_sea_instruction.trade_terms_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                    <el-option v-for="item in tradeTermsOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                  <el-select
+                    v-model="former_sea_instruction.trade_terms_id"
+                    filterable
+                    placeholder="请选择"
+                    size="small"
+                    clearable
+                    style="width: 100%"
+                  >
+                    <el-option
+                      v-for="item in tradeTermsOptions"
+                      :key="parseInt(item.id)"
+                      :label="item.name"
+                      :value="parseInt(item.id)"
+                    />
                   </el-select>
                 </el-form-item>
                 <el-form-item label="装运条款" size="small">
-                  <el-select v-model="former_sea_instruction.shipment_item_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                    <el-option v-for="item in shipmentItemOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                  <el-select
+                    v-model="former_sea_instruction.shipment_item_id"
+                    filterable
+                    placeholder="请选择"
+                    size="small"
+                    clearable
+                    style="width: 100%"
+                  >
+                    <el-option
+                      v-for="item in shipmentItemOptions"
+                      :key="parseInt(item.id)"
+                      :label="item.name"
+                      :value="parseInt(item.id)"
+                    />
                   </el-select>
                 </el-form-item>
                 <el-form-item label="合同编号" size="small">
@@ -359,7 +620,13 @@
             </el-row>
           </el-form>
           <keep-alive>
-            <sea-cargo-list :source-id="former_sea_instruction.id" :cargo-info="former_sea_instruction.sea_cargo_infos" source-type="former_sea_instructions" :package-type-options="packageTypeOptions" :cap-type-options="CapTypeOptions" />
+            <sea-cargo-list
+              :source-id="former_sea_instruction.id"
+              :cargo-info="former_sea_instruction.sea_cargo_infos"
+              source-type="former_sea_instructions"
+              :package-type-options="packageTypeOptions"
+              :cap-type-options="CapTypeOptions"
+            />
           </keep-alive>
         </el-tab-pane>
         <el-tab-pane label="订舱单(MBL)" name="former_sea_book" :lazy="true">
@@ -383,7 +650,12 @@
                     @change="getCompanyDetail($event,'shipper_content')"
                     @focus="getCooperator"
                   >
-                    <el-option v-for="item in cooperatorOptions" :key="item.value" :label="item.label" :value="item.value" />
+                    <el-option
+                      v-for="item in cooperatorOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
                   </el-select>
                 </el-form-item>
                 <el-form-item label="发货人详情" size="small">
@@ -403,7 +675,12 @@
                     @change="getCompanyDetail($event,'consignee_content')"
                     @focus="getCooperator"
                   >
-                    <el-option v-for="item in cooperatorOptions" :key="item.value" :label="item.label" :value="item.value" />
+                    <el-option
+                      v-for="item in cooperatorOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
                   </el-select>
                 </el-form-item>
                 <el-form-item label="收货人详情" size="small">
@@ -423,11 +700,21 @@
                     @change="getCompanyDetail($event,'notify_party_content')"
                     @focus="getCooperator"
                   >
-                    <el-option v-for="item in cooperatorOptions" :key="item.value" :label="item.label" :value="item.value" />
+                    <el-option
+                      v-for="item in cooperatorOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
                   </el-select>
                 </el-form-item>
                 <el-form-item label="通知人详情" size="small">
-                  <el-input v-model="former_sea_book.notify_party_content" type="textarea" :rows="6" style="width: 100%" />
+                  <el-input
+                    v-model="former_sea_book.notify_party_content"
+                    type="textarea"
+                    :rows="6"
+                    style="width: 100%"
+                  />
                 </el-form-item>
                 <el-form-item label="目的港代理" prop="pod_agent_id" size="small">
                   <el-select
@@ -443,7 +730,12 @@
                     @change="getCompanyDetail($event,'pod_agent_content')"
                     @focus="getCooperator"
                   >
-                    <el-option v-for="item in cooperatorOptions" :key="item.value" :label="item.label" :value="item.value" />
+                    <el-option
+                      v-for="item in cooperatorOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
                   </el-select>
                 </el-form-item>
                 <el-form-item label="目的港代理详情" size="small">
@@ -453,32 +745,84 @@
               <el-col :span="16" class="form-content-box-center" style="padding-left: 5px;padding-right: 5px; ">
                 <div class="box-center-1">
                   <el-form-item label="MBL NO." size="small">
-                    <el-input v-model="former_sea_book.mbl_no" style="width: 100%" @change="syncExtendInfo($event,'mbl_so')" />
+                    <el-input
+                      v-model="former_sea_book.mbl_no"
+                      style="width: 100%"
+                      @change="syncExtendInfo($event,'mbl_so')"
+                    />
                   </el-form-item>
                   <el-form-item label="MBL释放时间" size="small">
                     <el-date-picker v-model="former_sea_book.mbl_no_date" type="date" placeholder="选择日期" />
                   </el-form-item>
                   <el-form-item label="运费支付方式" size="small">
-                    <el-select v-model="former_sea_book.ocean_change_pay_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                      <el-option v-for="item in changePayOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                    <el-select
+                      v-model="former_sea_book.ocean_change_pay_id"
+                      filterable
+                      placeholder="请选择"
+                      size="small"
+                      clearable
+                      style="width: 100%"
+                    >
+                      <el-option
+                        v-for="item in changePayOptions"
+                        :key="parseInt(item.id)"
+                        :label="item.name"
+                        :value="parseInt(item.id)"
+                      />
                     </el-select>
                   </el-form-item>
                   <el-form-item label="其他运费支付方式" size="small">
-                    <el-select v-model="former_sea_book.other_change_pay_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                      <el-option v-for="item in changePayOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                    <el-select
+                      v-model="former_sea_book.other_change_pay_id"
+                      filterable
+                      placeholder="请选择"
+                      size="small"
+                      clearable
+                      style="width: 100%"
+                    >
+                      <el-option
+                        v-for="item in changePayOptions"
+                        :key="parseInt(item.id)"
+                        :label="item.name"
+                        :value="parseInt(item.id)"
+                      />
                     </el-select>
                   </el-form-item>
                   <el-form-item label="运费支付地" size="small">
-                    <el-select v-model="former_sea_book.pay_pol_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                      <el-option v-for="item in portOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                    <el-select
+                      v-model="former_sea_book.pay_pol_id"
+                      filterable
+                      placeholder="请选择"
+                      size="small"
+                      clearable
+                      style="width: 100%"
+                    >
+                      <el-option
+                        v-for="item in portOptions"
+                        :key="parseInt(item.id)"
+                        :label="item.name"
+                        :value="parseInt(item.id)"
+                      />
                     </el-select>
                   </el-form-item>
                   <el-form-item label="校对日期" size="small">
                     <el-date-picker v-model="former_sea_book.verify_date" type="date" placeholder="选择日期" />
                   </el-form-item>
                   <el-form-item label="校对人" size="small">
-                    <el-select v-model="former_sea_book.user_verify_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                      <el-option v-for="item in userOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                    <el-select
+                      v-model="former_sea_book.user_verify_id"
+                      filterable
+                      placeholder="请选择"
+                      size="small"
+                      clearable
+                      style="width: 100%"
+                    >
+                      <el-option
+                        v-for="item in userOptions"
+                        :key="parseInt(item.id)"
+                        :label="item.name"
+                        :value="parseInt(item.id)"
+                      />
                     </el-select>
                   </el-form-item>
                   <el-form-item label="电放单号" size="small">
@@ -497,8 +841,20 @@
                 <el-divider />
                 <div class="box-center-2">
                   <el-form-item label="船公司" size="small">
-                    <el-select v-model="order_master.order_extend_info.carrier_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                      <el-option v-for="item in carrierOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                    <el-select
+                      v-model="order_master.order_extend_info.carrier_id"
+                      filterable
+                      placeholder="请选择"
+                      size="small"
+                      clearable
+                      style="width: 100%"
+                    >
+                      <el-option
+                        v-for="item in carrierOptions"
+                        :key="parseInt(item.id)"
+                        :label="item.name"
+                        :value="parseInt(item.id)"
+                      />
                     </el-select>
                   </el-form-item>
                   <el-form-item label="船名" size="small">
@@ -508,50 +864,116 @@
                     <el-input v-model="order_master.order_extend_info.voyage" style="width: 100%" />
                   </el-form-item>
                   <el-form-item label="装船日期" size="small">
-                    <el-date-picker v-model="former_sea_instruction.shaping_on_board_date" type="date" placeholder="选择日期" />
+                    <el-date-picker
+                      v-model="former_sea_instruction.shaping_on_board_date"
+                      type="date"
+                      placeholder="选择日期"
+                    />
                   </el-form-item>
                   <el-form-item label="离港日期" size="small">
-                    <el-date-picker v-model="order_master.order_extend_info.departure" type="date" placeholder="选择日期" :value="22" />
+                    <el-date-picker
+                      v-model="order_master.order_extend_info.departure"
+                      type="date"
+                      placeholder="选择日期"
+                      :value="22"
+                    />
                   </el-form-item>
                   <el-form-item label="到港日期" size="small">
                     <el-date-picker v-model="order_master.order_extend_info.arrival" type="date" placeholder="选择日期" />
                   </el-form-item>
                   <el-form-item label="截关/截港日期" size="small">
-                    <el-date-picker v-model="order_master.order_extend_info.cut_off_day" type="date" placeholder="选择日期" />
+                    <el-date-picker
+                      v-model="order_master.order_extend_info.cut_off_day"
+                      type="date"
+                      placeholder="选择日期"
+                    />
                   </el-form-item>
                   <el-form-item label="起运港" size="small">
-                    <el-select v-model="order_master.order_extend_info.pol_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                      <el-option v-for="item in portOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                    <el-select
+                      v-model="order_master.order_extend_info.pol_id"
+                      filterable
+                      placeholder="请选择"
+                      size="small"
+                      clearable
+                      style="width: 100%"
+                    >
+                      <el-option
+                        v-for="item in portOptions"
+                        :key="parseInt(item.id)"
+                        :label="item.name"
+                        :value="parseInt(item.id)"
+                      />
                     </el-select>
                   </el-form-item>
                   <el-form-item label="中转港" size="small">
-                    <el-select v-model="order_master.order_extend_info.pot_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                      <el-option v-for="item in portOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                    <el-select
+                      v-model="order_master.order_extend_info.pot_id"
+                      filterable
+                      placeholder="请选择"
+                      size="small"
+                      clearable
+                      style="width: 100%"
+                    >
+                      <el-option
+                        v-for="item in portOptions"
+                        :key="parseInt(item.id)"
+                        :label="item.name"
+                        :value="parseInt(item.id)"
+                      />
                     </el-select>
                   </el-form-item>
                   <el-form-item label="目的港" size="small">
-                    <el-select v-model="order_master.order_extend_info.pod_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                      <el-option v-for="item in portOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                    <el-select
+                      v-model="order_master.order_extend_info.pod_id"
+                      filterable
+                      placeholder="请选择"
+                      size="small"
+                      clearable
+                      style="width: 100%"
+                    >
+                      <el-option
+                        v-for="item in portOptions"
+                        :key="parseInt(item.id)"
+                        :label="item.name"
+                        :value="parseInt(item.id)"
+                      />
                     </el-select>
                   </el-form-item>
                 </div>
                 <el-divider />
                 <div class="box-center-3">
-                  <div class="cap-list">
-                    <el-form-item v-for="(cap_list, index) in former_sea_book.sea_cap_lists" :key="index" :label="'柜型/柜量'" size="mini">
+                  <div v-if="showTransport === 1" class="cap-list">
+                    <el-form-item
+                      v-for="(cap_list, index) in former_sea_book.sea_cap_lists"
+                      :key="index"
+                      :label="'柜型/柜量'"
+                      size="mini"
+                    >
                       <el-select v-model="cap_list.cap_type" filterable placeholder="请选择" size="mini" clearable>
-                        <el-option v-for="item in CapTypeOptions" :key="item.name" :label="item.name" :value="item.name" />
+                        <el-option
+                          v-for="item in CapTypeOptions"
+                          :key="item.name"
+                          :label="item.name"
+                          :value="item.name"
+                        />
                       </el-select>
                       <el-input-number v-model="cap_list.number" :min="1" class="cap-list-number" size="mini" />
                       <el-button type="danger" size="mini" icon="el-icon-delete" @click.prevent="removeCapList(index)" />
                     </el-form-item>
                   </div>
-                  <div><el-button type="primary" size="mini" @click.prevent="addCapList">新增</el-button></div>
+                  <div v-if="showTransport === 1">
+                    <el-button type="primary" size="mini" @click.prevent="addCapList">新增</el-button>
+                  </div>
                   <el-form-item label="唛头" size="small">
                     <el-input v-model="former_sea_book.marks" type="textarea" :rows="8" style="width: 100%" />
                   </el-form-item>
                   <el-form-item label="货物描述" size="small">
-                    <el-input v-model="former_sea_book.description_of_good" type="textarea" :rows="8" style="width: 100%" />
+                    <el-input
+                      v-model="former_sea_book.description_of_good"
+                      type="textarea"
+                      :rows="8"
+                      style="width: 100%"
+                    />
                   </el-form-item>
                   <el-form-item label="尺寸" size="small">
                     <el-input v-model="former_sea_book.size" type="textarea" :rows="8" style="width: 100%" />
@@ -561,22 +983,55 @@
                   </el-form-item>
                   <div class="pack-number-content">
                     <el-form-item label="数量" size="small">
-                      <el-input-number v-model="former_sea_book.number" :min="1" style="width: 100%" @change="syncExtendInfo($event,'number')" />
+                      <el-input-number
+                        v-model="former_sea_book.number"
+                        :min="1"
+                        style="width: 100%"
+                        @change="syncExtendInfo($event,'number')"
+                      />
                     </el-form-item>
                     <el-form-item label="包装类型" size="small">
-                      <el-select v-model="former_sea_book.package_type_id" filterable placeholder="请选择" size="small" clearable style="width: 100%" @change="syncExtendInfo($event,'package_type_id')">
-                        <el-option v-for="item in packageTypeOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                      <el-select
+                        v-model="former_sea_book.package_type_id"
+                        filterable
+                        placeholder="请选择"
+                        size="small"
+                        clearable
+                        style="width: 100%"
+                        @change="syncExtendInfo($event,'package_type_id')"
+                      >
+                        <el-option
+                          v-for="item in packageTypeOptions"
+                          :key="parseInt(item.id)"
+                          :label="item.name"
+                          :value="parseInt(item.id)"
+                        />
                       </el-select>
                     </el-form-item>
                     <el-form-item label="毛重(KGS)" size="small">
-                      <el-input v-model="former_sea_book.gross_weight" style="width: 100%" type="number" @change="syncExtendInfo($event,'gross_weight')" />
+                      <el-input
+                        v-model="former_sea_book.gross_weight"
+                        style="width: 100%"
+                        type="number"
+                        @change="syncExtendInfo($event,'gross_weight')"
+                      />
                     </el-form-item>
                     <el-form-item label="体积(CBM)" size="small">
-                      <el-input v-model="former_sea_book.volume" style="width: 100%" type="number" @change="syncExtendInfo($event,'volume')" />
+                      <el-input
+                        v-model="former_sea_book.volume"
+                        style="width: 100%"
+                        type="number"
+                        @change="syncExtendInfo($event,'volume')"
+                      />
                     </el-form-item>
                   </div>
                   <el-form-item label="收货地" size="small">
-                    <el-input v-model="former_sea_book.place_of_delivery" type="textarea" :rows="8" style="width: 100%" />
+                    <el-input
+                      v-model="former_sea_book.place_of_delivery"
+                      type="textarea"
+                      :rows="8"
+                      style="width: 100%"
+                    />
                   </el-form-item>
                   <el-form-item label="接货地" size="small">
                     <el-input v-model="former_sea_book.place_of_receipt" type="textarea" :rows="8" style="width: 100%" />
@@ -602,18 +1057,54 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="出单方式" size="small">
-                  <el-select v-model="former_sea_book.misc_bill_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                    <el-option v-for="item in miscBillOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                  <el-select
+                    v-model="former_sea_book.misc_bill_id"
+                    filterable
+                    placeholder="请选择"
+                    size="small"
+                    clearable
+                    style="width: 100%"
+                  >
+                    <el-option
+                      v-for="item in miscBillOptions"
+                      :key="parseInt(item.id)"
+                      :label="item.name"
+                      :value="parseInt(item.id)"
+                    />
                   </el-select>
                 </el-form-item>
                 <el-form-item label="贸易条款" size="small">
-                  <el-select v-model="former_sea_book.trade_terms_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                    <el-option v-for="item in tradeTermsOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                  <el-select
+                    v-model="former_sea_book.trade_terms_id"
+                    filterable
+                    placeholder="请选择"
+                    size="small"
+                    clearable
+                    style="width: 100%"
+                  >
+                    <el-option
+                      v-for="item in tradeTermsOptions"
+                      :key="parseInt(item.id)"
+                      :label="item.name"
+                      :value="parseInt(item.id)"
+                    />
                   </el-select>
                 </el-form-item>
                 <el-form-item label="装运条款" size="small">
-                  <el-select v-model="former_sea_book.shipment_item_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-                    <el-option v-for="item in shipmentItemOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                  <el-select
+                    v-model="former_sea_book.shipment_item_id"
+                    filterable
+                    placeholder="请选择"
+                    size="small"
+                    clearable
+                    style="width: 100%"
+                  >
+                    <el-option
+                      v-for="item in shipmentItemOptions"
+                      :key="parseInt(item.id)"
+                      :label="item.name"
+                      :value="parseInt(item.id)"
+                    />
                   </el-select>
                 </el-form-item>
                 <el-form-item label="费用描述" size="small">
@@ -626,12 +1117,22 @@
             </el-row>
           </el-form>
           <keep-alive>
-            <sea-cargo-list :source-id="former_sea_book.id" source-type="former_sea_books" :cargo-info="former_sea_book.sea_cargo_infos" :package-type-options="packageTypeOptions" :cap-type-options="CapTypeOptions" />
+            <sea-cargo-list
+              :source-id="former_sea_book.id"
+              source-type="former_sea_books"
+              :cargo-info="former_sea_book.sea_cargo_infos"
+              :package-type-options="packageTypeOptions"
+              :cap-type-options="CapTypeOptions"
+            />
           </keep-alive>
         </el-tab-pane>
         <el-tab-pane label="SO NO." name="former_sea_so_no" :lazy="true">
           <keep-alive>
-            <former-so-no :get-former-data-url="getFormerDataUrl" @childByValue="formerSoNoValue" @childByDataChange="childByDataChange" />
+            <former-so-no
+              :get-former-data-url="getFormerDataUrl"
+              @childByValue="formerSoNoValue"
+              @childByDataChange="childByDataChange"
+            />
           </keep-alive>
         </el-tab-pane>
         <el-tab-pane label="综合服务" name="service">定时任务补偿</el-tab-pane>
@@ -641,17 +1142,19 @@
 </template>
 <script>
 import { parseTime } from '@/utils'
-import { getData, createData } from '@/api/index_data'
+import { createData, getData } from '@/api/index_data'
 import ButtonList from '../ButtonList'
 import FormerButton from './FormerButton'
 import FormerSoNo from './FormerSoNo'
 import SeaCargoList from './SeaCargoList'
 import { remoteCompany } from '@/api/select'
+
 export default {
   name: 'SeaPage',
   components: { ButtonList, FormerButton, FormerSoNo, SeaCargoList },
   data() {
     return {
+      transport_type: this.$route.query.transport_type,
       former_sea_so_no: {
         voucher_cut_off: undefined,
         vgm_submission_deadline: undefined,
@@ -791,6 +1294,9 @@ export default {
     }
   },
   computed: {
+    showTransport: function() {
+      return parseInt(this.transport_type)
+    },
     showCarrier: function() {
       const val = this.order_master.order_extend_info.carrier_id
       if (val === '' || val === undefined || typeof (val) === 'undefined') {
@@ -859,7 +1365,7 @@ export default {
         this.former_sea_instruction[field] = ''
         return
       }
-      getData('/crm/companies/' + val + '/operationInfo', { }, 'get').then(response => {
+      getData('/crm/companies/' + val + '/operationInfo', {}, 'get').then(response => {
         this.former_sea_instruction[field] = response.data
       }).catch(error => {
         console.log(error)
@@ -884,7 +1390,14 @@ export default {
         this.shipmentItemOptions = selectOptions['ShippingTerms']
         this.former_sea_instruction = response['formerData']
         if (this.former_sea_instruction.sea_cap_lists === null) {
-          this.former_sea_instruction.sea_cap_lists = [{ number: 1, cap_type: undefined, order_master_id: parseInt(this.$route.params.id) }]
+          this.former_sea_instruction.sea_cap_lists = [{
+            number: 1,
+            cap_type: undefined,
+            order_master_id: parseInt(this.$route.params.id)
+          }]
+        }
+        if (this.former_sea_instruction.sea_cargo_infos === null) {
+          this.former_sea_instruction.sea_cargo_infos = []
         }
         this.order_master = response['order']
         this.$emit('orderInfo', this.order_master)
@@ -893,7 +1406,11 @@ export default {
       })
     },
     addCapList() {
-      this[this.activeName].sea_cap_lists.push({ number: 1, cap_type: undefined, order_master_id: parseInt(this.$route.params.id) })
+      this[this.activeName].sea_cap_lists.push({
+        number: 1,
+        cap_type: undefined,
+        order_master_id: parseInt(this.$route.params.id)
+      })
     },
     removeCapList(index) {
       this[this.activeName].sea_cap_lists.splice(index, 1)
@@ -978,7 +1495,14 @@ export default {
       getData(this.getFormerDataUrl + '/getFormerData', { formerType: 'former_sea_book' }, 'get').then(response => {
         this.former_sea_book = response['formerData']
         if (this.former_sea_book.sea_cap_lists === null) {
-          this.former_sea_book.sea_cap_lists = [{ number: 1, cap_type: undefined, order_master_id: parseInt(this.$route.params.id) }]
+          this.former_sea_book.sea_cap_lists = [{
+            number: 1,
+            cap_type: undefined,
+            order_master_id: parseInt(this.$route.params.id)
+          }]
+        }
+        if (this.former_sea_book.sea_cargo_infos === null) {
+          this.former_sea_book.sea_cargo_infos = []
         }
         this.isLoadingBookingData = true
       })
@@ -1001,7 +1525,10 @@ export default {
         return
       }
       if (this.activeName === 'former_sea_instruction') {
-        data = { former_sea_instruction: this.former_sea_instruction, order_extend_info: this.order_master.order_extend_info }
+        data = {
+          former_sea_instruction: this.former_sea_instruction,
+          order_extend_info: this.order_master.order_extend_info
+        }
       } else if (this.activeName === 'former_sea_book') {
         data = { former_sea_book: this.former_sea_book, order_extend_info: this.order_master.order_extend_info }
       }
@@ -1023,19 +1550,24 @@ export default {
 </script>
 
 <style lang="scss">
-  .cap-list{
-    .el-form-item{
-      width: 30% !important;
-      .el-select{
-        width: 33%;
-      }
-      .cap-list-number{
-        width: 40%;
-      }
-      .el-button{
-        display: inline-block;
-      }
-    }
+  .cap-list {
+
+  .el-form-item {
+    width: 30% !important;
+
+  .el-select {
+    width: 33%;
+  }
+
+  .cap-list-number {
+    width: 40%;
+  }
+
+  .el-button {
+    display: inline-block;
+  }
+
+  }
   }
 </style>
 

@@ -209,6 +209,7 @@ export default {
       immediate: true, // 这句重要
       handler(val) {
         if (val.length >= 1) {
+          console.log(val)
           this.sea_cargo_array = val
         }
       }

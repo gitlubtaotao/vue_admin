@@ -214,7 +214,9 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           createData('/order/masters/create', this.handlerTemp()).then((response) => {
+            const order = response.data
             this.localFormVisible = false
+            this.$router.push('/order/master/operation/' + order.id.toString() + '?transport_type=' + order.transport_type)
             this.closeDialog()
             this.$notify({
               title: 'Success',
