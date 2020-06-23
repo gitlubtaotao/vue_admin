@@ -13,14 +13,18 @@
     </el-card>
     <el-card class="box-card" style="margin-top: 20px;">
       <el-tabs>
-        <el-tab-pane label="操作">
+        <el-tab-pane label="操作" :lazy="true">
           <keep-alive>
             <sea-page v-if="transport_type === '1' || transport_type === '4'" @orderInfo="getOrderMaster" />
           </keep-alive>
         </el-tab-pane>
-        <el-tab-pane label="录入费用">
+        <el-tab-pane label="录入费用" :lazy="true">
           <keep-alive>
-            <operation-fee />
+            <operation-fee pay-or-receive="receive" />
+          </keep-alive>
+          <div style="margin-top: 20px" />
+          <keep-alive>
+            <operation-fee pay-or-receive="pay" />
           </keep-alive>
         </el-tab-pane>
         <el-tab-pane label="附件">附件</el-tab-pane>
