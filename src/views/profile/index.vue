@@ -63,7 +63,6 @@ export default {
         avatar: this.userInfo.userInfo.avatar,
         phone: this.userInfo.userInfo.phone,
         address: this.userInfo.userInfo.address,
-        userInfo: this.userInfo.userInfo,
         password: '',
         confirm_password: ''
       }

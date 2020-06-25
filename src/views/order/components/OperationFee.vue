@@ -14,6 +14,9 @@
             <el-form-item v-else label="应付">
               <span>{{ scope.row.payable }}</span>
             </el-form-item>
+            <el-form-item label="不含税金额">
+              <span>{{ scope.row.not_tax_amount }}</span>
+            </el-form-item>
             <el-form-item label="费用状态">
               <span>{{ scope.row.status }}</span>
             </el-form-item>
@@ -32,8 +35,8 @@
       <el-table-column label="费用简称" width="120">
         <template slot-scope="scope">
           <template v-if="scope.row.edit">
-            <el-select v-model="scope.row.name" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-              <el-option v-for="item in fee_type_options" :key="parseInt(item.id)" :label="item.name" :value="item.name" />
+            <el-select v-model="scope.row.name" filterable placeholder="请选择" size="small" clearable style="width: 100%" @change="financeNameChange($event,scope.$index)">
+              <el-option v-for="item in fee_type_options" :key="parseInt(item.id)" :label="item.label" :value="item.name" />
             </el-select>
           </template>
           <span v-else>{{ scope.row.name }}</span>
@@ -61,7 +64,7 @@
         <template slot-scope="scope">
           <template v-if="scope.row.edit">
             <el-select v-model="scope.row.finance_currency_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-              <el-option v-for="item in finance_currency_options" :key="parseInt(item.id)" :label="item.name" :value="item.name" />
+              <el-option v-for="item in finance_currency_options" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
             </el-select>
           </template>
           <span v-else>{{ scope.row.name }}</span>
@@ -70,32 +73,24 @@
       <el-table-column label="数/重量" width="100">
         <template slot-scope="scope">
           <template v-if="scope.row.edit">
-            <el-input v-model="scope.row.quantity" size="small" type="number" />
+            <el-input v-model="scope.row.quantity" size="small" type="number" @change="statisticsTotalAmount($event,scope.$index)" />
           </template>
           <span v-else>{{ scope.row.quantity }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="单价" width="80">
+      <el-table-column label="单价" width="100">
         <template slot-scope="scope">
           <template v-if="scope.row.edit">
-            <el-input v-model="scope.row.unit_price" size="small" type="number" />
+            <el-input v-model="scope.row.unit_price" size="small" type="number" @change="statisticsTotalAmount($event,scope.$index)" />
           </template>
           <span v-else>{{ scope.row.unit_price }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="税率" width="80">
-        <template slot-scope="scope">
-          <template v-if="scope.row.edit">
-            <el-input v-model="scope.row.tax_rate" size="small" type="number" />
-          </template>
-          <span v-else>{{ scope.row.tax_rate }}</span>
         </template>
       </el-table-column>
       <el-table-column label="费用标签" width="150">
         <template slot-scope="scope">
           <template v-if="scope.row.edit">
             <el-select v-model="scope.row.type_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-              <el-option v-for="item in account_type_options" :key="parseInt(item.id)" :label="item.name" :value="item.name" />
+              <el-option v-for="item in financeTagOptions" :key="parseInt(item.id)" :label="item.name" :value="item.name" />
             </el-select>
           </template>
           <span v-else>{{ scope.row.name }}</span>
@@ -125,6 +120,14 @@
             </el-select>
           </template>
           <span v-else>{{ scope.row.name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="税率" width="100">
+        <template slot-scope="scope">
+          <template v-if="scope.row.edit">
+            <el-input v-model="scope.row.tax_rate" size="small" type="number" @change="statisticsTotalAmount($event,scope.$index)" />
+          </template>
+          <span v-else>{{ scope.row.tax_rate }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注" width="150">
@@ -161,16 +164,44 @@
   </el-card>
 </template>
 <script>
+
+import { financeFeePayOrReceive } from '@/utils/constant'
+import { remoteCompany } from '@/api/select'
 export default {
   name: 'OperationFee',
   props: {
     payOrReceive: {
       type: String,
       required: true
+    },
+    financeFeeArray: {
+      type: Array,
+      required: true
+    },
+    feeTypeOptions: {
+      type: Array,
+      required: true
+    },
+    financeCurrencyOptions: {
+      type: Array,
+      required: true
+    },
+    currencyRateOptions: {
+      type: Array,
+      required: true
+    },
+    payTypeOptions: {
+      type: Array,
+      required: true
+    },
+    financeTagOptions: {
+      type: Array,
+      required: true
     }
   },
   data() {
     return {
+      is_load_fee: false,
       deleteLoading: false,
       updateLoading: false,
       closingOptions: [],
@@ -178,8 +209,8 @@ export default {
       loadingClosing: false,
       fee_type_options: [],
       pay_type_options: [],
-      account_type_options: [],
       finance_currency_options: [],
+      currency_rate_options: [],
       multipleSelection: [],
       finance_fee_array: [],
       order_master_id: this.$route.params.id
@@ -187,10 +218,50 @@ export default {
   },
   computed: {
     showType: function() {
-      if (this.payOrReceive === 'pay') {
-        return '支出'
-      } else {
-        return '收入'
+      return financeFeePayOrReceive[this.payOrReceive]
+    }
+  },
+  watch: {
+    financeFeeArray: {
+      immediate: true,
+      handler(newVal) {
+        this.initFeeData(newVal)
+      }
+    },
+    feeTypeOptions: {
+      immediate: true,
+      handler(newVal) {
+        if (newVal.length >= 1) {
+          this.fee_type_options = newVal
+        }
+      }
+    },
+    financeCurrencyOptions: {
+      immediate: true,
+      handler(newVal) {
+        if (newVal.length > 1) {
+          this.finance_currency_options = newVal
+        }
+      }
+    },
+    payTypeOptions: {
+      immediate: true,
+      handler(newVal) {
+        if (newVal.length > 0) {
+          this.pay_type_options = newVal
+        }
+      }
+    },
+    financeTagOptions: {
+      immediate: true,
+      handler(newVal) { }
+    },
+    currencyRateOptions: {
+      immediate: true,
+      handler(newVal) {
+        if (newVal.length >= 1) {
+          this.currency_rate_options = newVal
+        }
       }
     }
   },
@@ -205,9 +276,9 @@ export default {
         pay_type_id: undefined,
         finance_currency_id: undefined,
         finance_currency_rate: undefined,
-        quantity: undefined,
-        unit_price: undefined,
-        tax_rate: undefined,
+        quantity: 1,
+        unit_price: 0.0,
+        tax_rate: 0.0,
         tax_amount: undefined,
         receivable: undefined,
         payable: undefined,
@@ -231,8 +302,80 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
-    getClosing() { },
-    remoteClosing(query) { }
+    getClosing() {
+      if (this.closing_unit.length > 0) {
+        this.closingOptions = this.closing_unit
+        return
+      }
+      this.remoteClosing('')
+    },
+    remoteClosing(query) {
+      if (query !== '') {
+        this.loadingClosing = true
+        const result = this.closing_unit.filter(item => {
+          return item.label.toLowerCase()
+            .indexOf(query.toLowerCase()) > -1
+        })
+        if (result.length > 0) {
+          this.loadingClosing = false
+          this.closingOptions = result
+          return
+        }
+      }
+      remoteCompany(query, { company_type: [1, 2, 3] }).then((response) => {
+        this.closingOptions = response
+        if (query === '' || query === null) {
+          this.closing_unit = response
+        }
+        this.loadingClosing = false
+      })
+    },
+    initFeeData(newVal) {
+      if (newVal.length >= 1) {
+        this.finance_fee_array = newVal
+      }
+    },
+    searchCurrencyRate(finance_currency_id) {
+      const data = this.currency_rate_options.filter(item => {
+        return item.finance_currency_id === finance_currency_id
+      })
+      if (data.length <= 0) {
+        this.$message.error('未设置正确的币种汇率,请先设置币种汇率')
+        return 0
+      }
+      return data[0].rate
+    },
+    financeNameChange(val, $index) {
+      const data = this.fee_type_options.filter(item => {
+        return item.name === val
+      })
+      if (data.length > 0) {
+        const value = data[0]
+        this.$set(this.finance_fee_array[$index], 'name_cn', value.name_cn)
+        this.$set(this.finance_fee_array[$index], 'name_en', value.name_en)
+        this.$set(this.finance_fee_array[$index], 'finance_currency_id', parseInt(value.finance_currency_id))
+        this.$set(this.finance_fee_array[$index], 'finance_currency_rate', this.searchCurrencyRate(parseInt(value.finance_currency_id)))
+      }
+    },
+    statisticsTotalAmount(val, $index) {
+      const row = this.finance_fee_array[$index]
+      const number = parseFloat(row.quantity)
+      const unitPrice = parseFloat(row.unit_price)
+      const taxRate = parseFloat(row.tax_rate)
+      let taxAmount = number * unitPrice
+      this.$set(this.finance_fee_array[$index], 'not_tax_amount', taxAmount.toFixed(4))
+      if (taxRate > 0.0) {
+        taxAmount = taxAmount + taxAmount * taxRate
+      }
+      taxAmount = taxAmount.toFixed(4)
+      console.log(taxAmount)
+      this.$set(this.finance_fee_array[$index], 'tax_amount', taxAmount)
+      if (this.payOrReceive === 'pay') {
+        this.$set(this.finance_fee_array[$index], 'payable', taxAmount)
+      } else {
+        this.$set(this.finance_fee_array[$index], 'receivable', taxAmount)
+      }
+    }
   }
 }
 </script>

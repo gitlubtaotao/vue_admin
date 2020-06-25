@@ -7,12 +7,12 @@
         <el-col :span="4"><el-tag> {{ order_master.instruction_name }}</el-tag></el-col>
         <el-col :span="2"><el-tag>{{ order_master.transport_type_text }}</el-tag></el-col>
         <el-col :span="3"><el-tag type="danger">{{ order_master.status_text }}</el-tag></el-col>
-        <el-col :span="3"><el-tag>{{ showDate(order_master.created_at) }}</el-tag></el-col>
+        <el-col :span="3"><el-tag>{{ showCreateAt }}</el-tag></el-col>
         <el-col :offset="2" :span="3" />
       </el-row>
     </el-card>
     <el-card class="box-card" style="margin-top: 20px;">
-      <el-tabs>
+      <el-tabs @tab-click="tabClick">
         <el-tab-pane label="操作" :lazy="true">
           <keep-alive>
             <sea-page v-if="transport_type === '1' || transport_type === '4'" @orderInfo="getOrderMaster" />
@@ -20,11 +20,11 @@
         </el-tab-pane>
         <el-tab-pane label="录入费用" :lazy="true">
           <keep-alive>
-            <operation-fee pay-or-receive="receive" />
+            <operation-fee pay-or-receive="receive" :finance-fee-array="receive_fee_array" :fee-type-options="fee_type_options" :finance-currency-options="currency_options" :pay-type-options="pay_type_options" :finance-tag-options="finance_tag_options" :currency-rate-options="currency_rate_options" />
           </keep-alive>
           <div style="margin-top: 20px" />
           <keep-alive>
-            <operation-fee pay-or-receive="pay" />
+            <operation-fee pay-or-receive="pay" :finance-fee-array="pay_fee_array" :fee-type-options="fee_type_options" :finance-currency-options="currency_options" :pay-type-options="pay_type_options" :finance-tag-options="finance_tag_options" :currency-rate-options="currency_rate_options" />
           </keep-alive>
         </el-tab-pane>
         <el-tab-pane label="附件">附件</el-tab-pane>
@@ -33,10 +33,12 @@
   </div>
 </template>
 <script>
-// import { getData } from '@/api/index_data'
+
 import { parseTime } from '@/utils'
 import SeaPage from '../components/sea/SeaPage'
 import OperationFee from '../components/OperationFee'
+import { getData } from '@/api/index_data'
+
 export default {
   name: 'OrderOperation',
   components: { SeaPage, OperationFee },
@@ -44,6 +46,14 @@ export default {
     return {
       id: this.$route.params && this.$route.params.id,
       transport_type: this.$route.query.transport_type,
+      loadingFee: false,
+      receive_fee_array: [],
+      pay_fee_array: [],
+      fee_type_options: [],
+      currency_options: [],
+      currency_rate_options: [],
+      finance_tag_options: [],
+      pay_type_options: [],
       order_master: {
         serial_number: '',
         instruction_name: '',
@@ -53,6 +63,11 @@ export default {
       }
     }
   },
+  computed: {
+    showCreateAt: function() {
+      return parseTime(this.order_master.created_at, '{y}-{m}-{d}')
+    }
+  },
   methods: {
     // 显示日期
     showDate(time) {
@@ -60,6 +75,39 @@ export default {
     },
     getOrderMaster(val) {
       this.order_master = val
+    },
+    tabClick(tab) {
+      if (tab.index === '1' && !this.loadingFee) {
+        this.getFeeData()
+      }
+    },
+    getFeeData() {
+      getData('/finance/fees/' + this.id + '/OrderFees', {}, 'get').then((response) => {
+        console.log(response)
+        if (response.data.length >= 1) {
+          const finance_fee_array = response.data
+          this.receive_fee_array = finance_fee_array.receive
+          this.pay_fee_array = finance_fee_array.pay
+        }
+        const options = response.options
+        this.handleFeeType(options.fee_type_options)
+        this.currency_options = options.finance_currency
+        this.pay_type_options = options['pay_type_options']
+        this.finance_tag_options = options.finance_tag_options
+        if (options.currency_rate_options !== null && typeof (options.currency_rate_options) !== "undefined") {
+          this.currency_rate_options = options.currency_rate_options
+        }
+        this.loadingFee = true
+      }).catch((reason) => {
+        console.log(reason)
+      })
+    },
+    handleFeeType(val) {
+      for (let i = 0; i < val.length; i++) {
+        const temp = val[i]
+        temp['label'] = temp.name + '|' + temp.name_cn + '|' + temp.name_en
+        this.fee_type_options.push(temp)
+      }
     }
   }
 }

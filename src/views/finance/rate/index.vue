@@ -112,7 +112,7 @@
             clearable
             :loading="loading"
           >
-            <el-option v-for="item in financeCurrencyOptions" :key="item.id" :label="item.name" :value="item.id" />
+            <el-option v-for="item in financeCurrencyOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
           </el-select>
         </el-form-item>
         <el-form-item label="汇率" prop="rate">
@@ -169,13 +169,13 @@ export default {
       dialogFormVisible: false,
       dialogStatus: '',
       temp: {
-        id: null,
-        finance_currency_id: null,
-        rate: null,
-        user_id: null,
-        start_month: null,
-        end_month: null,
-        company_id: null
+        id: undefined,
+        finance_currency_id: undefined,
+        rate: undefined,
+        user_id: undefined,
+        start_month: undefined,
+        end_month: undefined,
+        company_id: undefined
       },
       index: 0,
       rules: {
@@ -212,9 +212,14 @@ export default {
         finance_currency_id: null,
         rate: null,
         user_id: null,
-        start_month: this.showMonth(),
-        end_month: parseInt(this.showMonth()) + 1,
         company_id: null
+      }
+      if (this.systemRateSetting === 'month') {
+        this.temp.start_month = parseInt(this.showMonth())
+        this.temp.end_month = parseInt(this.showMonth()) + 1
+      } else {
+        this.temp.start_month = 0
+        this.temp.end_month = 0
       }
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
@@ -403,6 +408,7 @@ export default {
     },
     handlerData() {
       const temp = this.temp
+      console.log(temp)
       temp.rate = parseFloat(this.temp.rate)
       temp.finance_currency_id = parseInt(this.temp.finance_currency_id)
       return temp
