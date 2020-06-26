@@ -3,7 +3,7 @@
     <div slot="header" class="clearfix">
       <span>{{ showType }}</span>
     </div>
-    <el-table :key="payOrReceive" :data="finance_fee_array" fit max-height="500" border style="width: 100%;" @selection-change="handleSelectionChange">
+    <el-table ref="multipleTable" :key="payOrReceive" :data="finance_fee_array" fit max-height="500" border style="width: 100%;" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" fixed="left" />
       <el-table-column type="expand">
         <template slot-scope="scope">
@@ -18,10 +18,10 @@
               <span>{{ scope.row.not_tax_amount }}</span>
             </el-form-item>
             <el-form-item label="费用状态">
-              <span>{{ scope.row.status }}</span>
+              <span>{{ showStatus(scope.row.status) }}</span>
             </el-form-item>
             <el-form-item label="D/N">
-              <span>{{ scope.row.verify_status }}</span>
+              <span>{{ showVerifyStatus(scope.row.verify_status) }}</span>
             </el-form-item>
             <el-form-item label="币种汇率">
               <span>{{ scope.row.finance_currency_rate }}</span>
@@ -54,7 +54,7 @@
         <template slot-scope="scope">
           <template v-if="scope.row.edit">
             <el-select v-model="scope.row.pay_type_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-              <el-option v-for="item in pay_type_options" :key="parseInt(item.id)" :label="item.name" :value="item.name" />
+              <el-option v-for="item in pay_type_options" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
             </el-select>
           </template>
           <span v-else>{{ scope.row.name }}</span>
@@ -63,7 +63,7 @@
       <el-table-column label="币种" width="120">
         <template slot-scope="scope">
           <template v-if="scope.row.edit">
-            <el-select v-model="scope.row.finance_currency_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
+            <el-select v-model="scope.row.finance_currency_id" filterable placeholder="请选择" size="small" clearable style="width: 100%" @change="financeCurrencyChange($event,scope.$index)">
               <el-option v-for="item in finance_currency_options" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
             </el-select>
           </template>
@@ -73,7 +73,7 @@
       <el-table-column label="数/重量" width="100">
         <template slot-scope="scope">
           <template v-if="scope.row.edit">
-            <el-input v-model="scope.row.quantity" size="small" type="number" @change="statisticsTotalAmount($event,scope.$index)" />
+            <el-input v-model="scope.row.quantity" size="small" type="number" :min="0" @change="statisticsTotalAmount($event,scope.$index)" />
           </template>
           <span v-else>{{ scope.row.quantity }}</span>
         </template>
@@ -81,7 +81,7 @@
       <el-table-column label="单价" width="100">
         <template slot-scope="scope">
           <template v-if="scope.row.edit">
-            <el-input v-model="scope.row.unit_price" size="small" type="number" @change="statisticsTotalAmount($event,scope.$index)" />
+            <el-input v-model="scope.row.unit_price" size="small" type="number" :min="0" @change="statisticsTotalAmount($event,scope.$index)" />
           </template>
           <span v-else>{{ scope.row.unit_price }}</span>
         </template>
@@ -90,7 +90,7 @@
         <template slot-scope="scope">
           <template v-if="scope.row.edit">
             <el-select v-model="scope.row.type_id" filterable placeholder="请选择" size="small" clearable style="width: 100%">
-              <el-option v-for="item in financeTagOptions" :key="parseInt(item.id)" :label="item.name" :value="item.name" />
+              <el-option v-for="item in financeTagOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
             </el-select>
           </template>
           <span v-else>{{ scope.row.name }}</span>
@@ -138,7 +138,7 @@
           <span v-else>{{ scope.row.remarks }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="含税金额" width="80">
+      <el-table-column label="含税金额" width="120">
         <template slot-scope="scope">
           <span>{{ scope.row.tax_amount }}</span>
         </template>
@@ -153,8 +153,8 @@
     </el-table>
     <el-row style="margin-top: 10px">
       <el-button size="mini" type="primary" icon="el-icon-plus" @click="addFee">新增</el-button>
-      <el-button size="mini" type="success" icon="el-icon-check" :loading="updateLoading">保存</el-button>
-      <el-button size="mini" type="danger" icon="el-icon-delete" :loading="deleteLoading">删除</el-button>
+      <el-button size="mini" type="success" icon="el-icon-check" :loading="updateLoading" @click="saveFee()">保存</el-button>
+      <el-button size="mini" type="danger" icon="el-icon-delete" :loading="deleteLoading" @click="deleteFee('','')">删除</el-button>
       <el-button size="mini" type="info" icon="el-icon-copy-document">复制</el-button>
       <el-button size="mini" type="info" icon="el-icon-warning">确定对账</el-button>
       <el-button size="mini" type="warning" icon="el-icon-s-check">提交审批</el-button>
@@ -165,8 +165,10 @@
 </template>
 <script>
 
-import { financeFeePayOrReceive } from '@/utils/constant'
+import { financeFeePayOrReceive, financeFeeStatus, financeFeeVerifyStatus } from '@/utils/constant'
 import { remoteCompany } from '@/api/select'
+import { createData } from '@/api/index_data'
+
 export default {
   name: 'OperationFee',
   props: {
@@ -201,6 +203,7 @@ export default {
   },
   data() {
     return {
+      system_standard_currency: this.$store.getters.systemSetting.system_standard_currency,
       is_load_fee: false,
       deleteLoading: false,
       updateLoading: false,
@@ -213,7 +216,7 @@ export default {
       currency_rate_options: [],
       multipleSelection: [],
       finance_fee_array: [],
-      order_master_id: this.$route.params.id
+      order_master_id: parseInt(this.$route.params.id)
     }
   },
   computed: {
@@ -266,41 +269,166 @@ export default {
     }
   },
   methods: {
+    showStatus(status) {
+      return financeFeeStatus[status]
+    },
+    showVerifyStatus(status) {
+      return financeFeeVerifyStatus[status]
+    },
     inputFee() {
       return {
-        id: undefined,
+        id: 0,
         name: undefined,
         name_cn: undefined,
         name_en: undefined,
-        pay_or_receive: undefined,
-        pay_type_id: undefined,
+        pay_or_receive: this.payOrReceive,
+        pay_type_id: 0,
         finance_currency_id: undefined,
         finance_currency_rate: undefined,
         quantity: 1,
         unit_price: 0.0,
         tax_rate: 0.0,
-        tax_amount: undefined,
-        receivable: undefined,
-        payable: undefined,
+        tax_amount: 0.0,
+        receivable: 0.0,
+        payable: 0.0,
         closing_unit_id: undefined,
-        order_master_id: undefined,
+        order_master_id: parseInt(this.$route.params.id),
         status: 'init',
         verify_status: 'init',
-        type_id: undefined,
-        not_tax_amount: undefined,
+        type_id: 0,
+        not_tax_amount: 0.0,
         remarks: undefined,
         finance_statement_no: undefined,
         edit: true
       }
     },
     addFee() {
-      this.finance_fee_array.push(this.inputFee())
+      const temp = this.inputFee()
+      temp.pay_or_receive = this.payOrReceive
+      this.finance_fee_array.push(temp)
+      this.toggleSelection([temp])
+    },
+    saveFee(data) {
+      if (data === undefined) {
+        data = this.multipleSelection
+      }
+      if (data.length < 1) {
+        this.$message.error('请选择要提交的记录')
+        return
+      }
+      data.forEach((item, index) => {
+        if (item.name === '' || typeof (item.name) === 'undefined') {
+          this.$message.error('行' + index.toString() + '费用简称不能为空')
+          return
+        }
+        item.quantity = parseFloat(item.quantity)
+        if (item.quantity < 0 || typeof (item.quantity) === 'undefined') {
+          this.$message.error('行' + index.toString() + '数/重量不能小于0')
+          return
+        }
+        item.unit_price = parseFloat(item.unit_price)
+        item.tax_amount = parseFloat(item.tax_amount)
+        item.not_tax_amount = parseFloat(item.not_tax_amount)
+        item.payable = parseFloat(item.payable)
+        item.receivable = parseFloat(item.receivable)
+        item.tax_rate = parseFloat(item.tax_rate)
+        if (item.unit_price < 0 || typeof (item.unit_price) === 'undefined') {
+          this.$message.error('行' + index.toString() + '单价不能小于0')
+          return
+        }
+        if (item.finance_currency_id === 0 || typeof (item.finance_currency_id) === 'undefined') {
+          this.$message.error('行' + index.toString() + '币种不能为空')
+          return
+        }
+        if (item.closing_unit_id === 0 || typeof (item.closing_unit_id) === 'undefined') {
+          this.$message.error('行' + index.toString() + '结算单位不能为空')
+          return
+        }
+        if (item.finance_currency_rate === 0) {
+          this.$message.error('行' + index.toString() + '币种汇率不能为空')
+          return
+        }
+      })
+      this.updateLoading = true
+      createData('/finance/fees/create', data, 'post').then((response) => {
+        this.$notify({
+          title: 'Success',
+          message: '保存数据成功',
+          type: 'success',
+          duration: 5000
+        })
+        this.handleUpdateData(response.data)
+        this.updateLoading = false
+      }).then((reason) => {
+        this.updateLoading = false
+      })
+      this.multipleSelection.forEach(a => {
+        if (a.id !== 0) {
+          a.edit = false
+        }
+      })
     },
     deleteFee(row, $index) {
+      let rows = []
+      if (row === '') {
+        rows = this.multipleSelection
+        if (rows.length <= 0) {
+          this.$message.warning('未选择记录')
+          return
+        }
+      } else {
+        rows = [row]
+      }
+      this.$confirm('确定执行删除操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.deleteLoading = true
+        rows.forEach((a) => {
+          if (a.status !== 'init' && a.status !== 'pending') {
+            this.$message.error('只能删除未提交或者已驳回的费用')
+            return
+          }
+          this.finance_fee_array.splice(this.finance_fee_array.indexOf(a), 1)
+        })
+        const ids = rows.map(item => item.id)
+        createData('/finance/fees/DeleteFee', { ids: ids }, 'post').then((response) => {
+          this.$notify({
+            title: 'Success',
+            message: '删除成功',
+            type: 'success',
+            duration: 5000
+          })
+
+          this.deleteLoading = false
+        }).catch(reason => {
+          console.log(reason)
+        })
+      }).catch(() => {
+      })
     },
-    editFee(row, $index, status) {},
+    editFee(row, $index, status) {
+      if (!status) {
+        if (row['id'] === '' || typeof (row['id']) === 'undefined' || row['id'] === 0) {
+          this.finance_fee_array.splice($index, 1)
+        } else {
+          this.$set(this.finance_fee_array[$index], 'edit', status)
+        }
+      } else {
+        this.$set(this.finance_fee_array[$index], 'edit', status)
+      }
+    },
     handleSelectionChange(val) {
       this.multipleSelection = val
+    },
+    handleUpdateData(data) {
+      const result = this.finance_fee_array.filter(function(el) {
+        return el.id !== 0
+      })
+      if (data !== null && typeof (data) !== 'undefined') {
+        this.finance_fee_array = result.concat(data)
+      }
     },
     getClosing() {
       if (this.closing_unit.length > 0) {
@@ -336,6 +464,9 @@ export default {
       }
     },
     searchCurrencyRate(finance_currency_id) {
+      if (parseInt(this.system_standard_currency) === finance_currency_id) {
+        return 1
+      }
       const data = this.currency_rate_options.filter(item => {
         return item.finance_currency_id === finance_currency_id
       })
@@ -344,6 +475,9 @@ export default {
         return 0
       }
       return data[0].rate
+    },
+    financeCurrencyChange(val, $index) {
+      this.$set(this.finance_fee_array[$index], 'finance_currency_rate', this.searchCurrencyRate(parseInt(val)))
     },
     financeNameChange(val, $index) {
       const data = this.fee_type_options.filter(item => {
@@ -368,12 +502,20 @@ export default {
         taxAmount = taxAmount + taxAmount * taxRate
       }
       taxAmount = taxAmount.toFixed(4)
-      console.log(taxAmount)
       this.$set(this.finance_fee_array[$index], 'tax_amount', taxAmount)
       if (this.payOrReceive === 'pay') {
         this.$set(this.finance_fee_array[$index], 'payable', taxAmount)
       } else {
         this.$set(this.finance_fee_array[$index], 'receivable', taxAmount)
+      }
+    },
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row)
+        })
+      } else {
+        this.$refs.multipleTable.clearSelection()
       }
     }
   }

@@ -79,9 +79,9 @@
                   >
                     <el-option
                       v-for="item in currencyOptions"
-                      :key="item.name"
+                      :key="item.id"
                       :label="item.name"
-                      :value="item.name"
+                      :value="item.id"
                     />
                   </el-select>
                 </el-form-item>

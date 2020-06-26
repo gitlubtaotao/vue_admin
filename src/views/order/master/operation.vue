@@ -83,10 +83,11 @@ export default {
     },
     getFeeData() {
       getData('/finance/fees/' + this.id + '/OrderFees', {}, 'get').then((response) => {
-        console.log(response)
-        if (response.data.length >= 1) {
-          const finance_fee_array = response.data
+        const finance_fee_array = response.data
+        if (finance_fee_array.receive !== null && finance_fee_array.receive.length >= 1) {
           this.receive_fee_array = finance_fee_array.receive
+        }
+        if (finance_fee_array.pay !== null && finance_fee_array.receive.length >= 1) {
           this.pay_fee_array = finance_fee_array.pay
         }
         const options = response.options
@@ -94,7 +95,7 @@ export default {
         this.currency_options = options.finance_currency
         this.pay_type_options = options['pay_type_options']
         this.finance_tag_options = options.finance_tag_options
-        if (options.currency_rate_options !== null && typeof (options.currency_rate_options) !== "undefined") {
+        if (options.currency_rate_options !== null && typeof (options.currency_rate_options) !== 'undefined') {
           this.currency_rate_options = options.currency_rate_options
         }
         this.loadingFee = true

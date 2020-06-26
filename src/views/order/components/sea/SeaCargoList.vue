@@ -325,13 +325,19 @@ export default {
       }).catch(reason => {
         console.log(reason)
       })
+      this.multipleSelection.forEach(a => {
+        if (a.id !== 0) {
+          a.edit = false
+        }
+      })
     },
     handleUpdateData(data) {
       const result = this.sea_cargo_array.filter(function(el) {
         return el.id !== 0
       })
-      this.sea_cargo_array = result.concat(data)
-      console.log(this.sea_cargo_array)
+      if (data !== null && typeof (data) !== 'undefined') {
+        this.sea_cargo_array = result.concat(data)
+      }
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
