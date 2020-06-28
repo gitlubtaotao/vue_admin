@@ -167,8 +167,8 @@
         </el-dropdown-menu>
       </el-dropdown>
       <el-button size="mini" type="info" icon="el-icon-warning" @click="submitVerify">确定对账</el-button>
-      <el-button size="mini" type="warning" icon="el-icon-s-check">提交审批</el-button>
-      <el-button size="mini" type="warning" icon="el-icon-s-check">提交复核</el-button>
+      <el-button v-if="$store.state.orderMaster.systemFinanceApprove === 'false'" size="mini" type="warning" icon="el-icon-s-check">提交审批</el-button>
+      <el-button v-if="$store.state.orderMaster.systemFinanceAudit === 'false'" size="mini" type="warning" icon="el-icon-s-check">提交复核</el-button>
       <el-button size="mini" type="primary" icon="el-icon-share">导出</el-button>
     </el-row>
   </el-card>

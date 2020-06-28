@@ -115,6 +115,7 @@ export default {
     },
     getFeeData() {
       getData('/finance/fees/' + this.id + '/OrderFees', {}, 'get').then((response) => {
+        console.log(response)
         const finance_fee_array = response.data
         if (finance_fee_array.receive !== null && finance_fee_array.receive.length >= 1) {
           this.receive_fee_array = finance_fee_array.receive
@@ -124,6 +125,7 @@ export default {
         }
         this.closing_unit_options = response.closing_unit_options
         const options = response.options
+        this.setStateOperation(options)
         this.handleFeeType(options.fee_type_options)
         this.currency_options = options.finance_currency
         this.pay_type_options = options['pay_type_options']
@@ -142,6 +144,10 @@ export default {
         temp['label'] = temp.name + '|' + temp.name_cn + '|' + temp.name_en
         this.fee_type_options.push(temp)
       }
+    },
+    setStateOperation(data) {
+      this.$store.dispatch('orderMaster/setFinanceApprove', data['system_finance_approve'])
+      this.$store.dispatch('orderMaster/setFinanceAudit', data['system_finance_audit'])
     }
   }
 }
