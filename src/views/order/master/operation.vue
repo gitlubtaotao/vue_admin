@@ -20,11 +20,31 @@
         </el-tab-pane>
         <el-tab-pane label="录入费用" :lazy="true">
           <keep-alive>
-            <operation-fee pay-or-receive="receive" :finance-fee-array="receive_fee_array" :fee-type-options="fee_type_options" :finance-currency-options="currency_options" :pay-type-options="pay_type_options" :finance-tag-options="finance_tag_options" :currency-rate-options="currency_rate_options" />
+            <operation-fee
+              pay-or-receive="receive"
+              :finance-fee-array="receive_fee_array"
+              :fee-type-options="fee_type_options"
+              :finance-currency-options="currency_options"
+              :pay-type-options="pay_type_options"
+              :finance-tag-options="finance_tag_options"
+              :currency-rate-options="currency_rate_options"
+              :closing-unit-options="closing_unit_options"
+              @changeFeeArray="changeFeeArray"
+            />
           </keep-alive>
           <div style="margin-top: 20px" />
           <keep-alive>
-            <operation-fee pay-or-receive="pay" :finance-fee-array="pay_fee_array" :fee-type-options="fee_type_options" :finance-currency-options="currency_options" :pay-type-options="pay_type_options" :finance-tag-options="finance_tag_options" :currency-rate-options="currency_rate_options" />
+            <operation-fee
+              pay-or-receive="pay"
+              :finance-fee-array="pay_fee_array"
+              :fee-type-options="fee_type_options"
+              :finance-currency-options="currency_options"
+              :pay-type-options="pay_type_options"
+              :finance-tag-options="finance_tag_options"
+              :currency-rate-options="currency_rate_options"
+              :closing-unit-options="closing_unit_options"
+              @changeFeeArray="changeFeeArray"
+            />
           </keep-alive>
         </el-tab-pane>
         <el-tab-pane label="附件">附件</el-tab-pane>
@@ -38,6 +58,7 @@ import { parseTime } from '@/utils'
 import SeaPage from '../components/sea/SeaPage'
 import OperationFee from '../components/OperationFee'
 import { getData } from '@/api/index_data'
+import { mapState } from 'vuex'
 
 export default {
   name: 'OrderOperation',
@@ -54,6 +75,7 @@ export default {
       currency_rate_options: [],
       finance_tag_options: [],
       pay_type_options: [],
+      closing_unit_options: [],
       order_master: {
         serial_number: '',
         instruction_name: '',
@@ -64,6 +86,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      orderMaster: state => state.app.orderMaster
+    }),
     showCreateAt: function() {
       return parseTime(this.order_master.created_at, '{y}-{m}-{d}')
     }
@@ -81,6 +106,13 @@ export default {
         this.getFeeData()
       }
     },
+    changeFeeArray(data, payOrReceive) {
+      if (payOrReceive === 'receive') {
+        this.pay_fee_array = this.pay_fee_array.concat(data)
+      } else {
+        this.receive_fee_array = this.receive_fee_array.concat(data)
+      }
+    },
     getFeeData() {
       getData('/finance/fees/' + this.id + '/OrderFees', {}, 'get').then((response) => {
         const finance_fee_array = response.data
@@ -90,6 +122,7 @@ export default {
         if (finance_fee_array.pay !== null && finance_fee_array.receive.length >= 1) {
           this.pay_fee_array = finance_fee_array.pay
         }
+        this.closing_unit_options = response.closing_unit_options
         const options = response.options
         this.handleFeeType(options.fee_type_options)
         this.currency_options = options.finance_currency

@@ -1052,6 +1052,7 @@
                     :loading="loadingCooperator"
                     style="width: 100%"
                     @focus="getSupply"
+                    @change="supplyChange"
                   >
                     <el-option v-for="item in supplyOptions" :key="item.value" :label="item.label" :value="item.value" />
                   </el-select>
@@ -1354,6 +1355,9 @@ export default {
     this.initData()
   },
   methods: {
+    supplyChange(val) {
+      this.$store.dispatch('orderMaster/setPayClosingUnit', val)
+    },
     showDate(time) {
       if (time === '' || time === null || typeof (time) === 'undefined') {
         return ''
@@ -1401,6 +1405,7 @@ export default {
         }
         this.order_master = response['order']
         this.$emit('orderInfo', this.order_master)
+        this.$store.dispatch('orderMaster/setReceiveClosingUnit', this.order_master.instruction_id)
       }).catch(error => {
         console.log(error)
       })

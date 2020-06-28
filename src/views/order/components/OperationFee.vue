@@ -153,9 +153,17 @@
     </el-table>
     <el-row style="margin-top: 10px">
       <el-button size="mini" type="primary" icon="el-icon-plus" @click="addFee">新增</el-button>
-      <el-button size="mini" type="success" icon="el-icon-check" :loading="updateLoading" @click="saveFee()">保存</el-button>
+      <el-button size="mini" type="success" icon="el-icon-check" :loading="updateLoading" @click="saveFee('',true)">保存</el-button>
       <el-button size="mini" type="danger" icon="el-icon-delete" :loading="deleteLoading" @click="deleteFee('','')">删除</el-button>
-      <el-button size="mini" type="info" icon="el-icon-copy-document">复制</el-button>
+      <el-dropdown size="mini" type="info" @command="handleCommand">
+        <el-button size="mini" type="info">
+          <i class="el-icon-copy-document" /> 复制
+        </el-button>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item v-if="payOrReceive === 'receive'" command="copyFee">复制到支出</el-dropdown-item>
+          <el-dropdown-item v-else command="copyFee">复制到收入</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
       <el-button size="mini" type="info" icon="el-icon-warning">确定对账</el-button>
       <el-button size="mini" type="warning" icon="el-icon-s-check">提交审批</el-button>
       <el-button size="mini" type="warning" icon="el-icon-s-check">提交复核</el-button>
@@ -197,6 +205,10 @@ export default {
       required: true
     },
     financeTagOptions: {
+      type: Array,
+      required: true
+    },
+    closingUnitOptions: {
       type: Array,
       required: true
     }
@@ -266,6 +278,15 @@ export default {
           this.currency_rate_options = newVal
         }
       }
+    },
+    closingUnitOptions: {
+      immediate: true,
+      handler(newVal) {
+        if (newVal.length >= 1) {
+          this.closingOptions = newVal
+          this.closing_unit = newVal
+        }
+      }
     }
   },
   methods: {
@@ -305,18 +326,25 @@ export default {
     addFee() {
       const temp = this.inputFee()
       temp.pay_or_receive = this.payOrReceive
-      this.finance_fee_array.push(temp)
+      if (this.payOrReceive === 'receive') {
+        temp.closing_unit_id = parseInt(this.$store.state.orderMaster.receiveClosingUnitId)
+      } else {
+        temp.closing_unit_id = parseInt(this.$store.state.orderMaster.payClosingUnitId)
+      }
+      this.finance_fee_array.unshift(temp)
       this.toggleSelection([temp])
     },
-    saveFee(data) {
-      if (data === undefined) {
+    saveFee(data, callback) {
+      const saveData = []
+      if (data === '') {
         data = this.multipleSelection
       }
       if (data.length < 1) {
         this.$message.error('请选择要提交的记录')
         return
       }
-      data.forEach((item, index) => {
+      for (let index = 0; index < data.length; index++) {
+        const item = data[index]
         if (item.name === '' || typeof (item.name) === 'undefined') {
           this.$message.error('行' + index.toString() + '费用简称不能为空')
           return
@@ -334,30 +362,35 @@ export default {
         item.tax_rate = parseFloat(item.tax_rate)
         if (item.unit_price < 0 || typeof (item.unit_price) === 'undefined') {
           this.$message.error('行' + index.toString() + '单价不能小于0')
-          return
+          return false
         }
         if (item.finance_currency_id === 0 || typeof (item.finance_currency_id) === 'undefined') {
           this.$message.error('行' + index.toString() + '币种不能为空')
-          return
+          return false
         }
         if (item.closing_unit_id === 0 || typeof (item.closing_unit_id) === 'undefined') {
           this.$message.error('行' + index.toString() + '结算单位不能为空')
-          return
+          return false
         }
         if (item.finance_currency_rate === 0) {
           this.$message.error('行' + index.toString() + '币种汇率不能为空')
-          return
+          return false
         }
-      })
+        saveData.push(item)
+      }
       this.updateLoading = true
-      createData('/finance/fees/create', data, 'post').then((response) => {
+      createData('/finance/fees/create', saveData, 'post').then((response) => {
         this.$notify({
           title: 'Success',
           message: '保存数据成功',
           type: 'success',
           duration: 5000
         })
-        this.handleUpdateData(response.data)
+        if (callback) {
+          this.handleUpdateData(response.data)
+        } else {
+          this.dynamicHandlerData(data)
+        }
         this.updateLoading = false
       }).then((reason) => {
         this.updateLoading = false
@@ -400,7 +433,6 @@ export default {
             type: 'success',
             duration: 5000
           })
-
           this.deleteLoading = false
         }).catch(reason => {
           console.log(reason)
@@ -456,6 +488,8 @@ export default {
           this.closing_unit = response
         }
         this.loadingClosing = false
+      }).catch((reason) => {
+        console.log(reason)
       })
     },
     initFeeData(newVal) {
@@ -517,12 +551,64 @@ export default {
       } else {
         this.$refs.multipleTable.clearSelection()
       }
+    },
+    handleCommand(command) {
+      if (command === 'copyFee') {
+        this.copyFee()
+      }
+    },
+    copyFee() {
+      const copyData = []
+      if (this.multipleSelection.length === 0) {
+        this.$message.error('未选择记录')
+        return false
+      }
+      for (let i = 0; i < this.multipleSelection.length; i++) {
+        if (this.multipleSelection[i].id === 0) {
+          this.$message.error('请先保存记录')
+          return false
+        }
+        copyData.push(this.handleCopyFee(this.multipleSelection[i]))
+      }
+      this.saveFee(copyData, false)
+    },
+    dynamicHandlerData(data) {
+      this.$emit('changeFeeArray', data, this.payOrReceive)
+    },
+    handleCopyFee(data) {
+      return {
+        id: 0,
+        name: data.name,
+        name_cn: data.name_cn,
+        name_en: data.name_en,
+        pay_or_receive: (this.payOrReceive === 'pay' ? 'receive' : 'pay'),
+        pay_type_id: data.pay_type_id,
+        finance_currency_id: data.finance_currency_id,
+        finance_currency_rate: data.finance_currency_rate,
+        quantity: data.quantity,
+        unit_price: data.unit_price,
+        tax_rate: data.tax_rate,
+        tax_amount: data.tax_amount,
+        receivable: (this.payOrReceive === 'pay' ? data.payable : 0),
+        payable: (this.payOrReceive === 'receive' ? data.receivable : 0),
+        closing_unit_id: data.closing_unit_id,
+        order_master_id: parseInt(this.$route.params.id),
+        status: 'init',
+        verify_status: 'init',
+        type_id: data.type_id,
+        not_tax_amount: data.not_tax_amount,
+        remarks: data.remarks,
+        finance_statement_no: undefined
+      }
     }
   }
 }
 </script>
 <style lang="scss">
   .operation-fee{
+    .el-dropdown{
+      margin: 0 10px;
+    }
     .el-card__header{
       padding: 10px 20px !important;
     }

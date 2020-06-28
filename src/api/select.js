@@ -20,6 +20,8 @@ export function remoteCompany(query = '', scope = { company_type: 4 }) {
       scope: scope
     }).then((response) => {
       resolve(response.data)
+    }).catch(reason => {
+      console.log(reason)
     })
   })
 }
