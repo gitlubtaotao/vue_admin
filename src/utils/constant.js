@@ -1,6 +1,7 @@
 export const financeFeeStatus = {
   'init': '未提交',
   'dismiss': '已驳回',
+  'verify': '已对账',
   'pending': '待审批',
   'approval': '审批中',
   'review': '待复核',

@@ -20,9 +20,6 @@
             <el-form-item label="费用状态">
               <span>{{ showStatus(scope.row.status) }}</span>
             </el-form-item>
-            <el-form-item label="D/N">
-              <span>{{ showVerifyStatus(scope.row.verify_status) }}</span>
-            </el-form-item>
             <el-form-item label="币种汇率">
               <span>{{ scope.row.finance_currency_rate }}</span>
             </el-form-item>
@@ -145,9 +142,14 @@
       </el-table-column>
       <el-table-column label="操作" width="150px">
         <template slot-scope="scope">
-          <el-button v-if="!scope.row.edit" type="primary" icon="el-icon-edit" size="mini" @click="editFee(scope.row,scope.$index,true)" />
-          <el-button v-if="scope.row.edit" type="danger" icon="el-icon-close" size="mini" @click="editFee(scope.row,scope.$index,false)" />
-          <el-button v-if="!scope.row.edit" type="danger" icon="el-icon-delete" size="mini" @click="deleteFee(scope.row,scope.$index)" />
+          <div v-if="scope.row.status === 'init' || scope.row.status === 'dismiss' ">
+            <el-button v-if="!scope.row.edit" type="primary" icon="el-icon-edit" size="mini" @click="editFee(scope.row,scope.$index,true)" />
+            <el-button v-if="scope.row.edit" type="danger" icon="el-icon-close" size="mini" @click="editFee(scope.row,scope.$index,false)" />
+            <el-button v-if="!scope.row.edit" type="danger" icon="el-icon-delete" size="mini" @click="deleteFee(scope.row,scope.$index)" />
+          </div>
+          <div v-else style="text-align: center;">
+            <i class="el-icon-lock" />
+          </div>
         </template>
       </el-table-column>
     </el-table>
@@ -164,7 +166,7 @@
           <el-dropdown-item v-else command="copyFee">复制到收入</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-      <el-button size="mini" type="info" icon="el-icon-warning">确定对账</el-button>
+      <el-button size="mini" type="info" icon="el-icon-warning" @click="submitVerify">确定对账</el-button>
       <el-button size="mini" type="warning" icon="el-icon-s-check">提交审批</el-button>
       <el-button size="mini" type="warning" icon="el-icon-s-check">提交复核</el-button>
       <el-button size="mini" type="primary" icon="el-icon-share">导出</el-button>
@@ -173,7 +175,7 @@
 </template>
 <script>
 
-import { financeFeePayOrReceive, financeFeeStatus, financeFeeVerifyStatus } from '@/utils/constant'
+import { financeFeePayOrReceive, financeFeeStatus } from '@/utils/constant'
 import { remoteCompany } from '@/api/select'
 import { createData } from '@/api/index_data'
 
@@ -293,9 +295,6 @@ export default {
     showStatus(status) {
       return financeFeeStatus[status]
     },
-    showVerifyStatus(status) {
-      return financeFeeVerifyStatus[status]
-    },
     inputFee() {
       return {
         id: 0,
@@ -315,7 +314,6 @@ export default {
         closing_unit_id: undefined,
         order_master_id: parseInt(this.$route.params.id),
         status: 'init',
-        verify_status: 'init',
         type_id: 0,
         not_tax_amount: 0.0,
         remarks: undefined,
@@ -402,41 +400,78 @@ export default {
       })
     },
     deleteFee(row, $index) {
+      const self = this
       let rows = []
       if (row === '') {
         rows = this.multipleSelection
-        if (rows.length <= 0) {
-          this.$message.warning('未选择记录')
-          return
-        }
       } else {
         rows = [row]
       }
-      this.$confirm('确定执行删除操作, 是否继续?', '提示', {
+      this.beforeCheck(rows, function(rows) {
+        self.deleteLoading = true
+        const ids = []
+        for (let i = 0; i < rows.length; i++) {
+          if (rows[i].status !== 'init' && rows[i].status !== 'pending') {
+            self.$message.error('只能删除未提交或者已驳回的费用')
+            return false
+          }
+          self.finance_fee_array.splice(self.finance_fee_array.indexOf(rows[i]), 1)
+          ids.push(rows[i].id)
+        }
+        if (ids.length >= 1) {
+          createData('/finance/fees/DeleteFee', { ids: ids }, 'post').then((response) => {
+            console.log(self)
+            self.$notify({
+              title: 'Success',
+              message: '删除成功',
+              type: 'success',
+              duration: 5000
+            })
+            self.deleteLoading = false
+          }).catch(reason => {
+            console.log(reason)
+          })
+        }
+      })
+    },
+    submitVerify() {
+      const self = this
+      this.beforeCheck(this.multipleSelection, function(rows) {
+        const ids = []
+        for (let i = 0; i < rows.length; i++) {
+          if (rows[i].status !== 'init' && rows[i].status !== 'dismiss') {
+            self.$message.error('只能对未提交或者已驳回的费用进行确认对账')
+            return
+          }
+          self.$set(self.finance_fee_array[i], 'status', 'verify')
+          ids.push(rows[i].id)
+        }
+        if (ids.length >= 1) {
+          createData('/finance/fees/ChangeStatus?status=verify', { ids: ids }, 'post').then((response) => {
+            self.$notify({
+              title: 'Success',
+              message: '更新状态成功',
+              type: 'success',
+              duration: 5000
+            })
+            self.deleteLoading = false
+          }).catch(reason => {
+            console.log(reason)
+          })
+        }
+      })
+    },
+    beforeCheck(rows, callback) {
+      if (rows.length <= 0) {
+        this.$message.warning('请先未勾选记录')
+        return
+      }
+      this.$confirm('是否继续执行此操作, ', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.deleteLoading = true
-        rows.forEach((a) => {
-          if (a.status !== 'init' && a.status !== 'pending') {
-            this.$message.error('只能删除未提交或者已驳回的费用')
-            return
-          }
-          this.finance_fee_array.splice(this.finance_fee_array.indexOf(a), 1)
-        })
-        const ids = rows.map(item => item.id)
-        createData('/finance/fees/DeleteFee', { ids: ids }, 'post').then((response) => {
-          this.$notify({
-            title: 'Success',
-            message: '删除成功',
-            type: 'success',
-            duration: 5000
-          })
-          this.deleteLoading = false
-        }).catch(reason => {
-          console.log(reason)
-        })
+        callback(rows)
       }).catch(() => {
       })
     },
@@ -594,7 +629,6 @@ export default {
         closing_unit_id: data.closing_unit_id,
         order_master_id: parseInt(this.$route.params.id),
         status: 'init',
-        verify_status: 'init',
         type_id: data.type_id,
         not_tax_amount: data.not_tax_amount,
         remarks: data.remarks,

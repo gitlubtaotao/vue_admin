@@ -121,22 +121,15 @@
                     </el-select>
                   </el-form-item>
                 </el-tooltip>
+                <el-form-item label="跳过财务审批机制" prop="">
+                  <el-select v-model="temp.finance.skip_approve" filterable placeholder="请选择" size="medium" clearable style="width: 100%;">
+                    <el-option v-for="item in valueOptions" :key="item.value" :label="item.label" :value="item.value"/>
+                  </el-select>
+                </el-form-item>
                 <el-tooltip class="item" effect="dark" content="开启设置后，费用对帐成功后可直接进行销帐和开票处理" placement="right">
-                  <el-form-item label="跳过财务审核/复核机制" prop="">
-                    <el-select
-                      v-model="temp.finance.skip_audit"
-                      filterable
-                      placeholder="请选择"
-                      size="medium"
-                      clearable
-                      style="width: 100%;"
-                    >
-                      <el-option
-                        v-for="item in valueOptions"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
+                  <el-form-item label="跳过财务复核机制" prop="">
+                    <el-select v-model="temp.finance.skip_audit" filterable placeholder="请选择" size="medium" clearable style="width: 100%;">
+                      <el-option v-for="item in valueOptions" :key="item.value" :label="item.label" :value="item.value" />
                     </el-select>
                   </el-form-item>
                 </el-tooltip>
@@ -211,15 +204,16 @@ export default {
           data_security_control: 'false',
           company_logo: '',
           conversion_method_calu: 'division',
-          conversion_method_remain: 1
+          conversion_method_remain: 1,
         },
         finance: {
-          system_finance_currency: null,
-          system_finance_rate: null,
-          skip_bank_to_payable: null,
-          skip_audit: null,
-          auto_update_currency_rate: null,
-          manage_customer_rate: null
+          system_finance_currency: undefined,
+          system_finance_rate: undefined,
+          skip_bank_to_payable: undefined,
+          skip_audit: 'false',
+          skip_approve: 'false',
+          auto_update_currency_rate: undefined,
+          manage_customer_rate: undefined
         }
       },
       data: {},
@@ -284,6 +278,7 @@ export default {
         { key: 'finance', field: 'system_finance_rate', value: this.temp.finance.system_finance_rate },
         { key: 'finance', field: 'skip_bank_to_payable', value: this.temp.finance.skip_bank_to_payable },
         { key: 'finance', field: 'skip_audit', value: this.temp.finance.skip_audit },
+        { key: 'finance', field: 'skip_approve', value: this.temp.finance.skip_approve },
         { key: 'finance', field: 'auto_update_currency_rate', value: this.temp.finance.auto_update_currency_rate },
         { key: 'finance', field: 'manage_customer_rate', value: this.temp.finance.manage_customer_rate }
       ]
