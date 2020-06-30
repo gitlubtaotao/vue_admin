@@ -22,4 +22,3 @@ export const financeFeePayOrReceive = {
   'pay': '支出',
   'receive': '收入'
 }
-

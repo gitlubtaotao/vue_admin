@@ -169,7 +169,9 @@
       <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="filterTable" />
     </el-card>
     <el-dialog title="跟进记录" :visible.sync="dialogTracksVisible" width="50%">
-      <ClueTrack :source-id="parseInt(temp.id)" source-type="crm_clues" :clue-tracks="temp.crm_tracks" />
+      <keep-alive>
+        <ClueTrack :source-id="parseInt(temp.id)" source-type="crm_clues" :clue-tracks="temp.crm_tracks" />
+      </keep-alive>
     </el-dialog>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="80%">
       <el-form ref="dataForm" :rules="rules" :model="temp" :status-icon="true" label-position="left" label-width="100px" style="width: 100%;padding: 0 20px;">

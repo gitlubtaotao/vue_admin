@@ -227,7 +227,7 @@ import MasterIndex from '../components/MasterIndex'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import { getData } from '@/api/index_data'
-import { transportTypeOptions } from "@/api/order_master"
+import { transportTypeOptions } from '@/api/order_master'
 import { dateRangeArrayToStr } from '@/utils'
 export default {
   name: 'OrderMaster',
