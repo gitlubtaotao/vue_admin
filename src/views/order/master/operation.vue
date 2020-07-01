@@ -48,14 +48,11 @@
           </keep-alive>
         </el-tab-pane>
         <el-tab-pane label="附件" :lazy="true">
-          <el-row style="margin-bottom: 10px">
-            <el-button type="primary" size="small">上传附件</el-button>
-          </el-row>
           <keep-alive>
-            <order-attachment label="内部附件" :attachment-list="[]" />
+            <order-attachment label="internal" :attachment-list="internalFile" />
           </keep-alive>
           <keep-alive>
-            <order-attachment label="外部附件" :attachment-list="[]" />
+            <order-attachment label="external" :attachment-list="externalFile" />
           </keep-alive>
         </el-tab-pane>
       </el-tabs>
@@ -79,6 +76,7 @@ export default {
       id: this.$route.params && this.$route.params.id,
       transport_type: this.$route.query.transport_type,
       loadingFee: false,
+      loadingFile: false,
       receive_fee_array: [],
       pay_fee_array: [],
       fee_type_options: [],
@@ -87,6 +85,8 @@ export default {
       finance_tag_options: [],
       pay_type_options: [],
       closing_unit_options: [],
+      internalFile: [],
+      externalFile: [],
       order_master: {
         serial_number: '',
         instruction_name: '',
@@ -115,6 +115,8 @@ export default {
     tabClick(tab) {
       if (tab.index === '1' && !this.loadingFee) {
         this.getFeeData()
+      } else if (tab.index === '2' && !this.loadingFile) {
+        this.getFileData()
       }
     },
     changeFeeArray(data, payOrReceive) {
@@ -145,6 +147,15 @@ export default {
           this.currency_rate_options = options.currency_rate_options
         }
         this.loadingFee = true
+      }).catch((reason) => {
+        console.log(reason)
+      })
+    },
+    getFileData() {
+      getData('/attachments/' + this.id + '/GetOrderFile', {}, 'get').then((response) => {
+        this.externalFile = response['external']
+        this.internalFile = response['internal']
+        this.loadingFile = true
       }).catch((reason) => {
         console.log(reason)
       })
