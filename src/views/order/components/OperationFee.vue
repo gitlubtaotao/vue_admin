@@ -4,7 +4,7 @@
       <div slot="header" class="clearfix">
         <span>{{ showType }}</span>
       </div>
-      <el-table ref="multipleTable" :key="payOrReceive" :data="finance_fee_array" fit max-height="500" border style="width: 100%;" @selection-change="handleSelectionChange">
+      <el-table ref="multipleTable" :key="payOrReceive" :data="finance_fee_array" fit max-height="700" border style="width: 100%;" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" fixed="left" />
         <el-table-column type="expand">
           <template slot-scope="scope">

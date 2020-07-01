@@ -47,7 +47,17 @@
             />
           </keep-alive>
         </el-tab-pane>
-        <el-tab-pane label="附件">附件</el-tab-pane>
+        <el-tab-pane label="附件" :lazy="true">
+          <el-row style="margin-bottom: 10px">
+            <el-button type="primary" size="small">上传附件</el-button>
+          </el-row>
+          <keep-alive>
+            <order-attachment label="内部附件" :attachment-list="[]" />
+          </keep-alive>
+          <keep-alive>
+            <order-attachment label="外部附件" :attachment-list="[]" />
+          </keep-alive>
+        </el-tab-pane>
       </el-tabs>
     </el-card>
   </div>
@@ -57,12 +67,13 @@
 import { parseTime } from '@/utils'
 import SeaPage from '../components/sea/SeaPage'
 import OperationFee from '../components/OperationFee'
+import OrderAttachment from '../components/OrderAttachment'
 import { getData } from '@/api/index_data'
 import { mapState } from 'vuex'
 
 export default {
   name: 'OrderOperation',
-  components: { SeaPage, OperationFee },
+  components: { SeaPage, OperationFee, OrderAttachment },
   data() {
     return {
       id: this.$route.params && this.$route.params.id,
