@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-row>
-      <el-button v-if="orderMasterStatus === 'processing'" type="primary" size="small" icon="el-icon-edit" @click="editOrder">编辑订单</el-button>
+      <el-button v-if="['processing','unprocessed','unaudited'].indexOf(orderMasterStatus) > -1" type="primary" size="small" icon="el-icon-edit" @click="editOrder">编辑订单</el-button>
       <el-button type="primary" size="small" icon="el-icon-date">操作计划</el-button>
       <el-button v-if="orderMasterStatus !== 'cancel'" type="info" size="small" icon="el-icon-copy-document">复制</el-button>
       <el-button type="info" size="small" icon="el-icon-location">货物追踪</el-button>
