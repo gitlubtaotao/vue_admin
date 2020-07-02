@@ -271,12 +271,6 @@ export default {
       dialogFormVisible: false,
       loadingInstruction: false,
       transportOptions: transportTypeOptions(),
-      statusOptions: [
-        { label: '处理中', value: 'processing' },
-        { label: '已锁定', value: 'locked' },
-        { label: '已完成', value: 'finished' },
-        { label: '已作废', value: 'cancel' }
-      ],
       mainTransportOptions: [
         { label: '整箱', value: 1 },
         { label: '拼箱', value: 4 },
@@ -317,6 +311,22 @@ export default {
         created_at: undefined,
         remarks: undefined,
         roles: []
+      }
+    }
+  },
+  computed: {
+    statusOptions: function() {
+      const status = [
+        { label: '处理中', value: 'processing' },
+        { label: '已锁定', value: 'locked' },
+        { label: '已完成', value: 'finished' },
+        { label: '已作废', value: 'cancel' }
+      ]
+      if (this.$store.state.user.systemSetting.order_audit_mechanism === 'true') {
+        return [{ label: '待审核', value: 'unaudited' },
+          { label: '待接单', value: 'unprocessed' }].concat(status)
+      } else {
+        return status
       }
     }
   },

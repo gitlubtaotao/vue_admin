@@ -37,11 +37,6 @@
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item v-if="row['status_value'] === 'processing'" command="update">编辑</el-dropdown-item>
-                <el-dropdown-item v-if="row['status_value'] === 'processing'" command="locked">锁定</el-dropdown-item>
-                <el-dropdown-item v-if="row['status_value'] === 'processing'" command="finished">完成</el-dropdown-item>
-                <el-dropdown-item v-if="row['status_value'] === 'processing'" command="cancel" divided>作废</el-dropdown-item>
-                <el-dropdown-item v-if="row['status_value'] === 'locked'" command="processing">解锁</el-dropdown-item>
-                <el-dropdown-item v-if="row['status_value'] === 'locked'" command="finished">完成</el-dropdown-item>
                 <el-dropdown-item v-if="row['status_value'] === 'cancel'" command="delete">删除</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -72,7 +67,8 @@
 </template>
 <script>
 import { getColumn, localColumn } from '@/api/column'
-import { getData, updateData, deleteData } from '@/api/index_data'
+import { getData } from '@/api/index_data'
+import { deleteOrder } from '@/api/order_master'
 import UnfixedThead from '@/components/UnfixedThead'
 import ExportExcel from '@/components/ExportExcel'
 
@@ -145,14 +141,9 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteData('/order/masters/' + this.temp.id + '/delete').then((response) => {
-          this.$notify({
-            title: 'Success',
-            message: '删除成功',
-            type: 'success',
-            duration: 5000
-          })
+        deleteOrder(this.temp.id).then((response) => {
           this.lists.splice(this.index, 1)
+          this.$notify({ title: 'Success', message: '删除成功', type: 'success', duration: 5000 })
         })
       }).catch(() => {
       })
@@ -165,21 +156,6 @@ export default {
         this.handleUpdate()
       } else if (command === 'delete') {
         this.handleDelete()
-      } else {
-        this.$confirm('确定执行次操作, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          updateData('/order/masters/' + this.temp.id + '/changeStatus?status=' + command, {}, 'Patch').then((response) => {
-            this.$notify({
-              title: 'Success',
-              message: '执行次操作成功',
-              type: 'success',
-              duration: 5000
-            })
-          })
-        }).catch(() => {})
       }
     },
     filterColumn() {

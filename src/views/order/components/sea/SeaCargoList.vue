@@ -132,7 +132,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-row style="margin-top: 10px">
+    <el-row v-if="orderMasterStatus === 'processing'" style="margin-top: 10px">
       <el-button size="mini" type="primary" icon="el-icon-plus" @click="addCargoInfo">新增</el-button>
       <el-button size="mini" type="success" icon="el-icon-check" :loading="updateLoading" @click="saveCargoInfo()">保存</el-button>
       <el-button size="mini" type="danger" icon="el-icon-delete" :loading="deleteLoading" @click="deleteCargoInfo('','')">删除</el-button>
@@ -197,6 +197,11 @@ export default {
         description_of_good: undefined,
         edit: true
       }
+    }
+  },
+  computed: {
+    orderMasterStatus: function() {
+      return this.$store.state.orderMaster.orderMasterStatus
     }
   },
   watch: {

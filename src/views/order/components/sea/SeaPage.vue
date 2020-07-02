@@ -1406,6 +1406,7 @@ export default {
         this.order_master = response['order']
         this.$emit('orderInfo', this.order_master)
         this.$store.dispatch('orderMaster/setReceiveClosingUnit', this.order_master.instruction_id)
+        this.$store.dispatch('orderMaster/setOrderMasterStatus', this.order_master.status)
       }).catch(error => {
         console.log(error)
       })

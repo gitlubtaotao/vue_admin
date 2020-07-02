@@ -61,6 +61,11 @@
                 <el-form-item label="计费重保留小数位数" prop="">
                   <el-input-number v-model="temp.base.conversion_method_remain" :min="1" :max="10" label="" />
                 </el-form-item>
+                <el-form-item label="是否开启订单审核机制" prop="">
+                  <el-select v-model="temp.base.order_audit_mechanism" filterable placeholder="请选择" size="medium" clearable style="width: 100%;">
+                    <el-option v-for="item in valueOptions" :key="item.value" :label="item.label" :value="item.value" />
+                  </el-select>
+                </el-form-item>
                 <el-form-item>
                   <el-button type="primary" :loading="loading" @click="onSubmitBase">保存</el-button>
                 </el-form-item>
@@ -123,7 +128,7 @@
                 </el-tooltip>
                 <el-form-item label="跳过财务审批机制" prop="">
                   <el-select v-model="temp.finance.skip_approve" filterable placeholder="请选择" size="medium" clearable style="width: 100%;">
-                    <el-option v-for="item in valueOptions" :key="item.value" :label="item.label" :value="item.value"/>
+                    <el-option v-for="item in valueOptions" :key="item.value" :label="item.label" :value="item.value" />
                   </el-select>
                 </el-form-item>
                 <el-tooltip class="item" effect="dark" content="开启设置后，费用对帐成功后可直接进行销帐和开票处理" placement="right">
@@ -205,6 +210,7 @@ export default {
           company_logo: '',
           conversion_method_calu: 'division',
           conversion_method_remain: 1,
+          order_audit_mechanism: 'false'
         },
         finance: {
           system_finance_currency: undefined,
@@ -255,7 +261,8 @@ export default {
         { key: 'base', field: 'company_logo', value: this.temp.base.company_logo },
         { key: 'base', field: 'data_security_control', value: this.temp.base.data_security_control },
         { key: 'base', field: 'conversion_method_calu', value: this.temp.base.conversion_method_calu },
-        { key: 'base', field: 'conversion_method_remain', value: this.temp.base.conversion_method_remain.toString() }
+        { key: 'base', field: 'conversion_method_remain', value: this.temp.base.conversion_method_remain.toString() },
+        { key: 'base', field: 'order_audit_mechanism', value: this.temp.base.order_audit_mechanism }
       ]
       this.$refs['dataBase'].validate((valid) => {
         if (valid) {

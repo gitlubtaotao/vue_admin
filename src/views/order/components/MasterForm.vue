@@ -200,7 +200,6 @@ export default {
       handler(row) {
         this.temp = row
         this.roleArray = row.roles
-        console.log(this.roleArray)
       }
     }
   },
