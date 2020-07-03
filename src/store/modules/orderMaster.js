@@ -4,7 +4,8 @@ const state = {
   payClosingUnitId: 0,
   systemFinanceApprove: 'false',
   systemFinanceAudit: 'false',
-  orderMasterStatus: 'processing'
+  orderMasterStatus: 'processing',
+  orderMasterSoNo: []
 }
 const mutations = {
   SYSTEM_FINANCE_APPROVE: (state, status) => {

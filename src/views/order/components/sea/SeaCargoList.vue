@@ -141,8 +141,8 @@
   </div>
 </template>
 <script>
-import { getData, createData } from '@/api/index_data'
-
+import { createData } from '@/api/index_data'
+import { getSoNoData } from '@/api/order_master'
 export default {
   name: 'SeaCargoList',
   props: {
@@ -366,15 +366,8 @@ export default {
       if (this.SoNoOptions.length > 0) {
         return
       }
-      getData('/order/masters/' + this.$route.params.id + '/GetSoNoOptions', {}, 'get').then(response => {
-        const data = response.data.so_no
-        for (let i = 0; i < data.length; i++) {
-          if (data[i] !== '') {
-            this.SoNoOptions.push({ value: data[i], label: data[i] })
-          }
-        }
-      }).catch(error => {
-        console.log(error)
+      getSoNoData(this.$route.params.id).then((response) => {
+        this.SoNoOptions = response
       })
     },
     returnTemp() {

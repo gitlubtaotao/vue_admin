@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import { deleteData } from '@/api/index_data'
+import { deleteData, getData } from '@/api/index_data'
 
 export function transportTypeOptions() {
   return [
@@ -23,6 +23,23 @@ export function deleteOrder(order_master_id) {
   return new Promise((resolve, reject) => {
     deleteData('/order/masters/' + order_master_id + '/delete').then(response => {
       resolve(response)
+    }).catch(error => {
+      reject(error)
+    })
+  })
+}
+
+export function getSoNoData(id) {
+  return new Promise((resolve, reject) => {
+    getData('/order/masters/' + id + '/GetSoNoOptions', {}, 'get').then(response => {
+      const data = response.data.so_no
+      const SoNoOptions = []
+      for (let i = 0; i < data.length; i++) {
+        if (data[i] !== '') {
+          SoNoOptions.push({ value: data[i], label: data[i] })
+        }
+      }
+      resolve(SoNoOptions)
     }).catch(error => {
       reject(error)
     })

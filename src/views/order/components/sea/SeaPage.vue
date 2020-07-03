@@ -99,10 +99,13 @@
               </el-dropdown-menu>
             </el-dropdown>
           </div>
-          <keep-alive>
-            <former-button :order-master="order_master" :save-data="saveData" />
-          </keep-alive>
-          <el-form :inline="true" :model="former_sea_instruction" class="form-content-box" label-position="top">
+          <el-row>
+            <keep-alive>
+              <former-save :order-master="order_master" @click="saveData" />
+            </keep-alive>
+          </el-row>
+          <el-divider />
+          <el-form ref="former_sea_instruction" :inline="true" :model="former_sea_instruction" class="form-content-box" label-position="top">
             <el-row :gutter="5">
               <el-col :span="4" class="form-content-box-left">
                 <el-form-item label="发货人" prop="shipper_id" size="small">
@@ -413,28 +416,20 @@
                 </div>
                 <el-divider />
                 <div class="box-center-3">
-                  <div v-if="showTransport === 1" class="cap-list">
-                    <el-form-item
-                      v-for="(cap_list, index) in former_sea_instruction.sea_cap_lists"
-                      :key="index"
-                      :label="'柜型/柜量'"
-                      size="mini"
-                    >
-                      <el-select v-model="cap_list.cap_type" filterable placeholder="请选择" size="mini" clearable>
-                        <el-option
-                          v-for="item in CapTypeOptions"
-                          :key="item.name"
-                          :label="item.name"
-                          :value="item.name"
-                        />
-                      </el-select>
-                      <el-input-number v-model="cap_list.number" :min="1" class="cap-list-number" size="mini" />
-                      <el-button type="danger" size="mini" icon="el-icon-delete" @click.prevent="removeCapList(index)" />
-                    </el-form-item>
-                  </div>
-                  <div v-if="showTransport === 1">
-                    <el-button type="primary" size="mini" @click.prevent="addCapList">新增</el-button>
-                  </div>
+                  <el-row v-if="showTransport === 1" :gutter="5">
+                    <el-col v-for="(cap_list, index) in former_sea_instruction.sea_cap_lists" :key="index" :span="12">
+                      <el-form-item label="柜型" prop="cap_type" size="mini" style="width: 35%;">
+                        <el-select v-model="cap_list.cap_type" filterable placeholder="请选择" size="mini" clearable>
+                          <el-option v-for="item in CapTypeOptions" :key="item.name" :label="item.name" :value="item.name" />
+                        </el-select>
+                      </el-form-item>
+                      <el-form-item label="柜量" prop="number" size="mini" style="width: 35%;">
+                        <el-input-number v-model="cap_list.number" :min="1" class="cap-list-number" size="mini" />
+                      </el-form-item>
+                      <el-form-item style="vertical-align: bottom;" size="mini"><el-button type="danger" size="mini" icon="el-icon-delete" @click.prevent="removeCapList(index)" /></el-form-item>
+                    </el-col>
+                  </el-row>
+                  <div v-if="showTransport === 1" style="margin-top: 10px;"><el-button type="primary" size="mini" @click.prevent="addCapList()">新增</el-button></div>
                   <el-form-item label="唛头" size="small">
                     <el-input v-model="former_sea_instruction.marks" type="textarea" :rows="8" style="width: 100%" />
                   </el-form-item>
@@ -630,10 +625,13 @@
           </keep-alive>
         </el-tab-pane>
         <el-tab-pane label="订舱单(MBL)" name="former_sea_book" :lazy="true">
-          <keep-alive>
-            <former-button :order-master="order_master" :save-data="saveData" />
-          </keep-alive>
-          <el-form :inline="true" :model="former_sea_book" class="form-content-box" label-position="top">
+          <el-row>
+            <keep-alive>
+              <former-save :order-master="order_master" @click="saveData" />
+            </keep-alive>
+          </el-row>
+          <el-divider />
+          <el-form rel="former_sea_book" :inline="true" :model="former_sea_book" class="form-content-box" label-position="top">
             <el-row :gutter="5">
               <el-col :span="4" class="form-content-box-left">
                 <el-form-item label="发货人" prop="shipper_id" size="small">
@@ -942,28 +940,20 @@
                 </div>
                 <el-divider />
                 <div class="box-center-3">
-                  <div v-if="showTransport === 1" class="cap-list">
-                    <el-form-item
-                      v-for="(cap_list, index) in former_sea_book.sea_cap_lists"
-                      :key="index"
-                      :label="'柜型/柜量'"
-                      size="mini"
-                    >
-                      <el-select v-model="cap_list.cap_type" filterable placeholder="请选择" size="mini" clearable>
-                        <el-option
-                          v-for="item in CapTypeOptions"
-                          :key="item.name"
-                          :label="item.name"
-                          :value="item.name"
-                        />
-                      </el-select>
-                      <el-input-number v-model="cap_list.number" :min="1" class="cap-list-number" size="mini" />
-                      <el-button type="danger" size="mini" icon="el-icon-delete" @click.prevent="removeCapList(index)" />
-                    </el-form-item>
-                  </div>
-                  <div v-if="showTransport === 1">
-                    <el-button type="primary" size="mini" @click.prevent="addCapList">新增</el-button>
-                  </div>
+                  <el-row v-if="showTransport === 1" :gutter="5">
+                    <el-col v-for="(cap_list, index) in former_sea_book.sea_cap_lists" :key="index" :span="12">
+                      <el-form-item label="柜型" prop="cap_type" size="mini" style="width: 35%;">
+                        <el-select v-model="cap_list.cap_type" filterable placeholder="请选择" size="mini" clearable>
+                          <el-option v-for="item in CapTypeOptions" :key="item.name" :label="item.name" :value="item.name" />
+                        </el-select>
+                      </el-form-item>
+                      <el-form-item label="柜量" prop="number" size="mini" style="width: 35%;">
+                        <el-input-number v-model="cap_list.number" :min="1" class="cap-list-number" size="mini" />
+                      </el-form-item>
+                      <el-form-item style="vertical-align: bottom;" size="mini"><el-button type="danger" size="mini" icon="el-icon-delete" @click.prevent="removeCapList(index)" /></el-form-item>
+                    </el-col>
+                  </el-row>
+                  <div v-if="showTransport === 1" style="margin-top: 10px;"><el-button type="primary" size="mini" @click.prevent="addCapList()">新增</el-button></div>
                   <el-form-item label="唛头" size="small">
                     <el-input v-model="former_sea_book.marks" type="textarea" :rows="8" style="width: 100%" />
                   </el-form-item>
@@ -1136,7 +1126,9 @@
             />
           </keep-alive>
         </el-tab-pane>
-        <el-tab-pane label="综合服务" name="service">定时任务补偿</el-tab-pane>
+        <el-tab-pane label="综合服务" name="service" :lazy="true">
+          <keep-alive><other-server /></keep-alive>
+        </el-tab-pane>
       </el-tabs>
     </el-col>
   </div>
@@ -1145,14 +1137,15 @@
 import { parseTime } from '@/utils'
 import { createData, getData } from '@/api/index_data'
 import ButtonList from '../ButtonList'
-import FormerButton from './FormerButton'
+import FormerSave from '../button/FormerSave'
+import OtherServer from '../OtherServer/index'
 import FormerSoNo from './FormerSoNo'
 import SeaCargoList from './SeaCargoList'
 import { remoteCompany } from '@/api/select'
 
 export default {
   name: 'SeaPage',
-  components: { ButtonList, FormerButton, FormerSoNo, SeaCargoList },
+  components: { ButtonList, FormerSave, FormerSoNo, SeaCargoList, OtherServer },
   data() {
     return {
       transport_type: this.$route.query.transport_type,
@@ -1530,25 +1523,31 @@ export default {
         })
         return
       }
-      if (this.activeName === 'former_sea_instruction') {
-        data = {
-          former_sea_instruction: this.former_sea_instruction,
-          order_extend_info: this.order_master.order_extend_info
+      this.$refs[this.activeName].validate((valid) => {
+        if (valid) {
+          if (this.activeName === 'former_sea_instruction') {
+            data = {
+              former_sea_instruction: this.former_sea_instruction,
+              order_extend_info: this.order_master.order_extend_info
+            }
+          } else if (this.activeName === 'former_sea_book') {
+            data = { former_sea_book: this.former_sea_book, order_extend_info: this.order_master.order_extend_info }
+          }
+          createData('/order/masters/' + this.$route.params.id + '/UpdateFormerData?former_type=' + this.activeName, data).then((response) => {
+            this.$notify({
+              title: 'Success',
+              message: '保存数据成功',
+              type: 'success',
+              duration: 5000
+            })
+            this.isDataChange = 0
+          }).catch(reason => {
+            console.log(reason)
+          })
+        } else {
+          console.log('error submit!!')
+          return false
         }
-      } else if (this.activeName === 'former_sea_book') {
-        data = { former_sea_book: this.former_sea_book, order_extend_info: this.order_master.order_extend_info }
-      }
-      console.log(data)
-      createData('/order/masters/' + this.$route.params.id + '/UpdateFormerData?former_type=' + this.activeName, data).then((response) => {
-        this.$notify({
-          title: 'Success',
-          message: '保存数据成功',
-          type: 'success',
-          duration: 5000
-        })
-        this.isDataChange = 0
-      }).catch(reason => {
-        console.log(reason)
       })
     }
   }

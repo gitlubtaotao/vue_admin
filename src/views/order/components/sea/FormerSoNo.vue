@@ -1,7 +1,10 @@
 <template>
   <div>
-    <former-button :save-data="saveData" />
-    <el-form :inline="true" :model="former_sea_so_no" class="form-content-box" label-position="top">
+    <el-row>
+      <former-save @click="saveData" />
+    </el-row>
+    <el-divider />
+    <el-form ref="former_sea_so_no" :inline="true" :model="former_sea_so_no" class="form-content-box" label-position="top">
       <el-row :gutter="5" class="so-array">
         <el-col v-for="(cap_list, index) in soNoArray" :key="index" :span="4">
           <el-form-item :label="'So No.'" size="mini">
@@ -37,11 +40,11 @@
   </div>
 </template>
 <script>
-import FormerButton from './FormerButton'
+import FormerSave from '../button/FormerSave'
 import { getData, createData } from '@/api/index_data'
 export default {
   name: 'FormerSoNo',
-  components: { FormerButton },
+  components: { FormerSave },
   props: {
     getFormerDataUrl: {
       required: true,

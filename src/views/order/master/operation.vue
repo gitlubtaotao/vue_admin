@@ -11,7 +11,7 @@
         <el-col :offset="2" :span="3" />
       </el-row>
     </el-card>
-    <el-card class="box-card" style="margin-top: 20px;">
+    <el-card class="box-card operation-content-box" style="margin-top: 20px;">
       <el-tabs @tab-click="tabClick">
         <el-tab-pane label="操作" :lazy="true">
           <keep-alive>
@@ -178,6 +178,17 @@ export default {
   #operation-header{
     .el-col{
       text-align: center;
+    }
+  }
+  .el-divider--horizontal {
+    display: block;
+    height: 1px;
+    width: 100%;
+    margin: 10px 0;
+  }
+  .operation-content-box {
+    .el-card__body {
+      padding: 10px !important;
     }
   }
   .demo-form-inline{
