@@ -1,16 +1,21 @@
 <template>
   <div>
-    <integrated-order :order-list="[]" style="margin-bottom: 10px;" class="other-server-class" />
-    <trailer-order
-      v-if="transportType === '1'"
-      :order-list="formerTrailerOrders"
+    <integrated-order
+      :order-list="formerOtherServers"
+      :supply-data="supplyOptions"
+      :customer-data="customerOptions"
       style="margin-bottom: 10px;"
       class="other-server-class"
+    />
+    <trailer-order
+      :order-list="formerTrailerOrders"
       :port-data="portOptions"
       :supply-data="supplyOptions"
       :customer-data="customerOptions"
       :cap-type-data="capTypeOptions"
       :package-data="packageOptions"
+      style="margin-bottom: 10px;"
+      class="other-server-class"
     />
   </div>
 </template>
@@ -50,6 +55,7 @@ export default {
   methods: {
     initData() {
       getData(this.getDataUrl, {}, 'get').then((response) => {
+        console.log(response)
         this.formerOtherServers = response.formerData.formerOtherServers
         this.formerTrailerOrders = response.formerData.formerTrailerOrders
         this.portOptions = response.selectOptions.portOptions

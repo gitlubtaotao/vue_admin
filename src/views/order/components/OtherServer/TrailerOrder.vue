@@ -2,7 +2,7 @@
   <div>
     <el-card shadow="hover" style="margin-top: 10px">
       <div slot="header" class="clearfix">
-        <span>码头拖车单</span>
+        <span>拖车单</span>
         <el-button type="primary" size="small" style="float: right;" @click="addOrder">新增</el-button>
       </div>
       <div v-for="(trail_order,order_index) in trailerOrderArray" :key="trail_order.id">
@@ -14,6 +14,11 @@
         <el-form ref="ruleForm" :inline="true" :model="trail_order" class="form-content-box" label-position="top" style="margin-bottom: 10px;">
           <el-row :gutter="5">
             <el-col :span="6" class="form-content-box-left">
+              <el-form-item v-if="transportType === '1'" label="拖车类型" prop="of_way" size="small">
+                <el-select v-model="trail_order.of_type" filterable placeholder="请选择" clearable style="width: 100%">
+                  <el-option v-for="item in ofTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+                </el-select>
+              </el-form-item>
               <el-form-item label="发货人" prop="instruction_id" size="small">
                 <el-select
                   v-model="trail_order.instruction_id"
@@ -50,6 +55,50 @@
                   />
                 </el-select>
               </el-form-item>
+              <el-form-item v-if="trail_order.of_type === 0" label="运输方式" prop="of_way" size="small">
+                <el-select v-model="trail_order.of_way" filterable placeholder="请选择" clearable style="width: 100%">
+                  <el-option v-for="item in ofWayOption" :key="item.value" :label="item.label" :value="item.value" />
+                </el-select>
+              </el-form-item>
+              <el-form-item v-else label="运输方式" prop="of_way" size="small">
+                <el-select v-model="trail_order.of_way" filterable placeholder="请选择" clearable style="width: 100%">
+                  <el-option v-for="item in ofWay2Options" :key="item.value" :label="item.label" :value="item.value" />
+                </el-select>
+              </el-form-item>
+              <div v-if="trail_order.of_type === 0">
+                <el-form-item label="SO NO." prop="so_no" size="small">
+                  <el-select v-model="trail_order.so_no" allow-create filterable clearable placeholder="请选择" style="width: 100%" @focus="getSoInfo">
+                    <el-option v-for="item in soNoOptions" :key="item.value" :label="item.label" :value="item.value" />
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="起运港" prop="pol_id" size="small">
+                  <el-select v-model="trail_order.pol_id" filterable clearable placeholder="请选择" style="width: 100%">
+                    <el-option v-for="item in portData" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
+                  </el-select>
+                  <el-form-item label="装货地/卸货地" prop="" size="small">
+                    <el-input v-model="trail_order.destination" type="textarea" :rows="3" />
+                  </el-form-item>
+                </el-form-item>
+              </div>
+              <div v-else>
+                <el-form-item label="出发地" prop="" size="small">
+                  <el-input v-model="trail_order.departure" type="textarea" :rows="3" />
+                </el-form-item>
+                <el-form-item label="目的地" prop="" size="small">
+                  <el-input v-model="trail_order.destination" type="textarea" :rows="3" />
+                </el-form-item>
+              </div>
+
+              <el-form-item label="装货/卸货时间" size="small">
+                <el-date-picker
+                  v-model="trail_order.loading_date"
+                  type="date"
+                  placeholder="选择日期"
+                  style="width:100%"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="18" class="form-content-box-center">
               <el-form-item label="拖车联系人" prop="trailer_contact_name" size="small">
                 <el-input v-model="trail_order.trailer_contact_name" type="text" style="width: 100%" />
               </el-form-item>
@@ -59,31 +108,7 @@
               <el-form-item label="车牌号码" prop="trailer_number" size="small">
                 <el-input v-model="trail_order.trailer_number" type="text" style="width: 100%" />
               </el-form-item>
-              <el-form-item label="运输方式" prop="of_way" size="small">
-                <el-select v-model="trail_order.of_way" filterable placeholder="请选择" clearable style="width: 100%">
-                  <el-option v-for="item in ofWayOption" :key="item.value" :label="item.label" :value="item.value" />
-                </el-select>
-              </el-form-item>
-              <el-form-item label="SO NO." prop="so_no" size="small">
-                <el-select v-model="trail_order.so_no" allow-create filterable clearable placeholder="请选择" style="width: 100%" @focus="getSoInfo">
-                  <el-option v-for="item in soNoOptions" :key="item.value" :label="item.label" :value="item.value" />
-                </el-select>
-              </el-form-item>
-              <el-form-item label="装货/卸货时间" size="small">
-                <el-date-picker
-                  v-model="trail_order.loading_date"
-                  type="date"
-                  placeholder="选择日期"
-                  style="width:100%"
-                />
-              </el-form-item>
-              <el-form-item label="起运港" prop="pol_id" size="small">
-                <el-select v-model="trail_order.pol_id" filterable clearable placeholder="请选择" style="width: 100%">
-                  <el-option v-for="item in portData" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="18" class="form-content-box-center">
+              <el-divider />
               <el-form-item label="转关带司机本" size="small" prop="is_declare">
                 <el-switch v-model="trail_order.is_driving_license" />
               </el-form-item>
@@ -98,7 +123,7 @@
               </el-form-item>
               <el-divider />
               <div class="box-center-3">
-                <el-row :gutter="5">
+                <el-row v-if="trail_order.of_type === 0" :gutter="5">
                   <el-col v-for="(cap_list, index) in trail_order.sea_cap_lists" :key="index" :span="12">
                     <el-form-item label="柜型" prop="cap_type" size="mini" style="width: 35%;">
                       <el-select v-model="cap_list.cap_type" filterable placeholder="请选择" size="mini" clearable>
@@ -111,7 +136,7 @@
                     <el-form-item style="vertical-align: bottom;" size="mini"><el-button type="danger" size="mini" icon="el-icon-delete" @click.prevent="removeCapList(trail_order, index)" /></el-form-item>
                   </el-col>
                 </el-row>
-                <div style="margin-top: 10px;"><el-button type="primary" size="mini" @click.prevent="addCapList(trail_order)">新增</el-button></div>
+                <div v-if="trail_order.of_type === 0" style="margin-top: 10px;"><el-button type="primary" size="mini" @click.prevent="addCapList(trail_order)">新增</el-button></div>
                 <el-divider />
                 <el-form-item label="唛头" size="small">
                   <el-input v-model="trail_order.marks" type="textarea" :rows="8" style="width: 100%" />
@@ -162,7 +187,7 @@
                     <el-input v-model="trail_order.volume" style="width: 100%" type="number" />
                   </el-form-item>
                   <el-divider />
-                  <el-row>
+                  <el-row v-if="trail_order.of_type === 0">
                     <el-col v-for="(trailer_cabinet, index) in trail_order.trailer_cabinet_numbers" :key="index" :span="12">
                       <el-form-item label="柜号" size="mini" prop="cabinet_number" style="width: 35%;">
                         <el-input v-model="trailer_cabinet.cabinet_number" />
@@ -175,7 +200,7 @@
                       </el-form-item>
                     </el-col>
                   </el-row>
-                  <div style="margin-top: 10px;"><el-button type="primary" size="mini" @click.prevent="addCabinetNumber(trail_order)">新增</el-button></div>
+                  <div v-if="trail_order.of_type === 0" style="margin-top: 10px;"><el-button type="primary" size="mini" @click.prevent="addCabinetNumber(trail_order)">新增</el-button></div>
                 </div>
               </div>
             </el-col>
@@ -226,12 +251,17 @@ export default {
       loadingCooperator: false,
       trailerOrderArray: [],
       ofWayOption: [{ value: 0, label: '出口拖车' }, { value: 1, label: '进口拖车' }],
+      ofWay2Options: [{ value: 0, label: '整车运输' }, { value: 1, label: '零担运输' }],
+      ofTypeOptions: [{ value: 0, label: '码头拖车' }, { value: 1, label: '内陆运输拖车' }],
       soNoOptions: []
     }
   },
   computed: {
     orderMasterStatus: function() {
       return this.$store.state.orderMaster.orderMasterStatus
+    },
+    transportType: function() {
+      return this.$route.query.transport_type
     }
   },
   watch: {
@@ -291,7 +321,7 @@ export default {
     },
     deleteData(trailer_order, index) {
       if (typeof (trailer_order.id) === 'undefined' || trailer_order.id === null) {
-        this.$message.error('请先保存记录')
+        this.trailerOrderArray.splice(index, 1)
         return
       }
       this.$confirm('是否继续此操作?', '提示', {
@@ -325,7 +355,7 @@ export default {
       return {
         id: undefined,
         order_master_id: parseInt(this.$route.params.id),
-        instruction_id: undefined,
+        instruction_id: this.$store.state.orderMaster.receiveClosingUnitId,
         trailer_company_id: undefined,
         trailer_contact_name: undefined,
         trailer_contact_phone: undefined,
@@ -346,6 +376,9 @@ export default {
         gross_weight: undefined,
         volume: undefined,
         remarks: undefined,
+        of_type: this.transportType === '1' ? 0 : 1,
+        departure: undefined,
+        destination: undefined,
         sea_cap_lists: [],
         trailer_cabinet_numbers: []
       }
