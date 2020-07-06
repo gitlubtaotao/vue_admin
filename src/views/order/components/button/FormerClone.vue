@@ -1,10 +1,10 @@
 <template>
-  <el-button v-if="orderMasterStatus === 'processing'" type="success" size="mini" icon="el-icon-check" :loading="saveLoading" @click="saveDataToService">保存</el-button>
+  <el-button v-if="orderMasterStatus === 'processing'" type="info" size="mini" icon="el-icon-copy-document" :loading="saveLoading" @click="saveDataToService">复制</el-button>
 </template>
 
 <script>
 export default {
-  name: 'FormerSave',
+  name: 'FormerClone',
   data() {
     return {
       saveLoading: false

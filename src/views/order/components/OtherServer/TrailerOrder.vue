@@ -9,7 +9,8 @@
         <el-row>
           <keep-alive><former-save @click="saveData(trail_order, order_index)" /></keep-alive>
           <keep-alive><former-delete @click="deleteData(trail_order, order_index)" /></keep-alive>
-        </el-row>
+          <keep-alive><former-clone @click="cloneData(trail_order)" />
+          </keep-alive></el-row>
         <el-divider />
         <el-form ref="ruleForm" :inline="true" :model="trail_order" class="form-content-box" label-position="top" style="margin-bottom: 10px;">
           <el-row :gutter="5">
@@ -214,12 +215,13 @@
 <script>
 import FormerSave from '../button/FormerSave'
 import FormerDelete from '../button/FormerDelete'
+import FormerClone from '../button/FormerClone'
 import { getSoNoData } from '@/api/order_master'
 import { createData, deleteData } from '@/api/index_data'
 
 export default {
   name: 'TrailerOrder',
-  components: { FormerSave, FormerDelete },
+  components: { FormerSave, FormerDelete, FormerClone },
   props: {
     orderList: {
       type: Array,
@@ -308,15 +310,9 @@ export default {
       }
     },
     saveData(trailer_order, index) {
-      this.$refs['ruleForm'][index].validate((valid) => {
-        if (valid) {
-          createData('/order/masters/SaveOtherServer?former_type=former_trailer_order', { former_trailer_order: trailer_order }).then((response) => {
-            this.$notify({ title: 'Success', message: '保存数据成功', type: 'success', duration: 5000 })
-            trailer_order.id = response.id
-          })
-        } else {
-          return false
-        }
+      createData('/order/masters/SaveOtherServer?former_type=former_trailer_order', { former_trailer_order: trailer_order }).then((response) => {
+        this.$notify({ title: 'Success', message: '保存数据成功', type: 'success', duration: 5000 })
+        trailer_order.id = response.id
       })
     },
     deleteData(trailer_order, index) {
@@ -324,16 +320,9 @@ export default {
         this.trailerOrderArray.splice(index, 1)
         return
       }
-      this.$confirm('是否继续此操作?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        deleteData('/order/masters/' + trailer_order.id + '/DeleteOtherServer?former_type=former_trailer_order').then((response) => {
-          this.trailerOrderArray.splice(index, 1)
-          this.$notify({ title: 'Success', message: '删除数据成功', type: 'success', duration: 5000 })
-        })
-      }).catch(() => {
+      deleteData('/order/masters/' + trailer_order.id + '/DeleteOtherServer?former_type=former_trailer_order').then((response) => {
+        this.trailerOrderArray.splice(index, 1)
+        this.$notify({ title: 'Success', message: '删除数据成功', type: 'success', duration: 5000 })
       })
     },
     removeCapList(trailer_order, index) {
@@ -382,6 +371,13 @@ export default {
         sea_cap_lists: [],
         trailer_cabinet_numbers: []
       }
+    },
+    cloneData() {
+      const length = this.trailerOrderArray.length
+      const result = JSON.parse(JSON.stringify(this.trailerOrderArray[this.trailerOrderArray.length - 1]))
+      result.id = 0
+      this.trailerOrderArray.push(result)
+      this.saveData(result, length + 1)
     }
   }
 }

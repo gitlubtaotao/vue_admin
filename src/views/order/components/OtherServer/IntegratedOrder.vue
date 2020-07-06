@@ -142,16 +142,9 @@ export default {
         this.order_server_array.splice(index, 1)
         return
       }
-      this.$confirm('是否继续此操作?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        deleteData('/order/masters/' + former.id + '/DeleteOtherServer?former_type=former_other_service').then((response) => {
-          this.order_server_array.splice(index, 1)
-          this.$notify({ title: 'Success', message: '删除数据成功', type: 'success', duration: 5000 })
-        })
-      }).catch(() => {
+      deleteData('/order/masters/' + former.id + '/DeleteOtherServer?former_type=former_other_service').then((response) => {
+        this.order_server_array.splice(index, 1)
+        this.$notify({ title: 'Success', message: '删除数据成功', type: 'success', duration: 5000 })
       })
     },
     addOrder() {

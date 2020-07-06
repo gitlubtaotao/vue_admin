@@ -17,11 +17,18 @@ export default {
   },
   methods: {
     saveDataToService(evt) {
-      this.saveLoading = true
-      this.$emit('click', evt)
+      this.$confirm('是否继续此操作?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.saveLoading = true
+        this.$emit('click', evt)
+      }).catch(() => {
+      })
       setTimeout(() => {
         this.saveLoading = false
-      }, 300)
+      }, 2000)
     }
   }
 }

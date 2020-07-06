@@ -9,6 +9,7 @@
         <el-row>
           <keep-alive><former-save @click="saveData(order, order_index)" /></keep-alive>
           <keep-alive><former-delete @click="deleteData(order, order_index)" /></keep-alive>
+          <keep-alive><former-clone @click="copyData" /></keep-alive>
         </el-row>
         <el-divider />
         <el-form ref="ruleForm" :inline="true" :model="order" class="form-content-box" label-position="top" style="margin-bottom: 10px;">
@@ -99,13 +100,14 @@
 <script>
 import FormerDelete from '../button/FormerDelete'
 import FormerSave from '../button/FormerSave'
+import FormerClone from '../button/FormerClone'
 import { getWarehouseAddress } from '@/api/select'
 
 import { createData, deleteData } from '@/api/index_data'
 
 export default {
   name: 'WarehouseServer',
-  components: { FormerDelete, FormerSave },
+  components: { FormerDelete, FormerSave, FormerClone },
   props: {
     orderList: {
       required: true,
@@ -156,32 +158,19 @@ export default {
   },
   methods: {
     saveData(order, order_index) {
-      this.$refs['ruleForm'][order_index].validate((valid) => {
-        if (valid) {
-          createData('/order/masters/SaveOtherServer?former_type=former_warehouse_service', { former_warehouse_service: order }).then((response) => {
-            this.$notify({ title: 'Success', message: '保存数据成功', type: 'success', duration: 5000 })
-            order.id = response.id
-          })
-        } else {
-          return false
-        }
-      })
+      createData('/order/masters/SaveOtherServer?former_type=former_warehouse_service', { former_warehouse_service: order }).then((response) => {
+        this.$notify({ title: 'Success', message: '保存数据成功', type: 'success', duration: 5000 })
+        order.id = response.id
+      }).catch(reason => { console.log(reason) })
     },
     deleteData(order, order_index) {
       if (typeof (order.id) === 'undefined' || order.id === null) {
         this.warehouseServerArray.splice(order_index, 1)
         return
       }
-      this.$confirm('是否继续此操作?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        deleteData('/order/masters/' + order.id + '/DeleteOtherServer?former_type=former_warehouse_service').then((response) => {
-          this.warehouseServerArray.splice(order_index, 1)
-          this.$notify({ title: 'Success', message: '删除数据成功', type: 'success', duration: 5000 })
-        })
-      }).catch(() => {
+      deleteData('/order/masters/' + order.id + '/DeleteOtherServer?former_type=former_warehouse_service').then((response) => {
+        this.warehouseServerArray.splice(order_index, 1)
+        this.$notify({ title: 'Success', message: '删除数据成功', type: 'success', duration: 5000 })
       })
     },
     addOrder() {
@@ -204,6 +193,12 @@ export default {
         delivery_remarks: undefined,
         distribution_remarks: undefined
       })
+    },
+    copyData() {
+      const data = this.warehouseServerArray[this.warehouseServerArray.length - 1]
+      const result = JSON.parse(JSON.stringify(data))
+      this.warehouseServerArray.push(result)
+      this.saveData(result, this.warehouseServerArray.length - 1)
     },
     getWarehouseData() {
       console.log(this.warehouseOptions.length)
