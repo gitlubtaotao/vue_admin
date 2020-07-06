@@ -3,7 +3,7 @@
     <el-card shadow="hover" style="margin-top: 10px">
       <div slot="header" class="clearfix">
         <span>其他服务</span>
-        <el-button type="primary" size="small" style="float: right;" @click="addOrder">新增</el-button>
+        <el-button v-if="orderMasterStatus === 'processing'" type="primary" size="small" style="float: right;" @click="addOrder">新增</el-button>
       </div>
       <div v-for="(former,order_index) in order_server_array" :key="former.id">
         <el-row>
@@ -33,7 +33,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item prop="remarks" label="备注" size="small">
-                <el-input v-model="former.remarks" type="textarea" :rows="5" />
+                <el-input v-model="former.remarks" type="textarea" :rows="5" maxlength="256" show-word-limit />
               </el-form-item>
             </el-col>
             <el-col :span="18" class="form-content-box-center">
@@ -94,6 +94,14 @@ export default {
         { key: 'accreditation_company_id', value: '鉴定机构' },
         { key: 'insurance_company_id', value: '保险公司' }
       ]
+    }
+  },
+  computed: {
+    orderMasterStatus: function() {
+      return this.$store.state.orderMaster.orderMasterStatus
+    },
+    transportType: function() {
+      return this.$route.query.transport_type
     }
   },
   watch: {

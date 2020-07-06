@@ -33,7 +33,8 @@ module.exports = {
     port: port,
     open: false,
     allowedHosts: [
-      'localhost:8082'
+      'localhost:8082',
+      '192.168.0.159:8082'
     ],
     overlay: {
       warnings: false,

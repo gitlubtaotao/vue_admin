@@ -445,12 +445,7 @@
                     <el-input v-model="former_sea_instruction.size" type="textarea" :rows="8" style="width: 100%" />
                   </el-form-item>
                   <el-form-item label="HBL 备注" size="small">
-                    <el-input
-                      v-model="former_sea_instruction.hbl_remarks"
-                      type="textarea"
-                      :rows="8"
-                      style="width: 100%"
-                    />
+                    <el-input v-model="former_sea_instruction.hbl_remarks" type="textarea" :rows="8" style="width: 100%" maxlength="256" show-word-limit />
                   </el-form-item>
                   <div class="pack-number-content">
                     <el-form-item label="数量" size="small">
@@ -486,6 +481,8 @@
                       type="textarea"
                       :rows="8"
                       style="width: 100%"
+                      maxlength="256"
+                      show-word-limit
                     />
                   </el-form-item>
                   <el-form-item label="接货地" size="small">
@@ -494,6 +491,8 @@
                       type="textarea"
                       :rows="8"
                       style="width: 100%"
+                      maxlength="256"
+                      show-word-limit
                     />
                   </el-form-item>
                 </div>
@@ -609,7 +608,7 @@
                   <el-input v-model="former_sea_instruction.invoice_no" style="width: 100%" />
                 </el-form-item>
                 <el-form-item label="备注" size="small">
-                  <el-input v-model="former_sea_instruction.remarks" style="width: 100%" type="textarea" :rows="8" />
+                  <el-input v-model="former_sea_instruction.remarks" style="width: 100%" type="textarea" :rows="8" maxlength="256" show-word-limit />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -969,7 +968,7 @@
                     <el-input v-model="former_sea_book.size" type="textarea" :rows="8" style="width: 100%" />
                   </el-form-item>
                   <el-form-item label="MBL 备注" size="small">
-                    <el-input v-model="former_sea_book.mbl_remarks" type="textarea" :rows="8" style="width: 100%" />
+                    <el-input v-model="former_sea_book.mbl_remarks" type="textarea" :rows="8" maxlength="256" show-word-limit style="width: 100%" />
                   </el-form-item>
                   <div class="pack-number-content">
                     <el-form-item label="数量" size="small">
@@ -1021,10 +1020,12 @@
                       type="textarea"
                       :rows="8"
                       style="width: 100%"
+                      maxlength="256"
+                      show-word-limit
                     />
                   </el-form-item>
                   <el-form-item label="接货地" size="small">
-                    <el-input v-model="former_sea_book.place_of_receipt" type="textarea" :rows="8" style="width: 100%" />
+                    <el-input v-model="former_sea_book.place_of_receipt" type="textarea" :rows="8" style="width: 100%" maxlength="256" show-word-limit />
                   </el-form-item>
                 </div>
               </el-col>
@@ -1102,7 +1103,7 @@
                   <el-input v-model="former_sea_book.charge_description" style="width: 100%" type="textarea" :rows="8" />
                 </el-form-item>
                 <el-form-item label="备注" size="small">
-                  <el-input v-model="former_sea_book.remarks" style="width: 100%" type="textarea" :rows="8" />
+                  <el-input v-model="former_sea_book.remarks" style="width: 100%" type="textarea" :rows="8" maxlength="256" show-word-limit />
                 </el-form-item>
               </el-col>
             </el-row>

@@ -252,7 +252,7 @@ export default {
           tempData.updated_at = undefined
           tempData.created_at = undefined
           tempData.region = this.handleRegion()
-          updateData('/base/warehouses/' + tempData.id + '/update', tempData).then((response) => {
+          updateData('/base/warehouses/' + tempData.id + '/update', tempData, 'patch').then((response) => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, response.data)
             this.dialogFormVisible = false

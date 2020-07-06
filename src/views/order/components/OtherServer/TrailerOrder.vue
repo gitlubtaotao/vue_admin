@@ -2,8 +2,8 @@
   <div>
     <el-card shadow="hover" style="margin-top: 10px">
       <div slot="header" class="clearfix">
-        <span>拖车单</span>
-        <el-button type="primary" size="small" style="float: right;" @click="addOrder">新增</el-button>
+        <span>拖车服务</span>
+        <el-button v-if="orderMasterStatus === 'processing'" type="primary" size="small" style="float: right;" @click="addOrder">新增</el-button>
       </div>
       <div v-for="(trail_order,order_index) in trailerOrderArray" :key="trail_order.id">
         <el-row>
@@ -76,16 +76,16 @@
                     <el-option v-for="item in portData" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
                   </el-select>
                   <el-form-item label="装货地/卸货地" prop="" size="small">
-                    <el-input v-model="trail_order.destination" type="textarea" :rows="3" />
+                    <el-input v-model="trail_order.destination" type="textarea" :rows="3" maxlength="256" show-word-limit />
                   </el-form-item>
                 </el-form-item>
               </div>
               <div v-else>
                 <el-form-item label="出发地" prop="" size="small">
-                  <el-input v-model="trail_order.departure" type="textarea" :rows="3" />
+                  <el-input v-model="trail_order.departure" type="textarea" :rows="3" maxlength="256" show-word-limit />
                 </el-form-item>
                 <el-form-item label="目的地" prop="" size="small">
-                  <el-input v-model="trail_order.destination" type="textarea" :rows="3" />
+                  <el-input v-model="trail_order.destination" type="textarea" :rows="3" maxlength="256" show-word-limit />
                 </el-form-item>
               </div>
 
@@ -153,7 +153,7 @@
                   <el-input v-model="trail_order.size" type="textarea" :rows="8" style="width: 100%" />
                 </el-form-item>
                 <el-form-item label="备注" size="small">
-                  <el-input v-model="trail_order.remarks" type="textarea" :rows="8" style="width: 100%" />
+                  <el-input v-model="trail_order.remarks" type="textarea" :rows="8" maxlength="256" show-word-limit style="width: 100%" />
                 </el-form-item>
                 <div class="pack-number-content">
                   <el-form-item label="数量" size="small">

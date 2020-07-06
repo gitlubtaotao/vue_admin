@@ -22,6 +22,7 @@ export function remoteCompany(query = '', scope = { company_type: 4 }) {
       resolve(response.data)
     }).catch(reason => {
       console.log(reason)
+      reject(reason)
     })
   })
 }
@@ -43,7 +44,6 @@ export function remoteEmployee(query = '', scope = {}) {
   })
 }
 export function remoteContact(query = '', scope = {}) {
-  console.log(scope)
   scope['company_type'] = [1, 2, 3]
   let url = '/select/base'
   if (query !== '') {
@@ -56,6 +56,21 @@ export function remoteContact(query = '', scope = {}) {
       scope: scope
     }).then((response) => {
       resolve(response.data)
+    })
+  })
+}
+
+export function getWarehouseAddress(query) {
+  let url = '/select/warehouse'
+  if (query !== '') {
+    url += '?name=' + query
+  }
+  return new Promise(function(resolve, reject) {
+    getSelectApi(url, {
+    }, 'get').then((response) => {
+      resolve(response.data)
+    }).catch(reason => {
+      reject(reason)
     })
   })
 }
