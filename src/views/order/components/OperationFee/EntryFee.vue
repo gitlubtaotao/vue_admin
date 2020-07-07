@@ -193,7 +193,7 @@ import { createData } from '@/api/index_data'
 import OrderTable from '@/components/OrderTable'
 
 export default {
-  name: 'OperationFee',
+  name: 'EntryFee',
   components: { OrderTable },
   props: {
     payOrReceive: {

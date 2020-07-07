@@ -52,7 +52,7 @@ import { parseTime } from '@/utils'
 import { getToken } from '@/utils/auth'
 import { deleteData } from '@/api/index_data'
 export default {
-  name: 'OrderAttachment',
+  name: 'UploadAttachment',
   props: {
     label: {
       required: true,
