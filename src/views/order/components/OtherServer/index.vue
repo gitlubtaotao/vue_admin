@@ -22,7 +22,17 @@
       />
     </keep-alive>
     <keep-alive>
-      <customs-clearance style="margin-bottom: 10px;" class="other-server-class" />
+      <customs-clearance
+        :order-list="formerCustomsClearance"
+        :customer-data="customerOptions"
+        :supply-data="supplyOptions"
+        :port-data="portOptions"
+        :custom-type-data="customTypeOptions"
+        :trans-type-data="transTypeOptions"
+        :currency-data="currencyOptions"
+        style="margin-bottom: 10px;"
+        class="other-server-class"
+      />
     </keep-alive>
     <keep-alive>
       <warehouse-server
@@ -50,11 +60,15 @@ export default {
       formerOtherServers: [],
       formerTrailerOrders: [],
       formerWarehouseOrders: [],
+      formerCustomsClearance: [],
       customerOptions: [],
       supplyOptions: [],
       portOptions: [],
       packageOptions: [],
-      capTypeOptions: []
+      capTypeOptions: [],
+      transTypeOptions: [],
+      customTypeOptions: [],
+      currencyOptions: []
     }
   },
   computed: {
@@ -75,14 +89,21 @@ export default {
     initData() {
       getData(this.getDataUrl, {}, 'get').then((response) => {
         console.log(response)
-        this.formerOtherServers = response.formerData.formerOtherServers
-        this.formerTrailerOrders = response.formerData.formerTrailerOrders
-        this.formerWarehouseOrders = response.formerData.formerWarehouseServices
-        this.portOptions = response.selectOptions.portOptions
-        this.packageOptions = response.selectOptions.packageOptions
-        this.capTypeOptions = response.selectOptions.capTypeOptions
-        this.supplyOptions = response.crmOptions.supplyOptions
-        this.customerOptions = response.crmOptions.customerOptions
+        const formerData = response['formerData']
+        this.formerOtherServers = formerData.formerOtherServers
+        this.formerTrailerOrders = formerData.formerTrailerOrders
+        this.formerWarehouseOrders = formerData['formerWarehouseServices']
+        this.formerCustomsClearance = formerData['formerCustomClearances']
+        const selectOptions = response['selectOptions']
+        this.portOptions = selectOptions.portOptions
+        this.packageOptions = selectOptions.packageOptions
+        this.capTypeOptions = selectOptions.capTypeOptions
+        this.customTypeOptions = selectOptions.customTypeOptions
+        this.transTypeOptions = selectOptions.transTypeOptions
+        this.currencyOptions = selectOptions.currencyOptions
+        const crmOptions = response['crmOptions']
+        this.supplyOptions = crmOptions.supplyOptions
+        this.customerOptions = crmOptions.customerOptions
       }).catch(reason => {
         console.log(reason)
       })

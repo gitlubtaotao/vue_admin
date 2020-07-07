@@ -375,7 +375,7 @@ export default {
     cloneData() {
       const length = this.trailerOrderArray.length
       const result = JSON.parse(JSON.stringify(this.trailerOrderArray[this.trailerOrderArray.length - 1]))
-      result.id = 0
+      result.id = undefined
       this.trailerOrderArray.push(result)
       this.saveData(result, length + 1)
     }

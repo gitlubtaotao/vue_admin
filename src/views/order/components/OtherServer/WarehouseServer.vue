@@ -197,6 +197,7 @@ export default {
     copyData() {
       const data = this.warehouseServerArray[this.warehouseServerArray.length - 1]
       const result = JSON.parse(JSON.stringify(data))
+      result.id = undefined
       this.warehouseServerArray.push(result)
       this.saveData(result, this.warehouseServerArray.length - 1)
     },
