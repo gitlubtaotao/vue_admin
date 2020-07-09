@@ -1,10 +1,11 @@
 import request from '@/utils/request'
 
-export function getData(url, params, type = 'post') {
+export function getData(url, params, type = 'post', data = {}) {
   return request({
     url: url,
     method: type,
-    params
+    params,
+    data
   })
 }
 

@@ -88,7 +88,6 @@ export default {
   methods: {
     initData() {
       getData(this.getDataUrl, {}, 'get').then((response) => {
-        console.log(response)
         const formerData = response['formerData']
         this.formerOtherServers = formerData.formerOtherServers
         this.formerTrailerOrders = formerData.formerTrailerOrders

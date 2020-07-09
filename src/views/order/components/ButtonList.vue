@@ -1,6 +1,7 @@
 <template>
   <div>
     <el-row>
+      <el-button v-if="orderMasterStatus === 'processing' && transport_type === '3' " type="success" size="small" icon="el-icon-check" @click="updateData">保存</el-button>
       <el-button v-if="['processing','unprocessed','unaudited'].indexOf(orderMasterStatus) > -1" type="primary" size="small" icon="el-icon-edit" @click="editOrder">编辑订单</el-button>
       <el-button type="primary" size="small" icon="el-icon-date">操作计划</el-button>
       <el-button v-if="orderMasterStatus !== 'cancel'" type="info" size="small" icon="el-icon-copy-document">复制</el-button>
@@ -36,7 +37,8 @@ export default {
     return {
       dialogFormVisible: false,
       dialogStatus: 'update',
-      order_master_id: this.$route.params.id
+      order_master_id: this.$route.params.id,
+      transport_type: this.$route.query.transport_type
     }
   },
   computed: {
@@ -56,6 +58,12 @@ export default {
       }).then(() => {
         callback(this.order_master_id)
       }).catch(() => {
+      })
+    },
+    updateData(evt) {
+      const _this = this
+      this.beforeCheck(function(id) {
+        _this.$emit('saveData', evt)
       })
     },
     auditOrder() {

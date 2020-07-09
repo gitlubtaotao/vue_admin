@@ -1,6 +1,6 @@
 <template>
   <div id="app-container">
-    <el-col :span="24">
+    <div>
       <el-card shadow="never">
         <div slot="header">
           <keep-alive>
@@ -86,8 +86,8 @@
           </el-form>
         </div>
       </el-card>
-    </el-col>
-    <el-col :span="24" style="margin-top: 10px;">
+    </div>
+    <div style="margin-top: 10px;">
       <el-tabs v-model="activeName" type="border-card" :before-leave="dataIsSave" @tab-click="changeNabType">
         <el-tab-pane name="former_sea_instruction" :lazy="true">
           <div slot="label">
@@ -1131,7 +1131,7 @@
           <keep-alive><other-server /></keep-alive>
         </el-tab-pane>
       </el-tabs>
-    </el-col>
+    </div>
   </div>
 </template>
 <script>
@@ -1176,7 +1176,8 @@ export default {
           arrival: undefined,
           vessel: undefined,
           voyage: undefined,
-          shipper_id: undefined
+          shipper_id: undefined,
+          supply_agent_id: undefined
         }
       },
       former_sea_instruction: {
@@ -1350,6 +1351,7 @@ export default {
   },
   methods: {
     supplyChange(val) {
+      this.order_master.order_extend_info.supply_agent_id = val
       this.$store.dispatch('orderMaster/setPayClosingUnit', val)
     },
     showDate(time) {
@@ -1524,31 +1526,24 @@ export default {
         })
         return
       }
-      this.$refs[this.activeName].validate((valid) => {
-        if (valid) {
-          if (this.activeName === 'former_sea_instruction') {
-            data = {
-              former_sea_instruction: this.former_sea_instruction,
-              order_extend_info: this.order_master.order_extend_info
-            }
-          } else if (this.activeName === 'former_sea_book') {
-            data = { former_sea_book: this.former_sea_book, order_extend_info: this.order_master.order_extend_info }
-          }
-          createData('/order/masters/' + this.$route.params.id + '/UpdateFormerData?former_type=' + this.activeName, data).then((response) => {
-            this.$notify({
-              title: 'Success',
-              message: '保存数据成功',
-              type: 'success',
-              duration: 5000
-            })
-            this.isDataChange = 0
-          }).catch(reason => {
-            console.log(reason)
-          })
-        } else {
-          console.log('error submit!!')
-          return false
+      if (this.activeName === 'former_sea_instruction') {
+        data = {
+          former_sea_instruction: this.former_sea_instruction,
+          order_extend_info: this.order_master.order_extend_info
         }
+      } else if (this.activeName === 'former_sea_book') {
+        data = { former_sea_book: this.former_sea_book, order_extend_info: this.order_master.order_extend_info }
+      }
+      createData('/order/masters/' + this.$route.params.id + '/UpdateFormerData?former_type=' + this.activeName, data).then((response) => {
+        this.$notify({
+          title: 'Success',
+          message: '保存数据成功',
+          type: 'success',
+          duration: 5000
+        })
+        this.isDataChange = 0
+      }).catch(reason => {
+        console.log(reason)
       })
     }
   }
@@ -1557,7 +1552,6 @@ export default {
 
 <style lang="scss">
   .cap-list {
-
   .el-form-item {
     width: 30% !important;
 

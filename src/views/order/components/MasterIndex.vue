@@ -28,7 +28,7 @@
         <el-table-column type="selection" width="55" fixed="left" />
         <el-table-column label="操作" width="150" fixed="left">
           <template slot-scope="{row,$index}">
-            <router-link :to="'/order/master/operation/'+row.id + '?transport_type=' + row['transport_type_value']">
+            <router-link :to="'/order/master/operation/'+ row.order_master_id + '?transport_type=' + row['transport_type_value']">
               <el-button size="mini" type="primary" @click="rowDblclick(row)">操作</el-button>
             </router-link>
             <el-dropdown size="mini" type="primary" @visible-change="handleClick(row,$index)" @command="handleCommand">
@@ -128,7 +128,7 @@ export default {
       this.multipleSelection = val
     },
     rowDblclick(row, column, event) {
-      this.$router.push('/order/master/operation/' + row.id + '?transport_type=' + row['transport_type_value'])
+      this.$router.push('/order/master/operation/' + row.order_master_id + '?transport_type=' + row['transport_type_value'])
     },
     handleUpdate() {
       getData('/order/masters/' + this.temp.id + '/edit', {}, 'get').then(response => {
@@ -162,7 +162,7 @@ export default {
       const data = localColumn(this.columnUrl)
       if (data.length === 0) {
         getColumn(this.columnUrl).then(response => {
-          this.columnArray = response
+          console.log(response)
         }).catch(error => {
           this.$message({ showClose: true, message: error, type: 'error' })
         })

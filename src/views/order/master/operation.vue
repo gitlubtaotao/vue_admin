@@ -16,6 +16,7 @@
         <el-tab-pane label="操作" :lazy="true">
           <keep-alive>
             <sea-page v-if="transport_type === '1' || transport_type === '4'" @orderInfo="getOrderMaster" />
+            <other-page v-if="transport_type === '3'" @orderInfo="getOrderMaster" />
           </keep-alive>
         </el-tab-pane>
         <el-tab-pane label="录入费用" :lazy="true">
@@ -32,13 +33,14 @@
 
 import { parseTime } from '@/utils'
 import SeaPage from '../components/sea/SeaPage'
+import OtherPage from '../components/OtherServer/OtherPage'
 import OperationFee from '../components/OperationFee'
 import OrderAttachment from '../components/OrderAttachment'
 import { mapState } from 'vuex'
 
 export default {
   name: 'OrderOperation',
-  components: { SeaPage, OrderAttachment, OperationFee },
+  components: { SeaPage, OtherPage, OrderAttachment, OperationFee },
   data() {
     return {
       id: this.$route.params && this.$route.params.id,
