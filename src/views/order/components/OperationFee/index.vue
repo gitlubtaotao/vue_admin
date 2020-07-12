@@ -149,7 +149,6 @@ export default {
         }
         this.closing_unit_options = response['closing_unit_options']
         const options = response['options']
-        this.setStateOperation(options)
         this.handleFeeType(options.fee_type_options)
         this.currency_options = options['finance_currency']
         this.pay_type_options = options['pay_type_options']
@@ -160,10 +159,6 @@ export default {
       }).catch((reason) => {
         console.log(reason)
       })
-    },
-    setStateOperation(data) {
-      this.$store.dispatch('orderMaster/setFinanceApprove', data['system_finance_approve'])
-      this.$store.dispatch('orderMaster/setFinanceAudit', data['system_finance_audit'])
     },
     handlerHistoryFee() {
       this.centerDialogVisible = true

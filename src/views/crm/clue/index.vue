@@ -116,14 +116,10 @@
     </el-card>
     <el-card class="box-card">
       <div slot="header" class="">
-        <el-row :gutter="10">
-          <keep-alive>
-            <unfixed-thead v-model="columnArray" :local-key="columnUrl" :columns="columnArray" />
-          </keep-alive>
-          <keep-alive>
-            <export-excel :multiple-selection="multipleSelection" :local-key="columnUrl" />
-          </keep-alive>
-        </el-row>
+        <div>
+          <keep-alive><unfixed-thead v-model="columnArray" :local-key="columnUrl" :columns="columnArray" /></keep-alive>
+          <keep-alive><export-excel :multiple-selection="multipleSelection" :local-key="columnUrl" /></keep-alive>
+        </div>
       </div>
       <el-table
         :key="tableKey"

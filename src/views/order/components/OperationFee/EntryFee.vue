@@ -55,7 +55,7 @@
                 <el-option v-for="item in pay_type_options" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
               </el-select>
             </template>
-            <span v-else>{{ scope.row.name }}</span>
+            <span v-else>{{ showPayType(scope.row.pay_type_id) }}</span>
           </template>
         </el-table-column>
         <el-table-column label="币种" width="120">
@@ -65,7 +65,7 @@
                 <el-option v-for="item in finance_currency_options" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
               </el-select>
             </template>
-            <span v-else>{{ scope.row.name }}</span>
+            <span v-else>{{ showFinanceCurrency(scope.row.finance_currency_id) }}</span>
           </template>
         </el-table-column>
         <el-table-column label="数/重量" width="100">
@@ -91,7 +91,7 @@
                 <el-option v-for="item in financeTagOptions" :key="parseInt(item.id)" :label="item.name" :value="parseInt(item.id)" />
               </el-select>
             </template>
-            <span v-else>{{ scope.row.name }}</span>
+            <span v-else>{{ showFinanceTag(scope.row.type_id) }}</span>
           </template>
         </el-table-column>
         <el-table-column label="结算单位" width="150">
@@ -169,8 +169,8 @@
           </el-dropdown-menu>
         </el-dropdown>
         <el-button size="mini" type="info" icon="el-icon-warning" @click="submitVerify">确定对账</el-button>
-        <el-button v-if="$store.state.orderMaster.systemFinanceApprove === 'false'" size="mini" type="warning" icon="el-icon-s-check">提交审批</el-button>
-        <el-button v-if="$store.state.orderMaster.systemFinanceAudit === 'false'" size="mini" type="warning" icon="el-icon-s-check">提交复核</el-button>
+        <el-button v-if="skip_audit === 'false'" size="mini" type="warning" icon="el-icon-s-check">提交审批</el-button>
+        <el-button v-if="skip_approve === 'false'" size="mini" type="warning" icon="el-icon-s-check">提交复核</el-button>
         <el-button size="mini" type="primary" icon="el-icon-share">导出</el-button>
       </el-row>
     </el-card>
@@ -231,6 +231,8 @@ export default {
   },
   data() {
     return {
+      skip_audit: this.$store.state.user.systemSetting['system_finance_audit'],
+      skip_approve: this.$store.state.user.systemSetting['system_finance_approve'],
       chooseOrderMasterIds: [],
       centerDialogVisible: false,
       system_standard_currency: this.$store.getters.systemSetting.system_standard_currency,
@@ -322,6 +324,24 @@ export default {
     }
   },
   methods: {
+    showPayType(id) {
+      const payType = this.payTypeOptions.filter(item => { return parseInt(item.id) === id })
+      if (payType.length > 0) {
+        return payType[0].name
+      }
+    },
+    showFinanceCurrency(id) {
+      const payType = this.financeCurrencyOptions.filter(item => { return parseInt(item.id) === id })
+      if (payType.length > 0) {
+        return payType[0].name
+      }
+    },
+    showFinanceTag(id) {
+      const payType = this.financeTagOptions.filter(item => { return parseInt(item.id) === id })
+      if (payType.length > 0) {
+        return payType[0].name
+      }
+    },
     showStatus(status) {
       return financeFeeStatus[status]
     },

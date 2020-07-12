@@ -1,6 +1,6 @@
 <template>
   <el-dropdown :hide-on-click="false" placement="bottom">
-    <el-button type="primary" size="medium" icon="el-icon-arrow-down">
+    <el-button type="primary" size="small" icon="el-icon-arrow-down">
       列设置
     </el-button>
     <el-dropdown-menu slot="dropdown" style="width: 200px;margin-left: 30px;max-height:300px;overflow-y: auto;">

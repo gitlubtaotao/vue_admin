@@ -109,14 +109,15 @@ export function param2Obj(url) {
 }
 
 export function dateRangeArrayToStr(dateRange) {
+  const str = []
   if (Array.isArray(dateRange)) {
     if (dateRange.length === 1) {
       return dateRange[0]
     } else {
-      dateRange[0] = dateRange[0] + ' 00:00:00'
-      dateRange[1] = dateRange[1] + ' 23:59:59'
+      str[0] = dateRange[0] + ' 00:00:00'
+      str[1] = dateRange[1] + ' 23:59:59'
     }
-    return dateRange.join(',')
+    return str.join(',')
   }
   return ''
 }

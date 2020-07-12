@@ -1,9 +1,9 @@
 <template>
   <span>
-    <el-button :loading="downloadLoading" size="medium" type="primary" icon="el-icon-document" @click="handleDownload">
+    <el-button :loading="downloadLoading" size="small" type="primary" icon="el-icon-document" @click="handleDownload">
       导出Excel
     </el-button>
-    <el-button :loading="downloadLoadingZip" size="medium" type="primary" icon="el-icon-document" style="margin-left: 0" @click="handleDownloadZip">
+    <el-button :loading="downloadLoadingZip" size="small" type="primary" icon="el-icon-document" style="margin-left: 0" @click="handleDownloadZip">
       导出Zip
     </el-button>
   </span>

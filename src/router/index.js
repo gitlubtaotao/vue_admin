@@ -5,10 +5,10 @@ import Layout from '@/layout'
 
 import crmRouter from './modules/crm'
 import oaRoute from './modules/oa'
-import orderRouter from "@/router/modules/order"
-import financeRouter from "@/router/modules/finance"
-import dataRouter from "@/router/modules/data"
-import da from "element-ui/src/locale/lang/da";
+import orderRouter from '@/router/modules/order'
+import financeRouter from '@/router/modules/finance'
+import dataRouter from '@/router/modules/data'
+
 Vue.use(Router)
 
 /**
@@ -62,6 +62,18 @@ export const constantRoutes = [
   oaRoute,
   crmRouter,
   orderRouter,
+  {
+    path: '/confirmBill',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/ConfirmBill/index'),
+        name: 'ConfirmBill',
+        meta: { title: '对账', icon: 'list', noCache: true }
+      }
+    ]
+  },
   financeRouter,
   dataRouter,
   {

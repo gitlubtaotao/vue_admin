@@ -1,5 +1,5 @@
 export const financeFeeStatus = {
-  'init': '未提交',
+  'init': '未对账',
   'dismiss': '已驳回',
   'verify': '已对账',
   'pending': '待审批',
