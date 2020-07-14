@@ -252,7 +252,7 @@
 <script>
 import { getColumn, localColumn } from '@/api/column'
 import { remoteCompany } from '@/api/select'
-import { getData, createData, updateData, editData, deleteData } from '@/api/index_data'
+import { getData, createData, updateData, deleteData } from '@/api/index_data'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import UnfixedThead from '@/components/UnfixedThead'
@@ -375,9 +375,8 @@ export default {
     },
     handleUpdate(row) {
       this.getCompany()
-      editData('/employees/' + row.id + '/edit',).then((response) => {
-        this.temp = response.data
-      })
+      console.log(row)
+      this.temp = row
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -390,7 +389,8 @@ export default {
           const tempData = Object.assign({}, this.temp)
           tempData.updated_at = undefined
           tempData.created_at = undefined
-          updateData('/employees/' + tempData.id + '/update', tempData).then((response) => {
+          tempData.last_sign_in_at = undefined
+          updateData('/employees/' + tempData.id + '/update', tempData, 'patch').then((response) => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, response.data)
             this.dialogFormVisible = false

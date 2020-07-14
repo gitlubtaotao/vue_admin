@@ -270,7 +270,7 @@
         <el-row style="margin-bottom: 10px">
           <el-button type="primary" size="small" @click="addCrmUser">新增联系人</el-button>
         </el-row>
-        <el-table key="crm_users" :data="crmUserLists" fit max-height="1200" border style="width: 100%;">
+        <el-table key="crm_contacts" :data="crmUserLists" fit max-height="1200" border style="width: 100%;">
           <el-table-column min-width="100px" label="姓名">
             <template slot-scope="{row}">
               <template v-if="row.edit">
@@ -464,7 +464,7 @@ export default {
       sourceOptions: [],
       businessOptions: [],
       crmUserLists: [],
-      crmUsers: {
+      crm_contacts: {
         id: null,
         name: null,
         phone: null,
@@ -529,7 +529,7 @@ export default {
           data.age = parseInt(data.age)
           data.amount = parseInt(data.amount)
           if (this.crmUserLists.length > 0) {
-            data.crm_users = this.crmUserLists
+            data.crm_contacts = this.crmUserLists
           }
           createData('/crm/companies/create', data).then((response) => {
             this.list.unshift(response.data)

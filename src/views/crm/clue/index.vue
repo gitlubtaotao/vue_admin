@@ -460,7 +460,7 @@ export default {
       })
     },
     handleUpdate(row) {
-      editData('/crm/clues/' + row.id + '/edit',).then((response) => {
+      editData('/crm/clues/' + row.id + '/edit', 'get').then((response) => {
         const data = response.data
         if (data.source !== '') {
           data.source = data.source.split(',')
@@ -480,7 +480,7 @@ export default {
           if (tempData.source !== '' && typeof (tempData.source) !== 'undefined') {
             tempData.source = tempData.source.join(',')
           }
-          updateData('/crm/clues/' + tempData.id + '/update', tempData).then((response) => {
+          updateData('/crm/clues/' + tempData.id + '/update', tempData, 'patch').then((response) => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, response.data)
             this.dialogFormVisible = false
