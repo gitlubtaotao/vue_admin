@@ -408,6 +408,11 @@ export default {
         item.payable = parseFloat(item.payable)
         item.receivable = parseFloat(item.receivable)
         item.tax_rate = parseFloat(item.tax_rate)
+        if (item.pay_or_receive === 'pay') {
+          item.un_paid = item.payable
+        } else {
+          item.un_receivable = item.receivable
+        }
         if (item.unit_price < 0 || typeof (item.unit_price) === 'undefined') {
           this.$message.error('行' + index.toString() + '单价不能小于0')
           return false

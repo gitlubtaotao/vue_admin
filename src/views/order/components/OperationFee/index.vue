@@ -140,7 +140,6 @@ export default {
     },
     getFeeData() {
       getData('/finance/fees/' + this.orderMasterId + '/OrderFees', {}, 'get').then((response) => {
-        console.log(response)
         const finance_fee_array = response.data
         if (finance_fee_array.receive !== null && finance_fee_array.receive.length >= 1) {
           this.receive_fee_array = finance_fee_array.receive
@@ -183,6 +182,7 @@ export default {
         this.$message.error('未选择记录')
         return
       }
+      this.loadingCopyFee = true
       createData('/finance/fees/' + this.orderMasterId + '/BulkHistoryFee', this.exportParam).then(response => {
         if (this.exportParam.pay_or_receive === 'pay') {
           this.pay_fee_array = this.pay_fee_array.concat(response.data)
@@ -194,7 +194,7 @@ export default {
       }).catch(reason => {
         console.log(reason)
       })
-      this.loadingCopyFee = true
+      this.loadingCopyFee = false
     }
   }
 }

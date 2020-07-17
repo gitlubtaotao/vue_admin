@@ -22,14 +22,9 @@ export const financeFeePayOrReceive = {
   'pay': '支出',
   'receive': '收入'
 }
-
-
 export const OrderMasterStatus = {
   'processing': '处理中',
   'finished': '已完成',
   'locked': '已锁定',
   'cancel': '已作废'
 }
-
-
-
