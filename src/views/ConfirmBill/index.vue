@@ -11,54 +11,54 @@
         <el-row :gutter="5">
           <el-col :xs="24" :sm="12" :md="6" :lg="6">
             <el-form-item label="结算单位" class="" size="medium">
-              <el-select v-model="listQuery['closing_unit_id-eq']" filterable placeholder="请选择" size="medium" clearable @focus="getClosingUnit">
-                <el-option v-for="item in closingUnitOptions" :key="item.value" :label="item.label" :value="item.value" />
+              <el-select v-model="listQuery.closing_unit_id" filterable placeholder="请选择" size="medium" clearable :loading="loadingClosingUnit" @focus="getClosingUnit">
+                <el-option v-for="item in closingUnitOptions" :key="item.value" :label="item.label" :value="parseInt(item.value)" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="6" :lg="6">
             <el-form-item label="订单号" class="" size="medium">
-              <el-select v-model="listQuery['order_master-id-eq']" filterable remote placeholder="请选择" size="medium" clearable :loading="loadingOrderMaster" @focus="getOrderMaster">
-                <el-option v-for="item in orderMasterOptions" :key="item.value" :label="item.label" :value="item.value" />
+              <el-select v-model="listQuery.order_master_id" filterable remote placeholder="请选择" size="medium" clearable :remote-method="searchOrderMaster" :loading="loadingOrderMaster" @focus="getOrderMaster">
+                <el-option v-for="item in orderMasterOptions" :key="item.id" :label="item.serial_number" :value="parseInt(item.id)" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="6" :lg="6">
             <el-form-item label="币种" class="" size="medium">
-              <el-select v-model="listQuery['finance_currency_id-eq']" filterable placeholder="请选择" size="medium" clearable @focus="getFinanceCurrency">
-                <el-option v-for="item in financeCurrencyOptions" :key="item.value" :label="item.label" :value="item.value" />
+              <el-select v-model="listQuery.finance_currency_id" filterable placeholder="请选择" size="medium" clearable @focus="getFinanceCurrency">
+                <el-option v-for="item in financeCurrencyOptions" :key="item.id" :label="item.name" :value="parseInt(item.id)" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="6" :lg="6">
             <el-form-item label="业务员" class="" size="medium">
-              <el-select v-model="listQuery['salesman_id-eq']" filterable placeholder="请选择" size="medium" clearable @focus="getUser">
+              <el-select v-model="listQuery.salesman_id" filterable placeholder="请选择" size="medium" clearable @focus="getUser">
                 <el-option v-for="item in userOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="6" :lg="6">
             <el-form-item label="操作员" class="" size="medium">
-              <el-select v-model="listQuery['operation_id-eq']" filterable placeholder="请选择" size="medium" clearable @focus="getUser">
+              <el-select v-model="listQuery.operation_id" filterable placeholder="请选择" size="medium" clearable @focus="getUser">
                 <el-option v-for="item in userOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="6" :lg="6">
             <el-form-item label="收支" size="medium">
-              <el-select v-model="listQuery['pay_or_receive-eq']" filterable placeholder="请选择" size="medium" clearable>
-                <el-option v-for="item in payOrReceiveOptions" :key="item.value" :label="item.label" :value="item.value" />
+              <el-select v-model="listQuery.pay_or_receive" filterable placeholder="请选择" size="medium" clearable>
+                <el-option v-for="item in typeOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="6" :lg="6">
             <el-form-item label="主单号" class="" size="medium">
-              <el-input v-model="listQuery['mbl_so-rCount']" type="text" placeholder="支持模糊查询" />
+              <el-input v-model="listQuery.mbl_so" type="text" placeholder="支持模糊查询" />
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="6" :lg="6">
             <el-form-item label="费用简称" class="" size="medium">
-              <el-input v-model="listQuery['name-rCount']" type="text" placeholder="支持模糊查询" />
+              <el-input v-model="listQuery.name" type="text" placeholder="支持模糊查询" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -80,14 +80,14 @@
           </el-col>
           <el-col :xs="12" :sm="12" :md="12" :lg="12">
             <el-form-item label="到港日期" prop="created_at">
-              <el-date-picker v-model="tmp_arrival" type="daterange" range-separator="至" start-placeholder="开始日期"  end-placeholder="结束日期" value-format="yyyy-MM-dd" />
+              <el-date-picker v-model="tmp_arrival" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :xs="24" style="text-align: center;">
             <el-button v-waves type="primary" icon="el-icon-search" size="medium" @click="filterTable">搜索</el-button>
-            <el-button type="danger" icon="el-icon-close" size="medium">取消</el-button>
+            <el-button type="danger" icon="el-icon-close" size="medium" @click="clearFilter">取消</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -103,7 +103,7 @@
           </el-col>
           <el-col :span="16">
             <div style="float: right;">
-              <el-button type="primary" size="mini" icon="el-icon-s-operation">确定对账</el-button>
+              <el-button v-if="listQuery.status === 'init' || listQuery.status === 'dismiss'" type="primary" size="mini" icon="el-icon-s-operation" :loading="loadingChangeStatus" @click="submitVerify">确定对账</el-button>
               <el-button type="warning" size="mini" icon="el-icon-s-operation">导出账单</el-button>
               <el-button type="warning" size="mini" icon="el-icon-s-operation">导出对账单</el-button>
               <el-button v-if="skip_approve === 'false'" type="danger" size="mini" icon="el-icon-s-operation">提交审核</el-button>
@@ -139,19 +139,23 @@
   </div>
 </template>
 <script>
-import { getData } from '@/api/index_data'
+import { getData, createData } from '@/api/index_data'
 import { getColumn, localColumn } from '@/api/column'
 import waves from '@/directive/waves' // waves directive
 import UnfixedThead from '@/components/UnfixedThead'
 import ExportExcel from '@/components/ExportExcel'
 import Pagination from '@/components/Pagination'
-import { dateRangeArrayToStr } from '@/utils'
+import { dateRangeArrayToStr, payOrReceiveOptions } from '@/utils'
+
+import { remoteCompany, remoteOrderMaster, remoteEmployee, remoteBaseCode } from '@/api/select'
 export default {
   name: 'ConfirmBill',
   components: { UnfixedThead, ExportExcel, Pagination },
   directives: { waves },
   data() {
     return {
+      typeOptions: payOrReceiveOptions,
+      loadingChangeStatus: false,
       total: 0,
       page: 1,
       limit: 20,
@@ -168,25 +172,26 @@ export default {
       tmp_order_master_created_at: '',
       listQuery: {
         status: '',
-        'finance_fees.created_at': undefined,
-        'order_extend_infos.departure': undefined,
-        'order_extend_infos.arrival': undefined,
-        'order_masters.created_at': undefined,
+        created_at: undefined,
+        departure: undefined,
+        arrival: undefined,
+        order_masters_created_at: undefined,
         pay_or_receive_status: '',
-        'closing_unit_id-eq': undefined,
-        'order_master-id-eq': undefined,
-        'finance_currency_id-eq': undefined,
-        'salesman_id-eq': undefined,
-        'operation_id-eq': undefined,
-        'pay_or_receive-eq': undefined,
-        'mbl_so-rCount': undefined,
-        'name-rCount': undefined
+        closing_unit_id: undefined,
+        order_master_id: undefined,
+        finance_currency_id: undefined,
+        salesman_id: undefined,
+        operation_id: undefined,
+        pay_or_receive: undefined,
+        mbl_so: undefined,
+        name: undefined
       },
       closingUnitOptions: [],
       orderMasterOptions: [],
+      orderMasterData: [],
       financeCurrencyOptions: [],
       userOptions: [],
-      payOrReceiveOptions: [],
+      loadingClosingUnit: false,
       loadingOrderMaster: false
     }
   },
@@ -226,13 +231,27 @@ export default {
     },
     filterTable() {
       this.listLoading = true
-      console.log(this.listQuery)
-      this.listQuery['finance_fees.created_at'] = dateRangeArrayToStr(this.tmp_created_at)
-      this.listQuery['order_extend_infos.departure'] = dateRangeArrayToStr(this.tmp_departure)
-      this.listQuery['order_extend_infos.arrival'] = dateRangeArrayToStr(this.tmp_arrival)
-      this.listQuery['order_masters.created_at'] = dateRangeArrayToStr(this.tmp_order_master_created_at)
-      getData('/finance/fees/GetConfirmBillList', { page: this.page, limit: this.limit }, 'post', this.listQuery).then(response => {
-        console.log(response)
+      this.listQuery['created_at'] = dateRangeArrayToStr(this.tmp_created_at)
+      this.listQuery['departure'] = dateRangeArrayToStr(this.tmp_departure)
+      this.listQuery['arrival'] = dateRangeArrayToStr(this.tmp_arrival)
+      if (this.listQuery.closing_unit_id === '') {
+        this.listQuery.closing_unit_id = undefined
+      }
+      if (this.listQuery.order_master_id === '') {
+        this.listQuery.order_master_id = undefined
+      }
+      if (this.listQuery.salesman_id === '') {
+        this.listQuery.salesman_id = undefined
+      }
+      if (this.listQuery.operation_id === '') {
+        this.listQuery.operation_id = undefined
+      }
+      if (this.listQuery.finance_currency_id === '') {
+        this.listQuery.finance_currency_id = undefined
+      }
+      this.listQuery['order_masters_created_at'] = dateRangeArrayToStr(this.tmp_order_master_created_at)
+      const searchQuery = JSON.parse(JSON.stringify(this.listQuery))
+      getData('/finance/fees/GetConfirmBillList', { page: this.page, limit: this.limit }, 'post', searchQuery).then(response => {
         let total = response.total
         let data = response.data
         if (!Array.isArray(data)) { data = [] }
@@ -246,14 +265,122 @@ export default {
         console.log(error)
       })
     },
-    getClosingUnit() { },
-    getOrderMaster() { },
-    getFinanceCurrency() { },
-    getUser() { },
+    getClosingUnit() {
+      if (this.closingUnitOptions.length > 0) {
+        return
+      }
+      this.loadingClosingUnit = true
+      remoteCompany('', { company_type: [1, 2, 3] }).then((response) => {
+        this.closingUnitOptions = response
+        this.loadingClosingUnit = false
+      }).catch((reason) => {
+        console.log(reason)
+      })
+    },
+    getOrderMaster() {
+      if (this.orderMasterData.length >= 1) {
+        this.orderMasterOptions = this.orderMasterData
+        return
+      }
+      this.searchOrderMaster('')
+    },
+    searchOrderMaster(query) {
+      if (query !== '') {
+        this.loadingOrderMaster = true
+        const result = this.orderMasterData.filter(item => {
+          return item.serial_number.toLowerCase()
+            .indexOf(query.toLowerCase()) > -1
+        })
+        if (result.length > 0) {
+          this.loadingOrderMaster = false
+          this.orderMasterOptions = result
+          return
+        }
+      }
+      remoteOrderMaster(query).then((response) => {
+        this.orderMasterOptions = response
+        if (query === '' || query === null) {
+          this.orderMasterData = response
+        }
+        this.loadingOrderMaster = false
+      }).catch((reason) => {
+        console.log(reason)
+      })
+    },
+    getFinanceCurrency() {
+      if (this.financeCurrencyOptions.length > 0) {
+        return
+      }
+      remoteBaseCode().then((response) => {
+        this.financeCurrencyOptions = response
+        console.log(response)
+      }).catch((reason) => {
+      })
+    },
+    getUser() {
+      if (this.userOptions.length > 0) {
+        return
+      }
+      remoteEmployee('', { }).then((response) => {
+        this.userOptions = response
+      }).catch((reason) => {
+        console.log(reason)
+      })
+    },
     handleSelectionChange(val) {
+      console.log(val)
       this.multipleSelection = val
     },
     rowDblclick() {
+    },
+    clearFilter() {
+      this.tmp_created_at = ''
+      this.tmp_departure = ''
+      this.tmp_arrival = ''
+      this.tmp_order_master_created_at = ''
+      this.listQuery = {
+        status: '',
+        created_at: undefined,
+        departure: undefined,
+        arrival: undefined,
+        order_masters_created_at: undefined,
+        pay_or_receive_status: '',
+        closing_unit_id: undefined,
+        order_master_id: undefined,
+        finance_currency_id: undefined,
+        salesman_id: undefined,
+        operation_id: undefined,
+        pay_or_receive: undefined,
+        mbl_so: undefined,
+        name: undefined
+      }
+      this.filterTable()
+    },
+    submitVerify() {
+      if (this.multipleSelection.length === 0) {
+        this.$message.error('未选择要提交的记录')
+        return
+      }
+      if (!(['init', 'dismiss'].indexOf(this.listQuery.status) > -1)) {
+        this.$message.error('只能对未提交和已驳回的费用进行提交对账')
+        return
+      }
+      const ids = this.multipleSelection.map((item) => { return item.id })
+      this.loadingChangeStatus = true
+      createData('/finance/fees/ChangeStatus?status=verify', { ids: ids }).then(response => {
+        this.$notify({
+          title: 'Success',
+          message: '操作成功',
+          type: 'success',
+          duration: 5000
+        })
+        for (let i = 0; i < this.multipleSelection.length; i++) {
+          this.lists.splice(this.lists.findIndex(item => item.id === this.multipleSelection[i].id), 1)
+        }
+        this.loadingChangeStatus = false
+      }).catch(reason => {
+        this.loadingChangeStatus = false
+      })
     }
   }
 }

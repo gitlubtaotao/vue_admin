@@ -75,3 +75,58 @@ export function getWarehouseAddress(query) {
   })
 }
 
+// 获取订单数据
+export function remoteOrderMaster(query) {
+  let url = '/select/orderMaster'
+  if (query !== '') {
+    url += '?serial_number=' + query
+  }
+  return new Promise(function(resolve, reject) {
+    getSelectApi(url, {
+    }, 'get').then((response) => {
+      resolve(response.data)
+    }).catch(reason => {
+      reject(reason)
+    })
+  })
+}
+
+// 获取基础代码数据
+
+export function remoteBaseCode() {
+  const url = '/select/baseCode'
+  return new Promise(function(resolve, reject) {
+    getSelectApi(url, {
+    }, 'get').then((response) => {
+      resolve(response.data)
+    }).catch(reason => {
+      reject(reason)
+    })
+  })
+}
+
+export function remoteBaseCarrier() {
+  const url = '/select/baseCarrier'
+  return new Promise(function(resolve, reject) {
+    getSelectApi(url, {
+    }, 'get').then((response) => {
+      resolve(response.data)
+    }).catch(reason => {
+      reject(reason)
+    })
+  })
+}
+
+// 获取港口信息
+export function remoteBasePort() {
+  const url = '/select/basePort'
+  return new Promise(function(resolve, reject) {
+    getSelectApi(url, {
+    }, 'get').then((response) => {
+      resolve(response.data)
+    }).catch(reason => {
+      reject(reason)
+    })
+  })
+}
+

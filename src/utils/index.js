@@ -121,3 +121,5 @@ export function dateRangeArrayToStr(dateRange) {
   }
   return ''
 }
+
+export const payOrReceiveOptions = [{ label: '支出', value: 'pay' }, { label: '收入', value: 'receive' }]
