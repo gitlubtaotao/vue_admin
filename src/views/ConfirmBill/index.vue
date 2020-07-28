@@ -205,10 +205,10 @@ export default {
     },
     payOrReceiveList: function() {
       return [
-        { key: 'receivable', value: '未收' },
-        { key: 'payable', value: '未付' },
-        { key: 'received', value: '实收' },
-        { key: 'paid', value: '实付' }
+        { key: 'uncollected', value: '未收' },
+        { key: 'unpaid', value: '未付' },
+        { key: 'receive_amount', value: '实收' },
+        { key: 'pay_amount', value: '实付' }
       ]
     }
   },
